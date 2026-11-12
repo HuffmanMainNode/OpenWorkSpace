@@ -26,6 +26,16 @@ jobs:
         run: python -m pip install -e '.[dev]'
       - name: Run tests
         run: pytest
+      - name: Smoke-test installed CLI
+        run: |
+          set -euo pipefail
+          openworkspace --help
+          workspace="$(mktemp -d)"
+          init_output="$(openworkspace init --path "$workspace")"
+          python -c 'import json,sys; data=json.loads(sys.stdin.read()); assert data["initialized"] is True; print("Initialized:", data["workspace"])' <<< "$init_output"
+          openworkspace list --database "$workspace/registry.sqlite3"
+          demo_output="$(openworkspace demo)"
+          python -c 'import json,sys; data=json.loads(sys.stdin.read()); assert data["executed"] is False; assert data["os_access_enforced"] is False; print("Safe demo verified")' <<< "$demo_output"
       - name: Lint
         run: ruff check .
       - name: Build wheel
