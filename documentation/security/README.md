@@ -9,6 +9,7 @@ Do not rely on OpenWorkSpace as a production security boundary or use it to run 
 - Strict capability manifest validation.
 - Local SQLite registry with duplicate-ID rejection and stored-manifest digest checks.
 - Local identity records with encrypted Ed25519 private-key storage, public-key binding, and file-signature verification.
+- External package manifest validation and local artifact SHA-256 verification without unpacking or execution.
 - Registry, identity, task, message, and resource audit records protected from ordinary SQL update/delete statements by triggers.
 - Permission-decision helper allowing only exact explicit grants.
 - Local JSONL evidence journal with schema validation and SHA-256 hash chaining.
@@ -21,6 +22,7 @@ Do not rely on OpenWorkSpace as a production security boundary or use it to run 
 - Ed25519 signatures prove possession of the bound private key for specific bytes, not a real-world identity or remote authentication.
 - Private key files are encrypted with a user passphrase and restricted to owner permissions on POSIX. Windows ACLs are not configured by this package.
 - Local revocation does not propagate to other workspaces or remote systems.
+- Package digest matching proves byte consistency only. The intake does not verify publisher signatures, inspect archive contents, resolve dependencies, or execute package code.
 - Resource records are descriptive metadata. The catalog does not fetch URLs, verify license claims, qualify software, or authorize execution.
 - Task records are not executed by a worker engine. Message records remain in a local queue and sender identifiers are not authenticated.
 - Local audit triggers deter ordinary SQL mutation but can be dropped by a database owner.
