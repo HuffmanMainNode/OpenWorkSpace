@@ -32,7 +32,6 @@ def initialize_workspace(root: str | Path) -> dict[str, str]:
     ResourceCatalog(database)
     PackageCatalog(database)
     CapabilityRegistry(registry_database)
-    evidence_path.touch(exist_ok=True)
 
     return {
         "workspace": str(workspace.resolve()),
