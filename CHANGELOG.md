@@ -2,7 +2,7 @@
 
 ## [0.1.0] - Unreleased
 
-### Added
+### Added\n- Local identity metadata registry with audited active/suspended/revoked lifecycle transitions.\n- Local task lifecycle store with dependency-aware readiness, retry limits, integrity checks, and audited transitions.\n- CLI commands for identity and task records.\n
 - Initial Python package and CLI.
 - JSON Schema 2020-12 capability manifest contract and validator.
 - Local SQLite capability registry with duplicate-ID rejection and manifest digest verification.

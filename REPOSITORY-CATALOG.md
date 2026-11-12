@@ -18,7 +18,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 |---|---|---|
 | `contracts.py` | Validate capability manifests | Implemented |
 | `registry.py` | Local SQLite registry, duplicate protection, digest check, transactional audit | Implemented |
-| `policy.py` | Explicit permission decision helper | Implemented, not OS enforcement |
+| `policy.py` | Explicit permission decision helper | Implemented, not OS enforcement |\n| `identity.py` | Local identity metadata lifecycle and audit | Implemented, no authentication or cryptographic identity proof |\n| `tasks.py` | Task state store, dependencies, retry limits, audit | Implemented, no task execution engine |
 | `evidence.py` | Schema-validated JSONL hash chain | Implemented, no multi-writer lock |
 | `cli.py` | Validate, register, list, show, remove, evaluate, verify | Implemented |
 
