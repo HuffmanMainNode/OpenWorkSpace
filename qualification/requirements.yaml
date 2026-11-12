@@ -65,9 +65,9 @@ requirements:
     status: tested
     test: tests/test_evidence.py
   - id: WSP-014
-    title: Concurrent JSONL writers are safe
-    status: blocked
-    test: no locking guarantee exists
+    title: Concurrent JSONL writers preserve a complete hash chain
+    status: tested
+    test: tests/test_evidence.py::test_parallel_process_writers_preserve_complete_hash_chain
   - id: WSP-015
     title: OS filesystem and network permissions enforced
     status: blocked
@@ -92,3 +92,23 @@ requirements:
     title: All published JSON schemas are valid
     status: tested
     test: tests/test_schema_catalog.py::test_all_published_schemas_are_valid_json_schema
+  - id: WSP-021
+    title: Workspace initialization creates local stores idempotently
+    status: tested
+    test: tests/test_entrypoint.py::test_initialize_workspace_creates_stores_and_is_idempotent
+  - id: WSP-022
+    title: Demo reports policy decisions without executing capabilities
+    status: tested
+    test: tests/test_entrypoint.py::test_demo_is_non_executing_and_shows_allow_and_deny
+  - id: WSP-023
+    title: Main CLI help exposes initialization and demo commands
+    status: tested
+    test: tests/test_entrypoint.py::test_main_help_lists_init_and_demo
+  - id: WSP-024
+    title: Provider-neutral storage and backup requirements documented
+    status: specified
+    test: documentation/storage/README.md
+  - id: WSP-025
+    title: Portable encrypted backup and verified restore
+    status: blocked
+    test: not implemented
