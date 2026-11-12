@@ -20,7 +20,7 @@ OpenWorkSpace should use a provider-neutral storage interface. The core should d
 
 | Provider / route | Practical integration route | Current OpenWorkSpace status |
 |---|---|---|
-| Google Drive | User-managed OAuth through rclone, or a future reviewed Drive API adapter | Not shipped or qualified |
+| Google Drive | User-managed OAuth through rclone, or a future reviewed Drive API adapter. Current rclone guidance says to use your own Google OAuth client ID rather than rely on its shared default during the 2026 retirement transition | Not shipped or qualified |
 | Apple iCloud Drive | Prefer a user-managed iCloud Drive sync folder where available. rclone also documents an iCloud backend, but it is an external community tool with Apple 2FA/session renewal requirements | Not shipped or qualified |
 | Microsoft OneDrive | rclone or a user-managed OneDrive sync folder | Not shipped or qualified |
 | Dropbox | rclone or a user-managed Dropbox sync folder | Not shipped or qualified |
