@@ -1,0 +1,53 @@
+# OpenWorkSpace
+
+> Local-first open-source workspace foundation for discovering, describing, verifying, and extending software capabilities and AI tools.
+
+Canonical repository: https://github.com/HuffmanMainNode/OpenWorkSpace
+License: Apache-2.0 for original project code
+Stage: pre-alpha foundation
+Runtime: Python 3.11+
+Offline-first: yes, for implemented local workflows
+Hosted service required: no
+Third-party code execution: disabled
+OS sandbox: not implemented
+
+## Start here
+- README.md: project overview, installation, commands, current capabilities, and limitations.
+- openworkspace.json: machine-readable project discovery descriptor.
+- AGENTS.md: operating and safety instructions for AI agents and automation.
+- SECURITY.md: security policy and trust boundaries.
+- CONTRIBUTING.md: human contribution workflow.
+- GOVERNANCE.md: project governance and review.
+- REPOSITORY-CATALOG.md: implementation inventory.
+- STRATEGIC-REVIEW-AND-ADOPTION-PLAN.md: architecture assessment and roadmap.
+
+## Contracts and data
+- specifications/README.md: versioned JSON Schema contracts.
+- specifications/: normative JSON Schema Draft 2020-12 files.
+- data/README.md: shared reference catalogs.
+- data/catalogs/: permission, lifecycle, trust, resource, and domain vocabularies.
+- examples/README.md: synthetic, non-executable examples.
+- examples/contracts/: schema fixtures.
+
+## Architecture and qualification
+- architecture/master-architecture.md
+- architecture/threat-model.md
+- architecture/trust-model.md
+- architecture/security-requirements.md
+- architecture/integration-model.md
+- architecture/compatibility-policy.md
+- qualification/requirements.yaml
+- qualification/test-matrix.yaml
+
+## Resource ecosystem
+- catalog/README.md: first-party and community resource catalog policy.
+- catalog/first-party/README.md: first-party repository collection.
+- catalog/community/README.md: third-party resource policy.
+- catalog/packs/README.md: optional curated pack policy.
+- contributions/README.md: contributor intake process.
+- contributions/inbox/README.md: where pull-request proposals are submitted.
+- contributions/templates/contribution.json: contribution manifest template.
+- specifications/contribution.schema.json: contribution manifest schema.
+
+## Safety and limitations
+A valid manifest is not a trust decision, permission grant, security review, or execution approval. Current permission evaluation is advisory, not OS enforcement. Tasks are lifecycle records, not workers. Messaging is local-only. Resource and package intake is metadata and digest verification, not download, installation, or execution. No arbitrary third-party code is executed.

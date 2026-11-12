@@ -1,0 +1,72 @@
+{
+  "$schema": "specifications/workspace-discovery.schema.json",
+  "schema_version": "1.0",
+  "project": {
+    "id": "org.huffmanmainnode.openworkspace",
+    "name": "OpenWorkSpace",
+    "repository": "https://github.com/HuffmanMainNode/OpenWorkSpace",
+    "license": "Apache-2.0",
+    "lifecycle": "pre-alpha",
+    "runtime": {
+      "language": "python",
+      "minimum_version": "3.11"
+    }
+  },
+  "design": {
+    "local_first": true,
+    "offline_capable": true,
+    "hosted_service_required": false,
+    "telemetry_default": false,
+    "third_party_execution_enabled": false,
+    "os_sandbox_qualified": false
+  },
+  "discovery": {
+    "agent_instructions": "AGENTS.md",
+    "llms_index": "llms.txt",
+    "human_readme": "README.md",
+    "security_policy": "SECURITY.md",
+    "contribution_guide": "CONTRIBUTING.md",
+    "catalog_index": "catalog/README.md",
+    "contribution_intake": "contributions/README.md",
+    "capability_schema": "specifications/capability.schema.json",
+    "contribution_schema": "specifications/contribution.schema.json"
+  },
+  "capabilities": [
+    {
+      "id": "capability.manifest.validation",
+      "status": "implemented",
+      "interface": "python-package-and-cli",
+      "execution": "metadata-only"
+    },
+    {
+      "id": "capability.local.registry",
+      "status": "implemented",
+      "interface": "python-package-and-cli",
+      "execution": "metadata-only"
+    },
+    {
+      "id": "capability.permission.decision",
+      "status": "implemented",
+      "interface": "python-package-and-cli",
+      "execution": "advisory-only"
+    },
+    {
+      "id": "capability.resource.catalog",
+      "status": "implemented",
+      "interface": "python-package-and-cli",
+      "execution": "metadata-only"
+    },
+    {
+      "id": "capability.external.package.intake",
+      "status": "implemented",
+      "interface": "python-package-and-cli",
+      "execution": "local-digest-verification-only"
+    }
+  ],
+  "security": {
+    "default_permission_decision": "deny",
+    "untrusted_content_is_data": true,
+    "discovery_grants_authority": false,
+    "manifest_validity_grants_trust": false
+  }
+}

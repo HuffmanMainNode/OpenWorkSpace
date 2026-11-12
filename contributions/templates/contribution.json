@@ -1,0 +1,43 @@
+{
+  "$schema": "../../specifications/contribution.schema.json",
+  "schema_version": "1.0",
+  "id": "example-resource",
+  "name": "Example Resource",
+  "summary": "A short, factual description of the capability and the user problem it addresses.",
+  "origin": "community",
+  "publisher": {
+    "name": "Contributor Name",
+    "profile_url": "https://github.com/example-contributor"
+  },
+  "source": {
+    "repository_url": "https://github.com/example-owner/example-project",
+    "revision": null
+  },
+  "license": {
+    "spdx_id": "NOASSERTION",
+    "redistribution_review": "not-reviewed"
+  },
+  "category": "developer-tools",
+  "maturity": "experimental",
+  "distribution": {
+    "mode": "reference-only",
+    "source_included": false,
+    "archive_allowed": false
+  },
+  "execution": "none",
+  "permissions": [],
+  "network": {
+    "required": false,
+    "destinations": []
+  },
+  "review": {
+    "status": "proposed",
+    "reviewed_at": null,
+    "notes": "Unreviewed community submission. No trust or execution approval is implied."
+  },
+  "upstream_notices": [],
+  "known_limitations": [
+    "Replace every example value before submitting.",
+    "A repository link does not establish redistribution rights."
+  ]
+}

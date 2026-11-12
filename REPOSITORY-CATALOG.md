@@ -11,6 +11,9 @@ This index distinguishes shipped code from specifications and planned systems. A
 | CI | Python 3.11, 3.12, 3.13 install, tests, Ruff, wheel smoke tests | Implemented |
 | Community | Contribution guide, governance, conduct, issue templates | Published |
 | Security disclosure | Security policy and threat model | Published |
+| Machine discovery | `openworkspace.json`, `AGENTS.md`, `llms.txt` | Published |
+| Contribution intake | Metadata-first PR proposal structure and schema | Published |
+| Resource catalog | First-party/community/packs policy and catalog structure | Policy published; inventory review pending |
 
 ## Executable core
 
@@ -27,14 +30,23 @@ This index distinguishes shipped code from specifications and planned systems. A
 | `evidence.py` | Schema-validated JSONL hash chain with cross-process writer locking and fsync | Implemented, no external integrity anchor or power-loss qualification |
 | `database.py` | Shared SQLite WAL, synchronous, and busy-timeout configuration | Implemented |
 | `cli.py` | Capability, identity, task, message, resource, package-intake, evidence, init, and demo command parser | Implemented |
-| `entrypoint.py` | Idempotent local store initialization and temporary non-executing permission demo | Implemented
+| `entrypoint.py` | Idempotent local store initialization and temporary non-executing permission demo | Implemented |
 
 ## Contract and data pack
 
-- `specifications/`: capability, registry, identity, task, message, permission, evidence, resource, and external package schemas.
+- `specifications/`: capability, registry, identity, task, message, permission, evidence, resource, external package, contribution, and workspace-discovery schemas.
 - `data/catalogs/`: permission identifiers, capability domains, resource types, trust states, data classification, lifecycle, and protocol candidates.
 - `examples/contracts/`: synthetic fixtures for published contract schemas.
 - `qualification/`: requirement register, environment matrix, and qualification report schema.
+
+## Resource ecosystem and AI discovery
+
+- `catalog/`: first-party, community, and optional-pack curation policies.
+- `contributions/inbox/`: metadata-first resource proposal queue; submissions are untrusted.
+- `contributions/templates/`: starter contribution manifest.
+- `AGENTS.md`: operating instructions for AI agents and automated contributors.
+- `llms.txt`: compact documentation index.
+- `openworkspace.json`: machine-readable project and capability descriptor.
 
 ## Architecture and documentation
 
@@ -48,4 +60,4 @@ No third-party code runner, plugin loader, package downloader, OS sandbox, secre
 
 ## Verification
 
-Tests cover schema validity, fixture conformance, permission catalog consistency, registry behavior, identity lifecycle, task lifecycle and dependencies, message queue operations, duplicate and tampered data, concurrent distinct registrations, multi-process evidence writers, evidence tampering, initialization idempotency, safe demo behavior, CLI help and commands, installed-wheel resources, and local Markdown links. The CI matrix is the authoritative record of the latest tested commit and environment.
+The current test suite covers schema validity, fixture conformance, permission catalog consistency, registry behavior, identity lifecycle, task lifecycle and dependencies, message queue operations, duplicate and tampered data, concurrent distinct registrations, multi-process evidence writers, evidence tampering, initialization idempotency, safe demo behavior, CLI help and commands, installed-wheel resources, and local Markdown links. The CI matrix is the authoritative record of the latest tested commit and environment.

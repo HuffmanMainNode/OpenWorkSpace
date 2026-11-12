@@ -15,7 +15,7 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 | Local capability registry | Implemented | SQLite metadata store; no code execution |
 | Registry audit | Implemented | Local audit records; database owner can alter the database |
 | Permission decision primitive | Implemented | Exact explicit grants only; not OS enforcement |
-| Identity metadata lifecycle | Implemented | Local records and status transitions; local Ed25519 key binding and signatures; no real-world identity proof or remote authentication |
+| Identity metadata lifecycle | Implemented | Local records and status transitions; local Ed25519 key binding/signatures; no real-world identity proof or remote authentication |
 | Task lifecycle store | Implemented | State transitions, active owner-record check, dependency readiness, retry limits; no task execution |
 | Local message queue | Implemented | SQLite envelopes, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |
 | Evidence journal | Implemented | JSONL hash chain with cross-process writer lock and fsync; no external integrity anchor |
@@ -24,6 +24,9 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 | Third-party plugin execution | Disabled | No arbitrary external code execution |
 | OS-level sandbox | Not implemented | Required before untrusted execution |
 | Cross-language SDK | Planned | Shared contract tests required |
+| Machine-readable discovery | Added | Root descriptor, AI-agent instructions, and compact documentation index |
+| Community contribution intake | Added | Metadata-first pull-request process; no automatic installation or execution |
+| First-party resource catalog | Policy established | Repository-by-repository public, non-fork, license and provenance review remains separate |
 
 ## Design principles
 
@@ -35,6 +38,8 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 - **Evidence over claims:** functionality and security statements require tests and documented limits.
 - **Respect existing tools:** integrate proven software rather than rebuilding everything.
 - **Privacy by design:** data remains local by default; telemetry export requires explicit configuration.
+- **Independent extension:** users may add local resources without changing core code or submitting them upstream.
+- **Machine-readable by design:** agents can discover project status, contracts, contribution rules, and security boundaries from structured files.
 
 ## Product architecture
 
@@ -63,7 +68,7 @@ Requires Python 3.11 or newer. Current CI tests Ubuntu with Python 3.11, 3.12, a
 git clone https://github.com/HuffmanMainNode/OpenWorkSpace.git
 cd OpenWorkSpace
 python -m venv .venv
-. .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
+. .venv/bin/activate  # Windows PowerShell: .venv\\Scripts\\Activate.ps1
 python -m pip install -e '.[dev]'
 pytest
 ruff check .
@@ -100,6 +105,22 @@ openworkspace message-ack message.example.001 example.local.core
 ```
 
 These operations manipulate local metadata and records. They do not provide identity authentication, worker execution, authenticated message delivery, or network transport.
+
+## Extend OpenWorkSpace
+
+Users may maintain a local resource collection without modifying the core. Community projects can be proposed through pull requests using the metadata-first intake process.
+
+- [Resource catalog and distribution policy](catalog/README.md)
+- [First-party resource collection](catalog/first-party/README.md)
+- [Community resource collection](catalog/community/README.md)
+- [Optional resource packs](catalog/packs/README.md)
+- [Contribution intake and review process](contributions/README.md)
+- [Contribution manifest schema](specifications/contribution.schema.json)
+- [AI-agent instructions](AGENTS.md)
+- [Machine-readable workspace descriptor](openworkspace.json)
+- [Compact documentation index](llms.txt)
+
+Submissions are not automatically trusted, installed, or executed. Direct upstream links are the default; redistribution requires license review.
 
 See the [getting started guide](documentation/getting-started/README.md), [installation guide](documentation/installation/README.md), [storage and backup guide](documentation/storage/README.md), and [troubleshooting guide](documentation/troubleshooting/README.md).
 
@@ -145,6 +166,9 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [x] External package metadata intake and local artifact digest verification, with execution disabled.
 - [ ] Verified backup and restore workflow with encryption and integrity checks.
 - [ ] Optional storage adapters for local folders, cloud drives, and object storage.
+- [x] Machine-readable project discovery and AI-agent operating guidance.
+- [x] Metadata-first community contribution intake and validation contract.
+- [ ] First-party repository inventory and license/provenance qualification.
 - [ ] Reviewed integrations, knowledge resources, and community workflows.
 - [ ] Windows and macOS qualification.
 

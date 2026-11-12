@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/workspace-discovery.schema.json",
+  "title": "OpenWorkSpace Discovery Descriptor",
+  "description": "Machine-readable, non-authorizing description of an OpenWorkSpace-compatible project.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "project", "design", "discovery", "capabilities", "security"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "repository", "license", "lifecycle", "runtime"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{2,127}$"},
+        "name": {"type": "string", "minLength": 1, "maxLength": 120},
+        "repository": {"type": "string", "format": "uri", "pattern": "^https://github\\.com/"},
+        "license": {"type": "string", "minLength": 1, "maxLength": 80},
+        "lifecycle": {"enum": ["concept", "experimental", "pre-alpha", "alpha", "beta", "stable", "deprecated", "archived"]},
+        "runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["language", "minimum_version"],
+          "properties": {
+            "language": {"type": "string", "minLength": 1},
+            "minimum_version": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["local_first", "offline_capable", "hosted_service_required", "telemetry_default", "third_party_execution_enabled", "os_sandbox_qualified"],
+      "properties": {
+        "local_first": {"type": "boolean"},
+        "offline_capable": {"type": "boolean"},
+        "hosted_service_required": {"type": "boolean"},
+        "telemetry_default": {"type": "boolean"},
+        "third_party_execution_enabled": {"type": "boolean"},
+        "os_sandbox_qualified": {"type": "boolean"}
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_instructions", "llms_index", "human_readme", "security_policy", "contribution_guide", "catalog_index", "contribution_intake", "capability_schema", "contribution_schema"],
+      "properties": {
+        "agent_instructions": {"type": "string"},
+        "llms_index": {"type": "string"},
+        "human_readme": {"type": "string"},
+        "security_policy": {"type": "string"},
+        "contribution_guide": {"type": "string"},
+        "catalog_index": {"type": "string"},
+        "contribution_intake": {"type": "string"},
+        "capability_schema": {"type": "string"},
+        "contribution_schema": {"type": "string"}
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "interface", "execution"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{2,127}$"},
+          "status": {"enum": ["proposed", "specified", "implemented", "tested", "qualified", "deprecated", "blocked"]},
+          "interface": {"type": "string", "minLength": 1},
+          "execution": {"enum": ["metadata-only", "advisory-only", "local-digest-verification-only", "manual", "external-process", "isolated"]}
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_permission_decision", "untrusted_content_is_data", "discovery_grants_authority", "manifest_validity_grants_trust"],
+      "properties": {
+        "default_permission_decision": {"const": "deny"},
+        "untrusted_content_is_data": {"const": true},
+        "discovery_grants_authority": {"const": false},
+        "manifest_validity_grants_trust": {"const": false}
+      }
+    }
+  }
+}

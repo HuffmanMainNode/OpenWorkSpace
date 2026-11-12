@@ -23,7 +23,10 @@
 - Repository population register and automated local Markdown-link validation.
 - Shared SQLite configuration using WAL mode, NORMAL synchronous setting, and a 5-second busy timeout across local stores.
 - Cross-process evidence journal writer locking and fsync on append.
-- CI stress test for concurrent journal writers and SQLite configuration.
+- Machine-readable project discovery descriptor, AI-agent operating instructions, and compact documentation index.
+- Metadata-first community and first-party resource contribution process with a versioned JSON Schema contract.
+- Resource catalog policy separating first-party, community, optional packs, and local-only additions.
+- Automated validation tests for discovery metadata, contribution schema, contribution template, and intake boundaries.
 
 ### Security and reliability boundaries
 - Identity records are metadata, not authenticated or cryptographically verified identities.

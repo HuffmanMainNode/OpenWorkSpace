@@ -13,6 +13,8 @@ The JSON files in this directory are normative schema drafts for the current pub
 | evidence.schema.json | Hash-linked evidence event | Implemented by evidence journal |
 | resource.schema.json | Resource catalog metadata | Schema draft only |
 | plugin-manifest.schema.json | External package metadata | Schema draft only; execution disabled |
+| contribution.schema.json | Metadata-first resource proposal | Implemented as intake contract; no installer |
+| workspace-discovery.schema.json | Machine-readable project discovery descriptor | Implemented as repository metadata; not an authorization interface |
 
 ## Compatibility rules
 
