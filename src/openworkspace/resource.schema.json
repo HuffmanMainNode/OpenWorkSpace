@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/resource.schema.json",
+  "title": "OpenWorkSpace Resource Catalog Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "resource_type", "source", "license_status", "trust_state"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "name": {"type": "string", "minLength": 1, "maxLength": 256},
+    "resource_type": {"enum": ["reference", "external-integration", "managed-dependency", "isolated-capability", "native-capability"]},
+    "source": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "version": {"type": ["string", "null"], "maxLength": 128},
+    "license_status": {"enum": ["osi-approved", "other-open", "source-available-restricted", "commercial", "proprietary", "reference-only", "unknown-unresolved"]},
+    "license_expression": {"type": ["string", "null"], "maxLength": 256},
+    "trust_state": {"enum": ["uninspected", "inspected", "qualified", "authorized", "restricted", "quarantined", "revoked"]},
+    "permissions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "maintainer": {"type": ["string", "null"], "maxLength": 256},
+    "notes": {"type": "string", "maxLength": 4000}
+  }
+}
