@@ -10,6 +10,7 @@ from pathlib import Path
 from openworkspace.contracts import ContractError, validate_capability_file
 from openworkspace.evidence import read_events
 from openworkspace.identity import IdentityError, IdentityRegistry
+from openworkspace.messages import MessageError, MessageStore
 from openworkspace.registry import CapabilityRegistry, RegistryError
 from openworkspace.tasks import TaskError, TaskStore
 
@@ -100,6 +101,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     task_transition.add_argument("--reason", required=True)
     _database_argument(task_transition)
+
+    message_send = subparsers.add_parser("message-send", help="enqueue a local message envelope")
+    message_send.add_argument("path", type=Path)
+    _database_argument(message_send)
+
+    message_inbox = subparsers.add_parser("message-inbox", help="list a local identity inbox")
+    message_inbox.add_argument("identity_id")
+    message_inbox.add_argument("--include-acknowledged", action="store_true")
+    _database_argument(message_inbox)
+
+    message_ack = subparsers.add_parser("message-ack", help="acknowledge a queued message")
+    message_ack.add_argument("message_id")
+    message_ack.add_argument("recipient_id")
+    _database_argument(message_ack)
     return parser
 
 
@@ -143,6 +158,20 @@ def main(argv: list[str] | None = None) -> int:
             )
             print(json.dumps({"id": task["id"], "state": task["state"]}, sort_keys=True))
             return 0
+        if args.command == "message-send":
+            envelope = MessageStore(args.database).enqueue(_read_json(args.path))
+            print(json.dumps({"queued": True, "message_id": envelope["message_id"]}))
+            return 0
+        if args.command == "message-inbox":
+            messages = MessageStore(args.database).inbox(
+                args.identity_id, include_acknowledged=args.include_acknowledged
+            )
+            print(json.dumps({"messages": messages}, sort_keys=True))
+            return 0
+        if args.command == "message-ack":
+            MessageStore(args.database).acknowledge(args.message_id, args.recipient_id)
+            print(json.dumps({"acknowledged": True, "message_id": args.message_id}))
+            return 0
 
         if args.command == "register":
             manifest = validate_capability_file(args.path)
@@ -184,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if all(item.allowed for item in decisions) else 3
     except (
         ContractError, OSError, ValueError, KeyError,
-        RegistryError, IdentityError, TaskError,
+        RegistryError, IdentityError, TaskError, MessageError,
     ) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

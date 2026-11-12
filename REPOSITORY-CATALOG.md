@@ -18,7 +18,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 |---|---|---|
 | `contracts.py` | Validate capability manifests | Implemented |
 | `registry.py` | Local SQLite registry, duplicate protection, digest check, transactional audit | Implemented |
-| `policy.py` | Explicit permission decision helper | Implemented, not OS enforcement |\n| `identity.py` | Local identity metadata lifecycle and audit | Implemented, no authentication or cryptographic identity proof |\n| `tasks.py` | Task state store, dependencies, retry limits, audit | Implemented, no task execution engine |
+| `policy.py` | Explicit permission decision helper | Implemented, not OS enforcement |\n| `identity.py` | Local identity metadata lifecycle and audit | Implemented, no authentication or cryptographic identity proof |\n| `tasks.py` | Task state store, dependencies, retry limits, audit | Implemented, no task execution engine |\n| `messages.py` | Local SQLite message queue, inbox, acknowledgement, audit | Implemented, no network transport or sender authentication |
 | `evidence.py` | Schema-validated JSONL hash chain | Implemented, no multi-writer lock |
 | `cli.py` | Validate, register, list, show, remove, evaluate, verify | Implemented |
 
@@ -38,7 +38,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 
 ## Explicitly not shipped
 
-No third-party code runner, plugin loader, package downloader, OS sandbox, secret vault, network firewall, identity authority, task orchestrator, message broker, agent runtime, MCP/A2A adapter, cloud service, hosted control plane, telemetry exporter, or cross-language SDK is included.
+No third-party code runner, plugin loader, package downloader, OS sandbox, secret vault, network firewall, identity authority, task execution engine, network message broker, agent runtime, MCP/A2A adapter, cloud service, hosted control plane, telemetry exporter, or cross-language SDK is included.
 
 ## Verification
 

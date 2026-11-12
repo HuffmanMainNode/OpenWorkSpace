@@ -33,6 +33,19 @@ def test_evidence_schema_matches_bundled_runtime_schema():
     assert bundled == published
 
 
+def test_identity_task_and_message_schemas_match_bundled_runtime_resources():
+    for name in ("identity", "task", "message"):
+        published = json.loads(
+            (ROOT / "specifications" / f"{name}.schema.json").read_text(encoding="utf-8")
+        )
+        bundled = json.loads(
+            (ROOT / "src" / "openworkspace" / f"{name}.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert bundled == published
+
+
 def test_registry_schema_matches_bundled_runtime_schema():
     published = json.loads((ROOT / "specifications" / "registry.schema.json").read_text())
     bundled = json.loads((ROOT / "src" / "openworkspace" / "registry.schema.json").read_text())
