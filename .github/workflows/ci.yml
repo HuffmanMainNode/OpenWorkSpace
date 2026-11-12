@@ -65,6 +65,7 @@ jobs:
           from openworkspace.evidence import append_event, read_events
           from openworkspace.registry import CapabilityRegistry
           from openworkspace.identity import IdentityRegistry
+          from openworkspace.identity_keys import IdentityKeyStore
           from openworkspace.tasks import TaskStore
           from openworkspace.messages import MessageStore
 
@@ -82,6 +83,22 @@ jobs:
           assert registry.list() == []
           identities = IdentityRegistry(root / "runtime.sqlite3")
           assert identities.list() == []
+          identities.create({
+              "id": "wheel.smoke.identity", "kind": "user", "issuer": "ci",
+              "key_reference": None, "status": "active", "valid_from": None,
+              "valid_until": None, "attributes": {}
+          })
+          key_store = IdentityKeyStore(root / "keys")
+          key_store.generate(
+              "wheel.smoke.identity", "wheel smoke test passphrase", identities
+          )
+          signature = key_store.sign(
+              "wheel.smoke.identity", b"wheel smoke", "wheel smoke test passphrase",
+              identities
+          )
+          assert key_store.verify(
+              "wheel.smoke.identity", b"wheel smoke", signature, identities
+          )
           tasks = TaskStore(root / "runtime.sqlite3")
           assert tasks.list() == []
           messages = MessageStore(root / "runtime.sqlite3")

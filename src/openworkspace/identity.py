@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import sqlite3
@@ -171,6 +172,13 @@ class IdentityRegistry:
         """Bind a public Ed25519 key to an active metadata record."""
         if not key_reference.startswith("ed25519-sha256:") or not public_key:
             raise IdentityError("invalid Ed25519 key binding")
+        try:
+            public_bytes = base64.b64decode(public_key, validate=True)
+        except ValueError as exc:
+            raise IdentityError("public key must be valid base64") from exc
+        fingerprint = hashlib.sha256(public_bytes).hexdigest()
+        if len(public_bytes) != 32 or key_reference != f"ed25519-sha256:{fingerprint}":
+            raise IdentityError("public key does not match its Ed25519 fingerprint")
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import getpass
 import json
 import sys
 from pathlib import Path
@@ -10,6 +11,7 @@ from pathlib import Path
 from openworkspace.contracts import ContractError, validate_capability_file
 from openworkspace.evidence import read_events
 from openworkspace.identity import IdentityError, IdentityRegistry
+from openworkspace.identity_keys import IdentityKeyError, IdentityKeyStore
 from openworkspace.messages import MessageError, MessageStore
 from openworkspace.registry import CapabilityRegistry, RegistryError
 from openworkspace.tasks import TaskError, TaskStore
@@ -82,6 +84,33 @@ def build_parser() -> argparse.ArgumentParser:
     identity_status.add_argument("--reason", required=True)
     _database_argument(identity_status)
 
+    identity_keygen = subparsers.add_parser(
+        "identity-keygen", help="generate a passphrase-encrypted local Ed25519 key"
+    )
+    identity_keygen.add_argument("identity_id")
+    identity_keygen.add_argument(
+        "--key-directory", type=Path, default=Path(".openworkspace/keys")
+    )
+    _database_argument(identity_keygen)
+
+    identity_sign = subparsers.add_parser(
+        "identity-sign", help="sign a file with a local identity key"
+    )
+    identity_sign.add_argument("identity_id")
+    identity_sign.add_argument("path", type=Path)
+    identity_sign.add_argument(
+        "--key-directory", type=Path, default=Path(".openworkspace/keys")
+    )
+    _database_argument(identity_sign)
+
+    identity_verify = subparsers.add_parser(
+        "identity-verify", help="verify a signature against a registered public key"
+    )
+    identity_verify.add_argument("identity_id")
+    identity_verify.add_argument("path", type=Path)
+    identity_verify.add_argument("signature")
+    _database_argument(identity_verify)
+
     task_create = subparsers.add_parser("task-create", help="create a local task record")
     task_create.add_argument("path", type=Path)
     _database_argument(task_create)
@@ -141,6 +170,35 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "identity-show":
             print(json.dumps(IdentityRegistry(args.database).get(args.identity_id), sort_keys=True))
             return 0
+        if args.command == "identity-keygen":
+            first = getpass.getpass("New identity key passphrase: ")
+            second = getpass.getpass("Confirm passphrase: ")
+            if first != second:
+                raise IdentityKeyError("passphrases do not match")
+            binding = IdentityKeyStore(args.key_directory).generate(
+                args.identity_id, first, IdentityRegistry(args.database)
+            )
+            print(json.dumps({
+                "identity_id": binding["identity_id"],
+                "key_reference": binding["key_reference"],
+                "key_generated": True,
+            }, sort_keys=True))
+            return 0
+        if args.command == "identity-sign":
+            passphrase = getpass.getpass("Identity key passphrase: ")
+            signature = IdentityKeyStore(args.key_directory).sign(
+                args.identity_id, args.path.read_bytes(), passphrase,
+                IdentityRegistry(args.database),
+            )
+            print(json.dumps({"signature": signature}, sort_keys=True))
+            return 0
+        if args.command == "identity-verify":
+            valid = IdentityKeyStore(args.database.parent / "keys").verify(
+                args.identity_id, args.path.read_bytes(), args.signature,
+                IdentityRegistry(args.database),
+            )
+            print(json.dumps({"valid": valid}, sort_keys=True))
+            return 0 if valid else 4
         if args.command == "identity-status":
             record = IdentityRegistry(args.database).set_status(
                 args.identity_id, args.status, reason=args.reason
@@ -222,7 +280,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if all(item.allowed for item in decisions) else 3
     except (
         ContractError, OSError, ValueError, KeyError,
-        RegistryError, IdentityError, TaskError, MessageError,
+        RegistryError, IdentityError, IdentityKeyError, TaskError, MessageError,
     ) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

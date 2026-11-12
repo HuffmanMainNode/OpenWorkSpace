@@ -14,7 +14,7 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 | Local capability registry | Implemented | SQLite metadata store; no code execution |
 | Registry audit | Implemented | Local audit records; database owner can alter the database |
 | Permission decision primitive | Implemented | Exact explicit grants only; not OS enforcement |
-| Identity metadata lifecycle | Implemented | Local records and status transitions; no authentication or cryptographic identity proof |
+| Identity metadata lifecycle | Implemented | Local records and status transitions; local Ed25519 key binding and signatures; no real-world identity proof or remote authentication |
 | Task lifecycle store | Implemented | State transitions, active owner-record check, dependency readiness, retry limits; no task execution |
 | Local message queue | Implemented | SQLite envelopes, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |
 | Evidence journal | Implemented | JSONL hash chain; no multi-writer lock or external integrity anchor |
@@ -125,7 +125,7 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [x] Local task lifecycle store with dependency-aware readiness.
 - [x] Local message queue with recipient inbox and acknowledgement.
 - [x] Initial architecture, security, integration, data catalog, and contributor documentation.
-- [ ] Cryptographic identity, authentication, key lifecycle, and revocation proof.
+- [x] Local encrypted Ed25519 key binding, signing, and signature verification.\n- [ ] Remote authentication, key rotation/recovery, and distributed revocation.
 - [ ] Runtime task scheduler, worker execution, cancellation, and recovery.
 - [ ] Authenticated message transport and protocol negotiation.
 - [ ] Permission enforcement at actual OS/process boundaries.

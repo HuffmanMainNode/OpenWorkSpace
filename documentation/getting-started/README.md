@@ -55,11 +55,22 @@ Use the synthetic identity fixtures:
 openworkspace identity-create examples/contracts/identity.json
 openworkspace identity-create examples/contracts/service-identity.json
 openworkspace identity-show example.user.local
+openworkspace identity-keygen example.user.local
+# Passphrase is prompted securely and is never accepted as a command-line argument.
 openworkspace identity-status example.user.local suspended --reason "Example lifecycle demonstration"
 openworkspace identity-status example.user.local active --reason "Example reactivation"
 ```
 
-Identity records are local metadata. The current implementation does not authenticate a person, prove control of a key, issue cryptographic credentials, or establish remote trust. `key_reference` is an opaque reference label, not a secret.
+Identity records are local metadata. The implementation can bind an encrypted local Ed25519 private key to a public key recorded in the identity metadata, then sign and verify files. The signature proves possession of that private key for the signed bytes, not a real-world identity or remote trust. The private key is encrypted with a passphrase and stored under `.openworkspace/keys`; POSIX permissions are restricted to the owner. Windows ACLs are not configured by this package.
+
+Sign a file and verify it against the registered public key:
+
+```bash
+openworkspace identity-sign example.user.local ./document.bin
+openworkspace identity-verify example.user.local ./document.bin BASE64_SIGNATURE
+```
+
+The signing command prints a base64 signature. Keep private keys and passphrases out of source control, logs, fixtures, and issue reports.
 
 ## Task lifecycle
 

@@ -9,6 +9,7 @@
 - Registry audit records and permission-decision evaluation.
 - Local hash-linked JSONL evidence journal with strict schema and chain verification.
 - Local identity metadata registry with audited active, suspended, and revoked lifecycle transitions.
+- Passphrase-encrypted local Ed25519 key storage, public-key binding, and file-signature helpers.
 - Local task lifecycle store with active owner-record checks, dependency-aware readiness refresh, retry limits, integrity checks, and audited transitions.
 - Local SQLite message queue with active identity metadata checks, inbox retrieval, recipient acknowledgement, and audit events.
 - CLI commands for capability, identity, task, message, and evidence operations.
