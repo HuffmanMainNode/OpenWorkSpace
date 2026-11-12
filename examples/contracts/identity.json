@@ -1,0 +1,12 @@
+{
+  "id": "example.user.local",
+  "kind": "user",
+  "issuer": "local-example",
+  "key_reference": null,
+  "status": "active",
+  "valid_from": "2026-11-12T00:00:00Z",
+  "valid_until": null,
+  "attributes": {
+    "display_label": "Example local user"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "task.example.validation",
+  "owner": "example.user.local",
+  "state": "pending",
+  "inputs": {
+    "manifest_id": "example.hello"
+  },
+  "dependencies": [],
+  "deadline": null,
+  "retry_policy": {
+    "max_attempts": 1,
+    "backoff_seconds": 0
+  },
+  "idempotency_key": "example-task-001"
+}

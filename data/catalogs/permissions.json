@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "default_decision": "deny",
+  "enforcement_status": "decision-helper-only",
+  "permissions": [
+    {
+      "id": "data.read",
+      "risk": "moderate",
+      "description": "Read explicitly scoped application data."
+    },
+    {
+      "id": "data.write",
+      "risk": "high",
+      "description": "Create or modify explicitly scoped application data."
+    },
+    {
+      "id": "filesystem.read",
+      "risk": "moderate",
+      "description": "Read files within a separately defined filesystem scope."
+    },
+    {
+      "id": "filesystem.write",
+      "risk": "high",
+      "description": "Create, modify, or delete files within a separately defined filesystem scope."
+    },
+    {
+      "id": "network.connect",
+      "risk": "high",
+      "description": "Connect to explicitly listed network destinations."
+    },
+    {
+      "id": "process.execute",
+      "risk": "critical",
+      "description": "Launch a process within a separately qualified execution boundary."
+    },
+    {
+      "id": "device.access",
+      "risk": "high",
+      "description": "Access a declared hardware device or peripheral."
+    },
+    {
+      "id": "credential.use",
+      "risk": "critical",
+      "description": "Use a credential through a dedicated secret-handling interface."
+    },
+    {
+      "id": "agent.delegate",
+      "risk": "high",
+      "description": "Delegate a bounded task to another identified agent or service."
+    }
+  ],
+  "note": "These labels are design metadata. The current policy helper does not enforce operating-system or network boundaries."
+}

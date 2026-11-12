@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "states": [
+    {
+      "id": "uninspected",
+      "meaning": "Discovered or acquired but not reviewed; execution prohibited."
+    },
+    {
+      "id": "inspected",
+      "meaning": "Metadata and contents reviewed; this is not authorization."
+    },
+    {
+      "id": "qualified",
+      "meaning": "Defined tests passed within a stated scope and environment."
+    },
+    {
+      "id": "authorized",
+      "meaning": "A recognized authority granted bounded permissions."
+    },
+    {
+      "id": "restricted",
+      "meaning": "Use limited due to policy, compatibility, or known weakness."
+    },
+    {
+      "id": "quarantined",
+      "meaning": "Temporarily isolated pending investigation."
+    },
+    {
+      "id": "revoked",
+      "meaning": "No new use is permitted."
+    }
+  ],
+  "invariants": [
+    "Discovery never implies trust.",
+    "Inspection never implies authorization.",
+    "Qualification never implies authorization.",
+    "Signatures and hashes do not prove benign behavior.",
+    "Unknown evidence is not a clean result."
+  ]
+}

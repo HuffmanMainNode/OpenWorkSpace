@@ -1,0 +1,10 @@
+{
+  "principal": "example.user.local",
+  "resource": "capability:example.hello",
+  "action": "metadata.read",
+  "scope": "local-registry",
+  "decision": "allow",
+  "policy_reference": "example-policy-001",
+  "expires_at": null,
+  "reason": "Example fixture only"
+}

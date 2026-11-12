@@ -1,0 +1,13 @@
+{
+  "id": "resource.example.manual",
+  "name": "Example reference manual",
+  "resource_type": "reference",
+  "source": "https://example.invalid/manual",
+  "version": "1.0",
+  "license_status": "reference-only",
+  "license_expression": null,
+  "trust_state": "uninspected",
+  "permissions": [],
+  "maintainer": null,
+  "notes": "Synthetic fixture. The example.invalid domain is reserved and not a live integration."
+}

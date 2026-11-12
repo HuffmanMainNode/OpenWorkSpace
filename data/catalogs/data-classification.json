@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "classifications": [
+    {
+      "id": "public",
+      "description": "Approved for public disclosure.",
+      "default_handling": "May be published after license and attribution review."
+    },
+    {
+      "id": "internal",
+      "description": "Operational information not intended for public release.",
+      "default_handling": "Keep local unless explicitly approved for sharing."
+    },
+    {
+      "id": "confidential",
+      "description": "Sensitive business, user, or operational information.",
+      "default_handling": "Restrict access, minimize retention, and encrypt where appropriate."
+    },
+    {
+      "id": "restricted",
+      "description": "Credentials, secrets, private keys, or highly sensitive records.",
+      "default_handling": "Never place in ordinary manifests, prompts, fixtures, or logs."
+    }
+  ],
+  "note": "Classification labels do not provide technical access controls. The current release does not include a secret vault."
+}

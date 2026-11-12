@@ -1,0 +1,14 @@
+{
+  "event_id": "123e4567-e89b-12d3-a456-426614174000",
+  "event_type": "example.completed",
+  "timestamp": "2026-11-12T12:00:00Z",
+  "actor": "example.user.local",
+  "subject": "example.hello",
+  "result": "success",
+  "source": null,
+  "metadata": {
+    "fixture": true
+  },
+  "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hash": "0000000000000000000000000000000000000000000000000000000000000000"
+}

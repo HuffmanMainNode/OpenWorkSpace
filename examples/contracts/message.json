@@ -1,0 +1,13 @@
+{
+  "message_id": "message.example.001",
+  "sender": "example.user.local",
+  "recipient": "example.local.core",
+  "message_type": "capability.validation.request",
+  "schema_version": "1.0",
+  "timestamp": "2026-11-12T12:00:00Z",
+  "correlation_id": null,
+  "payload": {
+    "capability_id": "example.hello",
+    "purpose": "demonstrate contract shape"
+  }
+}

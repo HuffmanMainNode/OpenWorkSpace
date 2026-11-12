@@ -1,0 +1,14 @@
+{
+  "id": "example.package.placeholder",
+  "publisher": "Example publisher",
+  "version": "0.1.0",
+  "source": "https://example.invalid/package",
+  "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "license": "Apache-2.0",
+  "dependencies": [],
+  "permissions": [],
+  "supported_environments": [
+    "python>=3.11"
+  ],
+  "signature_reference": null
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "states": [
+    "discovered",
+    "staged",
+    "inspected",
+    "qualified",
+    "authorized",
+    "enabled",
+    "monitored",
+    "restricted",
+    "quarantined",
+    "revoked",
+    "removed"
+  ],
+  "transitions": [
+    {
+      "from": "discovered",
+      "to": "staged",
+      "condition": "Source and intended purpose recorded."
+    },
+    {
+      "from": "staged",
+      "to": "inspected",
+      "condition": "Metadata, license, dependencies, and content reviewed."
+    },
+    {
+      "from": "inspected",
+      "to": "qualified",
+      "condition": "Defined compatibility and security tests pass."
+    },
+    {
+      "from": "qualified",
+      "to": "authorized",
+      "condition": "A separate permission decision grants bounded use."
+    },
+    {
+      "from": "authorized",
+      "to": "enabled",
+      "condition": "Required enforcement boundary is available and verified."
+    },
+    {
+      "from": "enabled",
+      "to": "monitored",
+      "condition": "Health and activity evidence is available."
+    },
+    {
+      "from": "monitored",
+      "to": "restricted",
+      "condition": "Policy or risk requires reduced operation."
+    },
+    {
+      "from": "monitored",
+      "to": "quarantined",
+      "condition": "Investigation is required."
+    },
+    {
+      "from": "restricted",
+      "to": "revoked",
+      "condition": "Authorization is withdrawn."
+    },
+    {
+      "from": "quarantined",
+      "to": "revoked",
+      "condition": "Investigation confirms use must stop."
+    },
+    {
+      "from": "revoked",
+      "to": "removed",
+      "condition": "Removal and data-retention procedure completed."
+    }
+  ],
+  "note": "This is a conceptual lifecycle. The current application does not implement these transitions as an execution controller."
+}

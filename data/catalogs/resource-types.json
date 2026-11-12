@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "resource_types": [
+    {
+      "id": "reference",
+      "description": "Non-executable documentation or knowledge resource."
+    },
+    {
+      "id": "external-integration",
+      "description": "Adapter to independently installed or remote software."
+    },
+    {
+      "id": "managed-dependency",
+      "description": "Package or dependency whose acquisition and lifecycle may be managed."
+    },
+    {
+      "id": "isolated-capability",
+      "description": "Executable capability that must run inside a qualified isolation boundary."
+    },
+    {
+      "id": "native-capability",
+      "description": "Functionality implemented and maintained by OpenWorkSpace."
+    }
+  ],
+  "license_states": [
+    "osi-approved",
+    "other-open",
+    "source-available-restricted",
+    "commercial",
+    "proprietary",
+    "reference-only",
+    "unknown-unresolved"
+  ],
+  "note": "Resource type and license state are separate dimensions."
+}

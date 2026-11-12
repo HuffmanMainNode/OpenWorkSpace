@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "policy": "Protocol-neutral by default. Candidate adapters require independent design review, version pinning, permission mapping, and tests.",
+  "candidates": [
+    {
+      "id": "mcp",
+      "name": "Model Context Protocol",
+      "purpose": "Potential interface for model-to-tool and model-to-resource interoperability.",
+      "status": "candidate-not-implemented"
+    },
+    {
+      "id": "a2a",
+      "name": "Agent2Agent",
+      "purpose": "Potential interface for agent discovery and task collaboration.",
+      "status": "candidate-not-implemented"
+    },
+    {
+      "id": "openapi",
+      "name": "OpenAPI",
+      "purpose": "Potential description format for HTTP service interfaces.",
+      "status": "candidate-not-implemented"
+    },
+    {
+      "id": "json-rpc",
+      "name": "JSON-RPC",
+      "purpose": "Potential transport-neutral request and response envelope.",
+      "status": "candidate-not-implemented"
+    }
+  ],
+  "requirements": [
+    "No protocol adapter may bypass local policy decisions.",
+    "Remote identity and authentication must be explicit.",
+    "Network destinations and data disclosures must be declared.",
+    "Timeouts, retries, cancellation, and idempotency must be defined.",
+    "Protocol support must not be claimed until a tested adapter exists."
+  ]
+}

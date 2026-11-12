@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "domains": [
+    {
+      "id": "knowledge",
+      "description": "Reference material, documentation, search, retrieval, and provenance."
+    },
+    {
+      "id": "data",
+      "description": "Data ingestion, transformation, validation, storage, and export."
+    },
+    {
+      "id": "analysis",
+      "description": "Reasoning support, computation, evaluation, and reporting."
+    },
+    {
+      "id": "communication",
+      "description": "Messaging, protocol translation, and collaboration."
+    },
+    {
+      "id": "automation",
+      "description": "Bounded workflow and task automation."
+    },
+    {
+      "id": "creation",
+      "description": "Authoring, design, synthesis, and construction tools."
+    },
+    {
+      "id": "security",
+      "description": "Inspection, monitoring, defensive analysis, and assurance."
+    },
+    {
+      "id": "operations",
+      "description": "Lifecycle management, health, observability, and recovery."
+    },
+    {
+      "id": "devices",
+      "description": "Declared hardware and peripheral interfaces."
+    }
+  ],
+  "note": "Categories organize discovery. They do not grant permissions or indicate that an implementation exists."
+}
