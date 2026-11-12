@@ -10,6 +10,7 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 
 | Capability | Status | Boundary |
 |---|---|---|
+| Workspace initialization and demo | Implemented | Idempotent local store setup; demo is temporary and non-executing |
 | Capability manifest contract | Implemented | JSON Schema 2020-12 validation |
 | Local capability registry | Implemented | SQLite metadata store; no code execution |
 | Registry audit | Implemented | Local audit records; database owner can alter the database |
@@ -123,6 +124,7 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 ## Roadmap
 
 - [x] Initial Python package and CLI.
+- [x] Idempotent local workspace initialization and safe permission-evaluation demo.
 - [x] Capability manifest validation and local registry.
 - [x] Default-deny permission decision primitive.
 - [x] Registry audit trail and local hash-linked evidence journal.
