@@ -43,6 +43,8 @@ jobs:
               "openworkspace/capability.schema.json",
               "openworkspace/evidence.schema.json",
               "openworkspace/registry.schema.json",
+              "openworkspace/identity.schema.json",
+              "openworkspace/task.schema.json",
           }
           missing = required - names
           if missing:
@@ -61,6 +63,8 @@ jobs:
           sys.path.insert(0, "dist/install")
           from openworkspace.evidence import append_event, read_events
           from openworkspace.registry import CapabilityRegistry
+          from openworkspace.identity import IdentityRegistry
+          from openworkspace.tasks import TaskStore
 
           root = Path(tempfile.mkdtemp())
           journal = root / "events.jsonl"
@@ -74,5 +78,9 @@ jobs:
           assert len(read_events(journal)) == 1
           registry = CapabilityRegistry(root / "registry.sqlite3")
           assert registry.list() == []
-          print("Installed wheel loaded bundled schemas and initialized local storage.")
+          identities = IdentityRegistry(root / "runtime.sqlite3")
+          assert identities.list() == []
+          tasks = TaskStore(root / "runtime.sqlite3")
+          assert tasks.list() == []
+          print("Installed wheel loaded bundled schemas and initialized all local stores.")
           PY

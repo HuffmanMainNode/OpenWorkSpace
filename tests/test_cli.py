@@ -62,3 +62,39 @@ def test_cli_permission_evaluation_returns_nonzero_on_denial(tmp_path, capsys):
 def test_cli_missing_evidence_file_fails(tmp_path, capsys):
     assert main(["verify-evidence", str(tmp_path / "missing.jsonl")]) == 2
     assert "does not exist" in capsys.readouterr().err
+
+
+def test_cli_identity_and_task_lifecycle(tmp_path, capsys):
+    identity = {
+        "id": "cli.example.user", "kind": "user", "issuer": "local",
+        "key_reference": None, "status": "active", "valid_from": None,
+        "valid_until": None, "attributes": {}
+    }
+    task = {
+        "id": "cli.example.task", "owner": "cli.example.user", "state": "pending",
+        "inputs": {}, "dependencies": [], "deadline": None,
+        "retry_policy": {"max_attempts": 1, "backoff_seconds": 0},
+        "idempotency_key": None
+    }
+    identity_path = tmp_path / "identity.json"
+    task_path = tmp_path / "task.json"
+    database = tmp_path / "runtime.sqlite3"
+    identity_path.write_text(json.dumps(identity))
+    task_path.write_text(json.dumps(task))
+    db = ["--database", str(database)]
+
+    assert main(["identity-create", str(identity_path), *db]) == 0
+    assert json.loads(capsys.readouterr().out)["created"] is True
+    assert main(["identity-show", "cli.example.user", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "active"
+    assert main(["identity-status", "cli.example.user", "suspended", "--reason", "CLI test", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "suspended"
+
+    assert main(["task-create", str(task_path), *db]) == 0
+    assert json.loads(capsys.readouterr().out)["created"] is True
+    assert main(["task-transition", "cli.example.task", "ready", "--reason", "CLI test", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["state"] == "ready"
+    assert main(["task-list", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["tasks"][0]["state"] == "ready"
+    assert main(["task-show", "cli.example.task", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["state"] == "ready"

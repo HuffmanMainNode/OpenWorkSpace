@@ -132,10 +132,12 @@ class TaskStore:
             if target == "ready":
                 for dependency in task["dependencies"]:
                     dependency_row = connection.execute(
-                        "SELECT task_json FROM tasks WHERE task_id=?", (dependency,)
+                        "SELECT task_json,task_sha256 FROM tasks WHERE task_id=?", (dependency,)
                     ).fetchone()
                     if dependency_row is None:
                         raise TaskError(f"dependency not found: {dependency}")
+                    if hashlib.sha256(dependency_row[0].encode("utf-8")).hexdigest() != dependency_row[1]:
+                        raise TaskError(f"dependency integrity check failed: {dependency}")
                     if json.loads(dependency_row[0])["state"] != "succeeded":
                         raise TaskError(f"dependency is not complete: {dependency}")
             attempts = row[2]
