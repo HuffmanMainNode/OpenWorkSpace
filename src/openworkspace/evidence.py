@@ -4,11 +4,15 @@ from __future__ import annotations
 
 import hashlib
 import json
+import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from jsonschema import Draft202012Validator
+
 GENESIS = "0" * 64
+EVIDENCE_SCHEMA_PATH = Path(__file__).with_name("evidence.schema.json")
 
 
 def _canonical(value: dict[str, Any]) -> bytes:
@@ -19,6 +23,11 @@ def _canonical(value: dict[str, Any]) -> bytes:
         ensure_ascii=False,
     )
     return encoded.encode("utf-8")
+
+
+def _validator() -> Draft202012Validator:
+    schema = json.loads(EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8"))
+    return Draft202012Validator(schema)
 
 
 def append_event(
@@ -37,27 +46,34 @@ def append_event(
         events = read_events(journal)
         previous = events[-1]["hash"]
     event: dict[str, Any] = {
+        "event_id": str(uuid.uuid4()),
         "timestamp": datetime.now(UTC).isoformat(),
         "event_type": event_type,
         "actor": actor,
         "subject": subject,
         "result": result,
+        "source": None,
+        "metadata": {},
         "previous_hash": previous,
     }
+    _validator().validate({**event, "hash": "0" * 64})
     event["hash"] = hashlib.sha256(_canonical(event)).hexdigest()
     with journal.open("a", encoding="utf-8", newline="\n") as stream:
-        stream.write(json.dumps(event, sort_keys=True, ensure_ascii=False) + "\n")
+        stream.write(json.dumps({**event, "hash": event["hash"]}, sort_keys=True, ensure_ascii=False) + "\n")
         stream.flush()
-    return event
+    return {**event, "hash": event["hash"]}
 
 
 def read_events(path: str | Path) -> list[dict[str, Any]]:
-    """Read journal entries and reject malformed JSON or broken hash links."""
+    """Read journal entries and reject missing, empty, malformed, or altered journals."""
     journal = Path(path)
+    if not journal.exists():
+        raise FileNotFoundError(f"evidence journal does not exist: {journal}")
+    if not journal.stat().st_size:
+        raise ValueError(f"evidence journal is empty: {journal}")
     events: list[dict[str, Any]] = []
     previous = GENESIS
-    if not journal.exists():
-        return events
+    validator = _validator()
     with journal.open("r", encoding="utf-8") as stream:
         for line_number, line in enumerate(stream, start=1):
             if not line.strip():
@@ -69,10 +85,14 @@ def read_events(path: str | Path) -> list[dict[str, Any]]:
             if not isinstance(event, dict) or "hash" not in event:
                 raise ValueError(f"invalid event at journal line {line_number}")
             supplied_hash = event.pop("hash")
+            try:
+                validator.validate({**event, "hash": supplied_hash})
+            except Exception as exc:
+                raise ValueError(f"invalid event schema at journal line {line_number}: {exc}") from exc
             if event.get("previous_hash") != previous:
                 raise ValueError(f"broken hash link at journal line {line_number}")
             expected_hash = hashlib.sha256(_canonical(event)).hexdigest()
-            if supplied_hash != expected_hash:
+            if not isinstance(supplied_hash, str) or supplied_hash != expected_hash:
                 raise ValueError(f"integrity check failed at journal line {line_number}")
             event["hash"] = supplied_hash
             events.append(event)

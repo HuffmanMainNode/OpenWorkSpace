@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/evidence.schema.json",
+  "title": "OpenWorkSpace Evidence Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "event_type", "timestamp", "actor", "subject", "result", "source", "metadata", "previous_hash", "hash"],
+  "properties": {
+    "event_id": {"type": "string", "format": "uuid"},
+    "event_type": {"type": "string", "minLength": 1, "maxLength": 128},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "actor": {"type": "string", "minLength": 1, "maxLength": 256},
+    "subject": {"type": "string", "minLength": 1, "maxLength": 512},
+    "result": {"type": "string", "minLength": 1, "maxLength": 128},
+    "source": {"type": ["string", "null"], "maxLength": 512},
+    "previous_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "metadata": {"type": "object"}
+  }
+}

@@ -15,95 +15,80 @@ requirements:
   - id: WSP-001
     title: Valid capability manifest accepted
     status: tested
-    acceptance: A manifest satisfying the published capability schema is accepted.
     test: tests/test_contracts.py::test_valid_manifest_is_accepted
   - id: WSP-002
     title: Missing required field rejected
     status: tested
-    acceptance: A manifest missing a required property is rejected.
     test: tests/test_contracts.py::test_missing_required_field_is_rejected
   - id: WSP-003
     title: Unknown permission rejected
     status: tested
-    acceptance: A permission outside the published enumeration is rejected.
     test: tests/test_contracts.py::test_unknown_permission_is_rejected
   - id: WSP-004
     title: Unknown manifest property rejected
     status: tested
-    acceptance: Undeclared manifest properties are rejected.
     test: tests/test_contracts.py::test_unknown_property_is_rejected
   - id: WSP-005
     title: Permission primitive defaults to deny
     status: tested
-    acceptance: A requested permission without an exact grant is denied.
     test: tests/test_policy.py::test_policy_defaults_to_deny
   - id: WSP-006
     title: Exact permission grant only
     status: tested
-    acceptance: Only explicitly granted permission strings are allowed by the helper.
     test: tests/test_policy.py::test_only_exact_explicit_grant_is_allowed
   - id: WSP-007
     title: Evidence chain verifies
     status: tested
-    acceptance: An unmodified sequence of appended journal entries verifies.
     test: tests/test_evidence.py::test_evidence_chain_verifies
   - id: WSP-008
     title: Modified evidence detected
     status: tested
-    acceptance: Changing a hashed event field causes verification failure.
     test: tests/test_evidence.py::test_modified_event_is_detected
   - id: WSP-009
     title: Broken evidence link detected
     status: tested
-    acceptance: A broken previous-hash link causes verification failure.
     test: tests/test_evidence.py::test_broken_link_is_detected
   - id: WSP-010
-    title: CLI accepts valid manifest
+    title: CLI validates valid and invalid manifests
     status: tested
-    acceptance: CLI returns zero and machine-readable success for a valid manifest.
-    test: tests/test_cli.py::test_cli_validates_manifest
+    test: tests/test_cli.py
   - id: WSP-011
-    title: CLI reports invalid manifest
-    status: tested
-    acceptance: CLI returns a non-zero result and error message for invalid input.
-    test: tests/test_cli.py::test_cli_reports_invalid_manifest
-  - id: WSP-012
     title: Third-party code execution remains disabled
     status: implemented
-    acceptance: No third-party plugin execution interface or runner is shipped.
     test: manual repository review
-  - id: WSP-013
+  - id: WSP-012
     title: Offline CLI operation
     status: specified
-    acceptance: Manifest validation and evidence verification complete with network disabled.
     test: qualification/test-matrix.yaml
+  - id: WSP-013
+    title: Corrupt and empty journals fail closed
+    status: tested
+    test: tests/test_evidence.py
   - id: WSP-014
-    title: Corrupt or truncated journal fails closed
-    status: specified
-    acceptance: Malformed JSON and broken records are rejected with a non-zero CLI result.
-    test: planned
-  - id: WSP-015
-    title: Concurrent journal writes are safe
+    title: Concurrent JSONL writers are safe
     status: blocked
-    acceptance: Concurrent writers cannot interleave or fork the chain.
-    test: planned; no locking guarantee currently exists
-  - id: WSP-016
+    test: no locking guarantee exists
+  - id: WSP-015
     title: OS filesystem and network permissions enforced
     status: blocked
-    acceptance: Unauthorized system calls are denied by a qualified enforcement boundary.
-    test: blocked until isolation and enforcement are implemented
-  - id: WSP-017
+    test: requires qualified enforcement boundary
+  - id: WSP-016
     title: Independent TypeScript contract consumer
     status: deferred
-    acceptance: TypeScript implementation passes shared positive and negative fixtures.
-    test: deferred
+    test: requires shared fixture suite
+  - id: WSP-017
+    title: Local registry rejects duplicate capability IDs
+    status: tested
+    test: tests/test_registry.py::test_duplicate_id_is_rejected_without_overwrite
   - id: WSP-018
+    title: Registry detects stored manifest modification
+    status: tested
+    test: tests/test_registry.py::test_stored_manifest_digest_is_checked
+  - id: WSP-019
+    title: Registry records permission evaluation
+    status: tested
+    test: tests/test_registry.py::test_permission_evaluation_defaults_to_deny_and_is_audited
+  - id: WSP-020
     title: All published JSON schemas are valid
     status: tested
-    acceptance: Each schema passes JSON Schema Draft 2020-12 meta-schema validation.
     test: tests/test_schema_catalog.py::test_all_published_schemas_are_valid_json_schema
-  - id: WSP-019
-    title: Published capability example validates
-    status: tested
-    acceptance: The example manifest passes the shipped runtime validator.
-    test: tests/test_schema_catalog.py::test_example_manifest_passes_runtime_validator

@@ -32,3 +32,24 @@ def test_broken_link_is_detected(tmp_path):
     journal.write_text(lines[0] + "\n" + json.dumps(second) + "\n")
     with pytest.raises(ValueError, match="broken hash link"):
         read_events(journal)
+
+
+def test_missing_journal_fails_closed(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        read_events(tmp_path / "missing.jsonl")
+
+
+def test_empty_journal_fails_closed(tmp_path):
+    journal = tmp_path / "empty.jsonl"
+    journal.touch()
+    with pytest.raises(ValueError, match="empty"):
+        read_events(journal)
+
+
+def test_truncated_journal_record_fails(tmp_path):
+    journal = tmp_path / "events.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="unit", result="pass")
+    journal.write_text(journal.read_text().rstrip("\n"))
+    journal.write_text(journal.read_text() + '{"partial":')
+    with pytest.raises(ValueError, match="invalid JSON"):
+        read_events(journal)

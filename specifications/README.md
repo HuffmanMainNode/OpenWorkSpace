@@ -1,21 +1,17 @@
 # Contract Specifications
 
-The JSON files in this directory are normative schema documents for the current public contract drafts. They use JSON Schema Draft 2020-12.
+The JSON files in this directory are normative schema drafts for the current public contract set. They use JSON Schema Draft 2020-12.
 
-## Contract index
-
-| File | Purpose | Implementation status |
+| File | Purpose | Runtime status |
 |---|---|---|
-| capability.schema.json | Declarative capability description | Validator implemented |
+| capability.schema.json | Declarative capability description | Implemented and validated by package |
 | identity.schema.json | Principal identity metadata | Schema draft only |
-| task.schema.json | Durable task envelope | Schema draft only |
+| task.schema.json | Task envelope and retry metadata | Schema draft only |
 | message.schema.json | Interoperable message envelope | Schema draft only |
 | permission.schema.json | Permission decision record | Schema draft only |
-| evidence.schema.json | Evidence event envelope | Schema draft only; current journal format differs |
-| resource.schema.json | Catalog resource metadata | Schema draft only |
+| evidence.schema.json | Hash-linked evidence event | Implemented by evidence journal |
+| resource.schema.json | Resource catalog metadata | Schema draft only |
 | plugin-manifest.schema.json | External package metadata | Schema draft only; execution disabled |
-
-These are initial contract drafts, not a claim that corresponding runtime services exist. The current JSONL evidence journal is an internal prototype and does not yet conform to the published evidence event schema. A migration is required before claiming conformance.
 
 ## Compatibility rules
 
@@ -25,3 +21,5 @@ These are initial contract drafts, not a claim that corresponding runtime servic
 - Treat package metadata as untrusted input.
 - A valid schema instance is not a security approval.
 - Add shared positive and negative fixtures before publishing independent SDKs.
+
+The identity, task, message, permission, resource, and package schemas are not yet backed by runtime services. The local SQLite registry stores validated capability metadata, but does not yet implement a portable registry interchange contract.

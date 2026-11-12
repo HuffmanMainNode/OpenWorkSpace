@@ -25,3 +25,9 @@ def test_bundled_capability_schema_matches_published_contract():
     published = json.loads((ROOT / "specifications" / "capability.schema.json").read_text())
     bundled = json.loads((ROOT / "src" / "openworkspace" / "capability.schema.json").read_text())
     assert bundled == published
+
+
+def test_evidence_schema_matches_bundled_runtime_schema():
+    published = json.loads((ROOT / "specifications" / "evidence.schema.json").read_text())
+    bundled = json.loads((ROOT / "src" / "openworkspace" / "evidence.schema.json").read_text())
+    assert published == bundled

@@ -2,7 +2,7 @@
 
 ## `openworkspace: command not found`
 
-Activate the virtual environment where the package was installed, or invoke the module from that environment. Reinstall with `python -m pip install -e '.[dev]'`.
+Activate the virtual environment where the package was installed, or reinstall with `python -m pip install -e '.[dev]'`.
 
 ## Manifest validation fails
 
@@ -10,13 +10,21 @@ Activate the virtual environment where the package was installed, or invoke the 
 - Check required fields: `id`, `version`, `interface_version`, `description`, `inputs`, `outputs`, and `permissions`.
 - Use a three-part numeric version such as `0.1.0`.
 - Remove undeclared fields. The schema intentionally rejects unknown properties.
-- Use only the permission names in the schema.
+- Use only permission names in the schema.
+
+## Registry reports a duplicate
+
+Capability IDs are unique. The registry intentionally refuses to overwrite an existing ID. Review the registered manifest and design a future explicit update/migration workflow rather than deleting data blindly.
+
+## Registry reports an integrity error
+
+The registry stores a SHA-256 digest of each canonical manifest. Preserve a copy of the database before investigating. Do not edit the database to force a successful check. A mismatch can indicate corruption or manual modification.
 
 ## Evidence verification fails
 
-The CLI reports the first malformed record, broken link, or hash mismatch. Preserve a copy of the original journal before investigation. Do not edit records to make verification pass. A mismatch may result from corruption, truncation, manual editing, or an attempted alteration.
+The CLI reports a missing, empty, malformed, altered, or broken journal. Preserve a copy of the original before investigation. Do not edit records to make verification pass.
 
-An empty or nonexistent journal currently verifies as zero events. Do not interpret that as evidence that an operation occurred.
+The JSONL evidence journal does not currently support concurrent writers. Do not have multiple processes append to the same journal concurrently.
 
 ## Tests fail locally
 
@@ -24,7 +32,7 @@ An empty or nonexistent journal currently verifies as zero events. Do not interp
 - Recreate the virtual environment if dependencies are inconsistent.
 - Install the development extra.
 - Run `pytest -ra` and `ruff check .`.
-- Include the Python version, operating system, command, exit code, and complete relevant error output in a bug report. Remove secrets and personal data first.
+- Include Python version, operating system, command, exit code, and relevant error output in a bug report. Remove secrets and personal data first.
 
 ## Security concern
 

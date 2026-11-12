@@ -4,18 +4,20 @@
 
 OpenWorkSpace is an open-source, local-first digital workshop for discovering and connecting software, AI systems, tools, knowledge, and resources, then assembling new capabilities. It is an independent capability ecosystem, not a hosted platform or replacement operating system. No central service, account, subscription, token, or vendor-specific runtime is required by design.
 
-## Status
+## Current status
 
-**Pre-alpha, foundation in active development.** Version 0.1 provides capability-manifest validation, explicit permission-decision primitives, a local hash-linked evidence journal, and a small CLI. These are initial building blocks, not a complete security system or plugin platform.
+**Pre-alpha, foundation in active development.** The current Python package validates declarative capability manifests, stores them in a local SQLite registry, evaluates explicitly granted permissions, records registry audit events, and writes/verifies a local hash-linked evidence journal. These primitives do not constitute an operating-system security boundary or plugin execution platform.
 
 | Capability | Status | Boundary |
 |---|---|---|
 | Capability manifest contract | Implemented | JSON Schema 2020-12 validation |
-| Identity, task, message, permission, resource, package contracts | Specified | Schema drafts; no runtime services yet |
-| Evidence event contract | Specified | Draft schema; current journal format is a separate prototype |
+| Local capability registry | Implemented | SQLite metadata store; no code execution |
+| Registry duplicate protection | Implemented | Duplicate IDs rejected |
+| Registry audit | Implemented | Append-only SQLite audit table; local DB administrator can alter DB |
 | Permission decision primitive | Implemented | Exact explicit grants only; not OS enforcement |
-| Local evidence journal | Implemented | Hash-linked; not tamper-proof against privileged local administrators |
-| CLI | Implemented | Manifest validation and journal verification |
+| Evidence journal | Implemented | JSONL hash chain, schema-validated; no concurrent writer lock |
+| CLI | Implemented | Manifest validation, registry operations, permission evaluation, evidence verification |
+| Identity, task, message, resource, package runtime | Specified | Schemas only |
 | Third-party plugin execution | Disabled | No arbitrary external code execution |
 | OS-level sandbox | Not implemented | Required before untrusted execution |
 | Cross-language SDK | Planned | Shared contract tests required |
@@ -31,10 +33,10 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 - **Respect existing tools:** integrate proven software rather than rebuilding everything.
 - **Privacy by design:** data remains local by default; telemetry export requires explicit configuration.
 
-## Six product systems
+## Product architecture
 
 1. **Core:** contracts, identity, configuration, policy, lifecycle, evidence.
-2. **Connect:** adapters for applications, services, devices, and systems.
+2. **Connect:** adapters for applications, services, devices, systems.
 3. **Exchange:** discovery, capability metadata, packages, resource catalogs.
 4. **Atlas:** manuals, knowledge, technical references, provenance.
 5. **Foundry:** requirements, capability-gap analysis, assembly, testing, delivery.
@@ -44,7 +46,7 @@ These are product domains, not mandatory microservices.
 
 ## Security boundary
 
-A manifest describes a capability. It does not make it safe, trusted, authorized, or executable. Signatures and hashes help establish origin and integrity; they do not prove benign behavior. The initial release does not execute third-party plugin code. Ordinary in-process Python execution is not a security sandbox.
+A manifest describes a capability. It does not make it safe, trusted, authorized, or executable. Signatures and hashes help establish origin and integrity; they do not prove benign behavior. The current release does not execute third-party plugin code. Ordinary in-process Python execution is not a security sandbox.
 
 See [SECURITY.md](SECURITY.md), [the threat model](architecture/threat-model.md), and the [security guide](documentation/security/README.md).
 
@@ -62,10 +64,16 @@ pytest
 ruff check .
 ```
 
+Register and inspect the declarative example:
+
 ```bash
 openworkspace validate-manifest examples/hello-capability.json
-openworkspace verify-evidence path/to/events.jsonl
+openworkspace register examples/hello-capability.json --database .openworkspace/registry.sqlite3
+openworkspace list --database .openworkspace/registry.sqlite3
+openworkspace evaluate example.hello --grant filesystem.read --database .openworkspace/registry.sqlite3
 ```
+
+The permission command evaluates metadata only. It does not grant the registered capability operating-system access or execute it.
 
 See the [getting started guide](documentation/getting-started/README.md), [installation guide](documentation/installation/README.md), and [troubleshooting guide](documentation/troubleshooting/README.md).
 
@@ -87,11 +95,13 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 
 - [x] Initial Python package and CLI.
 - [x] Capability manifest validation.
+- [x] Local SQLite capability registry.
 - [x] Default-deny permission decision primitive.
+- [x] Registry audit trail.
 - [x] Local hash-linked evidence journal.
 - [x] Initial architecture, security, integration, and contributor documentation.
 - [x] Draft identity, task, message, permission, evidence, resource, and package schemas.
-- [ ] Durable local capability registry and identity runtime.
+- [ ] Identity runtime and cryptographic identity lifecycle.
 - [ ] Runtime task and message lifecycle.
 - [ ] Permission enforcement at actual OS/process boundaries.
 - [ ] Journal locking, crash consistency, and external integrity anchors.

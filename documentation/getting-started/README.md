@@ -1,14 +1,14 @@
 # Getting Started
 
-OpenWorkSpace is currently a developer-oriented pre-alpha foundation. The working 0.1 features validate a declarative capability manifest, evaluate explicit permission grants, and verify a local hash-linked evidence journal. It does not yet install or execute third-party capabilities.
+OpenWorkSpace is a developer-oriented pre-alpha foundation. It validates declarative capability manifests, registers them in a local SQLite database, evaluates explicit permission decisions, and verifies a local evidence journal. It does not install or execute third-party capabilities.
 
 ## Requirements
 
 - Python 3.11 or newer.
 - Git.
-- Internet access only to obtain the source and development dependencies. The CLI operations themselves are local.
+- Internet access to obtain source and dependencies. Registry and CLI operations are local after installation.
 
-## From a source checkout
+## Install from source
 
 ```bash
 git clone https://github.com/HuffmanMainNode/OpenWorkSpace.git
@@ -23,7 +23,7 @@ Activate the environment:
 . .venv/bin/activate
 
 # Windows PowerShell
-.venv\Scripts\Activate.ps1
+.venv\\Scripts\\Activate.ps1
 ```
 
 Install and test:
@@ -35,13 +35,28 @@ pytest
 ruff check .
 ```
 
-## Try the examples
+## Validate and register a capability
 
 ```bash
 openworkspace validate-manifest examples/hello-capability.json
+openworkspace register examples/hello-capability.json --database .openworkspace/registry.sqlite3
+openworkspace list --database .openworkspace/registry.sqlite3
+openworkspace show example.hello --database .openworkspace/registry.sqlite3
 ```
 
-To verify a journal, first create one using the Python API:
+The registry stores declarative metadata. It does not download packages, launch processes, or execute capability code.
+
+## Evaluate declared permissions
+
+```bash
+openworkspace evaluate example.hello --grant filesystem.read --database .openworkspace/registry.sqlite3
+```
+
+This command demonstrates the policy helper against grants explicitly supplied by the operator. It is an evaluation record, not an enforcement mechanism. It does not grant the capability access to the filesystem.
+
+## Verify an evidence journal
+
+Create one using the Python API:
 
 ```python
 from openworkspace.evidence import append_event
@@ -61,4 +76,4 @@ Then run:
 openworkspace verify-evidence workspace-events.jsonl
 ```
 
-The journal is tamper-evident, not tamper-proof against a privileged local administrator. See the security guide before using it for sensitive workloads.
+Missing and empty journals fail verification. The journal is tamper-evident, not tamper-proof against a privileged local administrator. Concurrent writers are not yet supported.

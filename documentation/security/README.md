@@ -2,26 +2,33 @@
 
 ## Pre-alpha warning
 
-Do not rely on OpenWorkSpace 0.1 as a production security boundary or use it to run untrusted code. It has no OS-level sandbox, plugin execution engine, credential vault, network firewall, signed update system, or complete identity/authorization service.
+Do not rely on OpenWorkSpace as a production security boundary or use it to run untrusted code. It has no OS-level sandbox, plugin execution engine, credential vault, network firewall, signed update system, or complete identity/authorization service.
 
-## What is implemented
+## Implemented
 
-- Strict validation of the current capability manifest.
-- A permission-decision helper that allows only exact explicit grants.
-- A local JSONL evidence journal with SHA-256 hash chaining and verification.
-- CI tests for manifest validation, permission decisions, CLI behavior, and journal tampering.
+- Strict capability manifest validation.
+- Local SQLite registry with duplicate-ID rejection and stored-manifest digest checks.
+- Registry audit records protected from ordinary SQL update/delete statements by triggers.
+- Permission-decision helper allowing only exact explicit grants.
+- Local JSONL evidence journal with schema validation and SHA-256 hash chaining.
+- CI tests for validation, policy decisions, registry behavior, CLI, and journal tampering.
 
-## What is not implemented
+## Important limitations
 
-A permission helper does not intercept system calls. A manifest's declared permissions do not constrain a process. A hash chain does not protect against a privileged local administrator who can rewrite the journal and recompute the chain. A signature would not prove code is benign.
+- SQLite audit triggers are not tamper-proof against a database owner who can drop triggers or rewrite the file.
+- Registry metadata is descriptive. The registry does not run or isolate capabilities.
+- A permission helper does not intercept system calls.
+- Evidence hash chains do not protect against privileged local administrators who can rewrite the journal and recompute hashes.
+- The JSONL journal has no inter-process writer lock or crash-consistency guarantee.
+- A valid manifest, package digest, or signature is not proof of benign behavior.
 
 ## Safe-use guidance
 
 - Do not add credentials or sensitive personal data to test fixtures.
 - Do not execute downloaded packages or repositories through this project.
-- Keep the source tree and dependencies updated through a reviewed process.
-- Treat all imported files, web content, model outputs, and manifests as untrusted.
-- Use a disposable environment for experimentation, understanding that ordinary containers are not automatically secure sandboxes.
+- Keep source and dependencies updated through a reviewed process.
+- Treat imported files, web content, and model outputs as untrusted.
+- Use a disposable environment for experiments, understanding that ordinary containers are not automatically secure sandboxes.
 - Report suspected vulnerabilities privately using the repository's security reporting feature where available.
 
 Read [SECURITY.md](../../SECURITY.md), [the threat model](../../architecture/threat-model.md), and [security requirements](../../architecture/security-requirements.md).
