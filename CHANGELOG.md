@@ -15,6 +15,9 @@
 - Local resource catalog with metadata search, explicit trust-state transitions, digest checks, and append-only audit records.
 - External package manifest validation and local artifact SHA-256 verification with execution disabled.
 - CLI commands for capability, identity, task, message, resource, package intake, and evidence operations.
+- First-run workspace initialization and a safe, non-executing permission evaluation demo.
+- Complete CLI help visibility and clean-environment command smoke tests.
+- Storage provider and long-term backup/restore architecture documentation, with current non-implementation boundaries clearly stated.
 - Shared data catalogs and synthetic fixtures for published contract schemas.
 - Qualification requirements, environment matrix, and report schema.
 - Repository population register and automated local Markdown-link validation.
@@ -30,5 +33,6 @@
 - No OS-level sandbox, credential vault, network firewall, or identity authority.
 - SQLite audit tables and local digests are not tamper-proof against the database owner.
 - Evidence hash chain is tamper-evident, not tamper-proof against a privileged local administrator.
-- JSONL evidence journal does not provide concurrent multi-process writer locking or crash-consistency guarantees.
+- JSONL evidence appends use cross-process writer locking and fsync, but lack an external integrity anchor and completed crash/power-loss/network-filesystem qualification.
+- No complete portable backup/restore workflow or native cloud storage connector is implemented.
 - Windows and macOS are not release-qualified.
