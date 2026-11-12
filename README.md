@@ -11,7 +11,9 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 | Capability | Status | Boundary |
 |---|---|---|
 | Capability manifest contract | Implemented | JSON Schema 2020-12 validation |
-| Permission decision primitive | Implemented | Explicit grants only; not an OS enforcement boundary |
+| Identity, task, message, permission, resource, package contracts | Specified | Schema drafts; no runtime services yet |
+| Evidence event contract | Specified | Draft schema; current journal format is a separate prototype |
+| Permission decision primitive | Implemented | Exact explicit grants only; not OS enforcement |
 | Local evidence journal | Implemented | Hash-linked; not tamper-proof against privileged local administrators |
 | CLI | Implemented | Manifest validation and journal verification |
 | Third-party plugin execution | Disabled | No arbitrary external code execution |
@@ -44,39 +46,59 @@ These are product domains, not mandatory microservices.
 
 A manifest describes a capability. It does not make it safe, trusted, authorized, or executable. Signatures and hashes help establish origin and integrity; they do not prove benign behavior. The initial release does not execute third-party plugin code. Ordinary in-process Python execution is not a security sandbox.
 
-See [SECURITY.md](SECURITY.md) and [architecture/threat-model.md](architecture/threat-model.md).
+See [SECURITY.md](SECURITY.md), [the threat model](architecture/threat-model.md), and the [security guide](documentation/security/README.md).
 
 ## Quick start
 
-Requires Python 3.11 or newer.
+Requires Python 3.11 or newer. Current CI tests Ubuntu with Python 3.11, 3.12, and 3.13.
 
 ```bash
+git clone https://github.com/HuffmanMainNode/OpenWorkSpace.git
+cd OpenWorkSpace
 python -m venv .venv
-. .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+. .venv/bin/activate  # Windows PowerShell: .venv\\Scripts\\Activate.ps1
 python -m pip install -e '.[dev]'
 pytest
 ruff check .
 ```
 
 ```bash
-openworkspace validate-manifest path/to/capability.json
+openworkspace validate-manifest examples/hello-capability.json
 openworkspace verify-evidence path/to/events.jsonl
 ```
 
-Schema: [specifications/capability.schema.json](specifications/capability.schema.json).
+See the [getting started guide](documentation/getting-started/README.md), [installation guide](documentation/installation/README.md), and [troubleshooting guide](documentation/troubleshooting/README.md).
+
+## Repository guide
+
+- [Architecture](architecture/master-architecture.md)
+- [Garage model](architecture/garage-model.md)
+- [Security requirements](architecture/security-requirements.md)
+- [Integration model](architecture/integration-model.md)
+- [Compatibility policy](architecture/compatibility-policy.md)
+- [Contract specifications](specifications/README.md)
+- [Qualification requirements](qualification/requirements.yaml)
+- [Test matrix](qualification/test-matrix.yaml)
+- [Integration handbook](documentation/integrations/README.md)
+- [Contribution guide](CONTRIBUTING.md)
+- [Governance](GOVERNANCE.md)
 
 ## Roadmap
 
 - [x] Initial Python package and CLI.
-- [x] Capability manifest contract.
+- [x] Capability manifest validation.
 - [x] Default-deny permission decision primitive.
 - [x] Local hash-linked evidence journal.
-- [ ] Durable local capability registry and identity model.
-- [ ] Task, message, permission, and evidence contracts.
-- [ ] Integration and resilience tests.
+- [x] Initial architecture, security, integration, and contributor documentation.
+- [x] Draft identity, task, message, permission, evidence, resource, and package schemas.
+- [ ] Durable local capability registry and identity runtime.
+- [ ] Runtime task and message lifecycle.
+- [ ] Permission enforcement at actual OS/process boundaries.
+- [ ] Journal locking, crash consistency, and external integrity anchors.
 - [ ] Qualified isolation before untrusted code execution.
-- [ ] Independent TypeScript contract consumer.
+- [ ] Independent TypeScript contract consumer and shared fixtures.
 - [ ] Reviewed integrations, knowledge resources, and community workflows.
+- [ ] Windows and macOS qualification.
 
 ## Contributing
 

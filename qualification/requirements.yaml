@@ -69,17 +69,17 @@ requirements:
     test: tests/test_cli.py::test_cli_reports_invalid_manifest
   - id: WSP-012
     title: Third-party code execution remains disabled
-    status: implemented-by-absence
+    status: implemented
     acceptance: No third-party plugin execution interface or runner is shipped.
     test: manual repository review
   - id: WSP-013
     title: Offline CLI operation
-    status: pending-qualification
+    status: specified
     acceptance: Manifest validation and evidence verification complete with network disabled.
     test: qualification/test-matrix.yaml
   - id: WSP-014
     title: Corrupt or truncated journal fails closed
-    status: partial
+    status: specified
     acceptance: Malformed JSON and broken records are rejected with a non-zero CLI result.
     test: planned
   - id: WSP-015
@@ -97,3 +97,13 @@ requirements:
     status: deferred
     acceptance: TypeScript implementation passes shared positive and negative fixtures.
     test: deferred
+  - id: WSP-018
+    title: All published JSON schemas are valid
+    status: tested
+    acceptance: Each schema passes JSON Schema Draft 2020-12 meta-schema validation.
+    test: tests/test_schema_catalog.py::test_all_published_schemas_are_valid_json_schema
+  - id: WSP-019
+    title: Published capability example validates
+    status: tested
+    acceptance: The example manifest passes the shipped runtime validator.
+    test: tests/test_schema_catalog.py::test_example_manifest_passes_runtime_validator
