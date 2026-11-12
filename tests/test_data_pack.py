@@ -51,7 +51,7 @@ def test_local_markdown_links_resolve():
 
     for markdown in ROOT.rglob("*.md"):
         source = markdown.read_text(encoding="utf-8")
-        for target in re.findall(r"\\[[^]]+\\]\\(([^)]+)\\)", source):
+        for target in re.findall(r"\[[^]]+\]\(([^)]+)\)", source):
             if target.startswith(("https://", "http://", "mailto:", "#")):
                 continue
             relative_path = target.split("#", 1)[0]
