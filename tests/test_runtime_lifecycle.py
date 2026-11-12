@@ -75,7 +75,9 @@ def test_identity_detects_database_tampering(tmp_path):
 
 
 def test_task_lifecycle_and_audit(tmp_path):
-    store = TaskStore(tmp_path / "runtime.sqlite3")
+    database = tmp_path / "runtime.sqlite3"
+    IdentityRegistry(database).create(IDENTITY)
+    store = TaskStore(database)
     task = store.create(make_task("task.one"))
     assert task["state"] == "pending"
     ready = store.transition("task.one", "ready", reason="Dependencies satisfied")
@@ -90,7 +92,9 @@ def test_task_lifecycle_and_audit(tmp_path):
 
 
 def test_task_dependencies_must_succeed_before_ready(tmp_path):
-    store = TaskStore(tmp_path / "runtime.sqlite3")
+    database = tmp_path / "runtime.sqlite3"
+    IdentityRegistry(database).create(IDENTITY)
+    store = TaskStore(database)
     store.create(make_task("task.parent"))
     store.create(make_task("task.child", ["task.parent"]))
     with pytest.raises(TaskError, match="not complete"):
@@ -102,7 +106,9 @@ def test_task_dependencies_must_succeed_before_ready(tmp_path):
 
 
 def test_task_rejects_missing_dependencies_duplicate_and_invalid_transitions(tmp_path):
-    store = TaskStore(tmp_path / "runtime.sqlite3")
+    database = tmp_path / "runtime.sqlite3"
+    IdentityRegistry(database).create(IDENTITY)
+    store = TaskStore(database)
     with pytest.raises(TaskError, match="dependency not found"):
         store.create(make_task("task.orphan", ["missing"]))
     store.create(make_task("task.one"))
@@ -113,7 +119,9 @@ def test_task_rejects_missing_dependencies_duplicate_and_invalid_transitions(tmp
 
 
 def test_task_retry_limit_and_required_reason(tmp_path):
-    store = TaskStore(tmp_path / "runtime.sqlite3")
+    database = tmp_path / "runtime.sqlite3"
+    IdentityRegistry(database).create(IDENTITY)
+    store = TaskStore(database)
     store.create(make_task("task.retry"))
     store.transition("task.retry", "ready", reason="Ready")
     store.transition("task.retry", "running", reason="Attempt one")
@@ -130,6 +138,7 @@ def test_task_retry_limit_and_required_reason(tmp_path):
 
 def test_task_detects_tampered_records(tmp_path):
     path = tmp_path / "runtime.sqlite3"
+    IdentityRegistry(path).create(IDENTITY)
     store = TaskStore(path)
     store.create(make_task("task.tamper"))
     with sqlite3.connect(path) as connection:
@@ -139,3 +148,16 @@ def test_task_detects_tampered_records(tmp_path):
         )
     with pytest.raises(TaskError, match="integrity"):
         store.get("task.tamper")
+
+
+
+def test_task_requires_active_registered_owner(tmp_path):
+    path = tmp_path / "runtime.sqlite3"
+    store = TaskStore(path)
+    with pytest.raises(TaskError, match="identity registry"):
+        store.create(make_task("task.no-identity"))
+    identities = IdentityRegistry(path)
+    identities.create(IDENTITY)
+    identities.set_status(IDENTITY["id"], "suspended", reason="Test")
+    with pytest.raises(TaskError, match="not active"):
+        store.create(make_task("task.suspended-owner"))

@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from jsonschema import Draft202012Validator, FormatChecker
+from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 
 
 class MessageError(ValueError):
@@ -203,7 +203,7 @@ class MessageStore:
             raise MessageError(f"message integrity check failed: {message_id}")
         try:
             self._validator.validate(json.loads(encoded))
-        except (ValueError, json.JSONDecodeError) as exc:
+        except (ValueError, ValidationError) as exc:
             raise MessageError(f"stored message is invalid: {message_id}") from exc
 
     @staticmethod

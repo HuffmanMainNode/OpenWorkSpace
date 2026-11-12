@@ -80,6 +80,22 @@ class TaskStore:
         try:
             with self._connect() as connection:
                 connection.execute("BEGIN IMMEDIATE")
+                identity_table = connection.execute(
+                    "SELECT 1 FROM sqlite_master WHERE type='table' AND name='identities'"
+                ).fetchone()
+                if identity_table is None:
+                    raise TaskError("identity registry is not initialized in this database")
+                owner = connection.execute(
+                    "SELECT record_json,record_sha256 FROM identities WHERE identity_id=?",
+                    (task["owner"],),
+                ).fetchone()
+                if owner is None:
+                    raise TaskError(f"task owner identity not found: {task['owner']}")
+                owner_digest = hashlib.sha256(owner[0].encode("utf-8")).hexdigest()
+                if owner_digest != owner[1]:
+                    raise TaskError(f"task owner identity integrity check failed: {task['owner']}")
+                if json.loads(owner[0]).get("status") != "active":
+                    raise TaskError(f"task owner identity is not active: {task['owner']}")
                 for dependency in task["dependencies"]:
                     row = connection.execute(
                         "SELECT task_json FROM tasks WHERE task_id = ?", (dependency,)

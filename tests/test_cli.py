@@ -101,3 +101,34 @@ def test_cli_identity_and_task_lifecycle(tmp_path, capsys):
     assert json.loads(capsys.readouterr().out)["tasks"][0]["state"] == "ready"
     assert main(["task-show", "cli.example.task", *db]) == 0
     assert json.loads(capsys.readouterr().out)["state"] == "ready"
+
+
+def test_cli_local_message_queue(tmp_path, capsys):
+    from openworkspace.identity import IdentityRegistry
+
+    database = tmp_path / "runtime.sqlite3"
+    identities = IdentityRegistry(database)
+    for identity_id, kind in (("cli.sender", "user"), ("cli.recipient", "service")):
+        identities.create({
+            "id": identity_id, "kind": kind, "issuer": "local",
+            "key_reference": None, "status": "active", "valid_from": None,
+            "valid_until": None, "attributes": {}
+        })
+    envelope = {
+        "message_id": "cli.message", "sender": "cli.sender",
+        "recipient": "cli.recipient", "message_type": "test.cli",
+        "schema_version": "1.0", "timestamp": "2026-11-12T12:00:00Z",
+        "correlation_id": None, "payload": {"test": True}
+    }
+    source = tmp_path / "message.json"
+    source.write_text(json.dumps(envelope))
+    db = ["--database", str(database)]
+
+    assert main(["message-send", str(source), *db]) == 0
+    assert json.loads(capsys.readouterr().out)["queued"] is True
+    assert main(["message-inbox", "cli.recipient", *db]) == 0
+    assert len(json.loads(capsys.readouterr().out)["messages"]) == 1
+    assert main(["message-ack", "cli.message", "cli.recipient", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["acknowledged"] is True
+    assert main(["message-inbox", "cli.recipient", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["messages"] == []
