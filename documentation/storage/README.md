@@ -52,7 +52,7 @@ Until a native backup/export feature is implemented:
 2. Ensure each database has closed cleanly. Preserve the entire workspace directory, including any SQLite sidecar files that remain.
 3. Include the separate evidence journals and the encrypted `keys` directory. Do not assume that backing up the two databases alone preserves the workspace.
 4. Create a dated snapshot in a staging directory that is **not** the live workspace.
-5. Encrypt the snapshot locally before uploading it to a provider. Do not upload raw identity key files, unencrypted databases, or evidence journals to a shared cloud folder.
+5. Apply client-side encryption before upload. A configured rclone `crypt` remote encrypts on the local device during transfer; otherwise create an encrypted archive with a separately reviewed tool. Do not upload raw identity key files, unencrypted databases, or evidence journals to a shared cloud folder.
 6. Copy the encrypted snapshot to the destination. Prefer a non-destructive copy operation over a mirror/sync operation that may delete older destination files.
 7. Verify the uploaded object against the local snapshot using a supported checksum or authenticated encryption verification.
 8. Keep at least one independent offline or separately administered copy.
@@ -61,11 +61,11 @@ Until a native backup/export feature is implemented:
 Example only, after configuring and testing an encrypted rclone remote named `vault:`:
 
 ```bash
-rclone copy ./encrypted-snapshots vault:OpenWorkSpace/snapshots
-rclone cryptcheck ./encrypted-snapshots vault:OpenWorkSpace/snapshots --one-way
+rclone copy ./staged-snapshot vault:OpenWorkSpace/snapshots
+rclone cryptcheck ./staged-snapshot vault:OpenWorkSpace/snapshots --one-way
 ```
 
-Do not point a cloud sync client at the live `.openworkspace` directory. Do not use `rclone sync` as a default backup operation: mirroring can propagate deletions and mistakes. Confirm the meaning of every command and destination before running it.
+Do not point a cloud sync client at the live `.openworkspace` directory. Do not use `rclone sync` as a default backup operation: mirroring can propagate deletions and mistakes. `cryptcheck` requires checksum support from the underlying storage backend. If the backend cannot provide the needed checksums, download a test backup through the crypt remote and verify its authenticated contents locally. Confirm the meaning of every command and destination before running it.
 
 ### Encryption and credential handling
 
