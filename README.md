@@ -6,18 +6,19 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 
 ## Current status
 
-**Pre-alpha, foundation in active development.** The current Python package validates declarative capability manifests, stores them in a local SQLite registry, evaluates explicitly granted permissions, records registry audit events, and writes/verifies a local hash-linked evidence journal. These primitives do not constitute an operating-system security boundary or plugin execution platform.
+**Pre-alpha, foundation in active development.** The current Python package provides a declarative capability registry, local identity metadata lifecycle, local task lifecycle store, local SQLite message queue, permission-decision helper, and hash-linked evidence journal.
 
 | Capability | Status | Boundary |
 |---|---|---|
 | Capability manifest contract | Implemented | JSON Schema 2020-12 validation |
 | Local capability registry | Implemented | SQLite metadata store; no code execution |
-| Registry duplicate protection | Implemented | Duplicate IDs rejected |
-| Registry audit | Implemented | Append-only SQLite audit table; local DB administrator can alter DB |
+| Registry audit | Implemented | Local audit records; database owner can alter the database |
 | Permission decision primitive | Implemented | Exact explicit grants only; not OS enforcement |
-| Evidence journal | Implemented | JSONL hash chain, schema-validated; no concurrent writer lock |
-| CLI | Implemented | Manifest validation, registry operations, permission evaluation, evidence verification |
-| Identity metadata lifecycle | Implemented | Local records and status changes; no authentication or cryptographic identity proof |\n| Local message queue | Implemented | SQLite envelope storage, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |\n| Task lifecycle store | Implemented | Local state transitions and dependency readiness; no task execution engine |\n| Resource and external package runtime | Specified | Schemas only |
+| Identity metadata lifecycle | Implemented | Local records and status transitions; no authentication or cryptographic identity proof |
+| Task lifecycle store | Implemented | State transitions, active owner-record check, dependency readiness, retry limits; no task execution |
+| Local message queue | Implemented | SQLite envelopes, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |
+| Evidence journal | Implemented | JSONL hash chain; no multi-writer lock or external integrity anchor |
+| Resource and external package runtime | Specified | Schemas only |
 | Third-party plugin execution | Disabled | No arbitrary external code execution |
 | OS-level sandbox | Not implemented | Required before untrusted execution |
 | Cross-language SDK | Planned | Shared contract tests required |
@@ -46,9 +47,11 @@ These are product domains, not mandatory microservices.
 
 ## Security boundary
 
-A manifest describes a capability. It does not make it safe, trusted, authorized, or executable. Signatures and hashes help establish origin and integrity; they do not prove benign behavior. The current release does not execute third-party plugin code. Ordinary in-process Python execution is not a security sandbox.
+A manifest describes a capability. It does not make it safe, trusted, authorized, or executable. Identity records are local metadata and do not authenticate a person or prove control of a cryptographic key. Task records do not execute themselves. The message queue is local-only and does not authenticate sender claims. Signatures and hashes do not prove benign behavior.
 
-See [SECURITY.md](SECURITY.md), [the threat model](architecture/threat-model.md), and the [security guide](documentation/security/README.md).
+The current release does not execute third-party plugin code. Ordinary in-process Python execution is not a security sandbox.
+
+See [SECURITY.md](SECURITY.md), [the threat model](architecture/threat-model.md), and [the security guide](documentation/security/README.md).
 
 ## Quick start
 
@@ -64,7 +67,7 @@ pytest
 ruff check .
 ```
 
-Register and inspect the declarative example:
+### Capability registry
 
 ```bash
 openworkspace validate-manifest examples/hello-capability.json
@@ -73,7 +76,25 @@ openworkspace list --database .openworkspace/registry.sqlite3
 openworkspace evaluate example.hello --grant filesystem.read --database .openworkspace/registry.sqlite3
 ```
 
-The permission command evaluates metadata only. It does not grant the registered capability operating-system access or execute it.
+Permission evaluation is metadata only. It does not grant operating-system access or execute a capability.
+
+### Local identity, task, and message lifecycle
+
+The default runtime database is `.openworkspace/runtime.sqlite3`. Create the two example identity records before creating tasks or sending messages:
+
+```bash
+openworkspace identity-create examples/contracts/identity.json
+openworkspace identity-create examples/contracts/service-identity.json
+openworkspace task-create examples/contracts/task.json
+openworkspace task-transition task.example.validation ready --reason "Dependencies satisfied"
+openworkspace task-transition task.example.validation running --reason "Claimed locally"
+openworkspace task-transition task.example.validation succeeded --reason "Completed"
+openworkspace message-send examples/contracts/message.json
+openworkspace message-inbox example.local.core
+openworkspace message-ack message.example.001 example.local.core
+```
+
+These operations manipulate local metadata and records. They do not provide identity authentication, worker execution, authenticated message delivery, or network transport.
 
 See the [getting started guide](documentation/getting-started/README.md), [installation guide](documentation/installation/README.md), and [troubleshooting guide](documentation/troubleshooting/README.md).
 
@@ -97,15 +118,16 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 ## Roadmap
 
 - [x] Initial Python package and CLI.
-- [x] Capability manifest validation.
-- [x] Local SQLite capability registry.
+- [x] Capability manifest validation and local registry.
 - [x] Default-deny permission decision primitive.
-- [x] Registry audit trail.
-- [x] Local hash-linked evidence journal.
-- [x] Initial architecture, security, integration, and contributor documentation.
-- [x] Draft identity, task, message, permission, evidence, resource, and package schemas.
-- [x] Local identity metadata lifecycle (authentication and cryptographic identity remain unimplemented).
-- [x] Local task lifecycle store (task execution remains unimplemented).\n- [x] Local message queue (network transport and sender authentication remain unimplemented).
+- [x] Registry audit trail and local hash-linked evidence journal.
+- [x] Local identity metadata lifecycle.
+- [x] Local task lifecycle store with dependency-aware readiness.
+- [x] Local message queue with recipient inbox and acknowledgement.
+- [x] Initial architecture, security, integration, data catalog, and contributor documentation.
+- [ ] Cryptographic identity, authentication, key lifecycle, and revocation proof.
+- [ ] Runtime task scheduler, worker execution, cancellation, and recovery.
+- [ ] Authenticated message transport and protocol negotiation.
 - [ ] Permission enforcement at actual OS/process boundaries.
 - [ ] Journal locking, crash consistency, and external integrity anchors.
 - [ ] Qualified isolation before untrusted code execution.

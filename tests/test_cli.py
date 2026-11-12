@@ -92,6 +92,10 @@ def test_cli_identity_and_task_lifecycle(tmp_path, capsys):
     ]
     assert main(status_args) == 0
     assert json.loads(capsys.readouterr().out)["status"] == "suspended"
+    assert main([
+        "identity-status", "cli.example.user", "active", "--reason", "Restore for task test", *db
+    ]) == 0
+    capsys.readouterr()
 
     assert main(["task-create", str(task_path), *db]) == 0
     assert json.loads(capsys.readouterr().out)["created"] is True

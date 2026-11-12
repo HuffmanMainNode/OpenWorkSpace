@@ -11,6 +11,7 @@ FIXTURE_DIR = ROOT / "examples" / "contracts"
 def test_all_contract_fixtures_validate_against_their_schemas():
     pairs = {
         "identity.json": "identity.schema.json",
+        "service-identity.json": "identity.schema.json",
         "task.json": "task.schema.json",
         "message.json": "message.schema.json",
         "permission.json": "permission.schema.json",

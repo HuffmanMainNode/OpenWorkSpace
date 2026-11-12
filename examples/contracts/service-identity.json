@@ -1,0 +1,12 @@
+{
+  "id": "example.local.core",
+  "kind": "service",
+  "issuer": "example.local",
+  "key_reference": null,
+  "status": "active",
+  "valid_from": "2026-11-12T00:00:00Z",
+  "valid_until": null,
+  "attributes": {
+    "display_label": "Example Local Service"
+  }
+}
