@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/capability.schema.json",
+  "title": "OpenWorkSpace Capability Manifest",
+  "description": "A declarative description of a capability. A valid manifest does not authorize or execute code.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "interface_version", "description", "inputs", "outputs", "permissions"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "interface_version": {"type": "string", "minLength": 1, "maxLength": 32},
+    "description": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "inputs": {"type": "object"},
+    "outputs": {"type": "object"},
+    "permissions": {"type": "array", "uniqueItems": true, "items": {"enum": ["data.read", "data.write", "filesystem.read", "filesystem.write", "network.connect", "process.execute", "device.access", "credential.use", "agent.delegate"]}},
+    "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "publisher": {"type": "string", "maxLength": 256},
+    "license": {"type": "string", "maxLength": 128}
+  }
+}
