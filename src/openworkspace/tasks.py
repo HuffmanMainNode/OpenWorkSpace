@@ -52,6 +52,16 @@ class TaskStore:
                     event_type TEXT NOT NULL, timestamp TEXT NOT NULL, details_json TEXT NOT NULL
                 )"""
             )
+            connection.executescript(
+                """
+                CREATE TRIGGER IF NOT EXISTS task_audit_no_update
+                BEFORE UPDATE ON task_audit
+                BEGIN SELECT RAISE(ABORT, 'task audit records are append-only'); END;
+                CREATE TRIGGER IF NOT EXISTS task_audit_no_delete
+                BEFORE DELETE ON task_audit
+                BEGIN SELECT RAISE(ABORT, 'task audit records are append-only'); END;
+                """
+            )
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:

@@ -8,7 +8,7 @@ Do not rely on OpenWorkSpace as a production security boundary or use it to run 
 
 - Strict capability manifest validation.
 - Local SQLite registry with duplicate-ID rejection and stored-manifest digest checks.
-- Registry audit records protected from ordinary SQL update/delete statements by triggers.
+- Registry, identity, task, and message audit records protected from ordinary SQL update/delete statements by triggers.
 - Permission-decision helper allowing only exact explicit grants.
 - Local JSONL evidence journal with schema validation and SHA-256 hash chaining.
 - CI tests for validation, policy decisions, registry behavior, CLI, and journal tampering.
@@ -17,6 +17,9 @@ Do not rely on OpenWorkSpace as a production security boundary or use it to run 
 
 - SQLite audit triggers are not tamper-proof against a database owner who can drop triggers or rewrite the file.
 - Registry metadata is descriptive. The registry does not run or isolate capabilities.
+- Identity records are not authenticated credentials or proof of key possession.
+- Task records are not executed by a worker engine. Message records remain in a local queue and sender identifiers are not authenticated.
+- Local audit triggers deter ordinary SQL mutation but can be dropped by a database owner.
 - A permission helper does not intercept system calls.
 - Evidence hash chains do not protect against privileged local administrators who can rewrite the journal and recompute hashes.
 - The JSONL journal has no inter-process writer lock or crash-consistency guarantee.

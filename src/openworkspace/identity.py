@@ -54,6 +54,16 @@ class IdentityRegistry:
                     details_json TEXT NOT NULL
                 )"""
             )
+            connection.executescript(
+                """
+                CREATE TRIGGER IF NOT EXISTS identity_audit_no_update
+                BEFORE UPDATE ON identity_audit
+                BEGIN SELECT RAISE(ABORT, 'identity audit records are append-only'); END;
+                CREATE TRIGGER IF NOT EXISTS identity_audit_no_delete
+                BEFORE DELETE ON identity_audit
+                BEGIN SELECT RAISE(ABORT, 'identity audit records are append-only'); END;
+                """
+            )
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:

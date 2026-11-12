@@ -99,3 +99,13 @@ def test_message_detects_routing_index_tampering(tmp_path):
         )
     with pytest.raises(MessageError, match="recipient index mismatch"):
         store.inbox(SENDER["id"])
+
+
+
+def test_message_audit_rejects_ordinary_mutation(tmp_path):
+    path = tmp_path / "runtime.sqlite3"
+    store = setup_store(path)
+    store.enqueue(envelope())
+    with sqlite3.connect(path) as connection:
+        with pytest.raises(sqlite3.IntegrityError, match="append-only"):
+            connection.execute("DELETE FROM message_audit")

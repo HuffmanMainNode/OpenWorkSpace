@@ -56,6 +56,16 @@ class MessageStore:
                     details_json TEXT NOT NULL
                 )"""
             )
+            connection.executescript(
+                """
+                CREATE TRIGGER IF NOT EXISTS message_audit_no_update
+                BEFORE UPDATE ON message_audit
+                BEGIN SELECT RAISE(ABORT, 'message audit records are append-only'); END;
+                CREATE TRIGGER IF NOT EXISTS message_audit_no_delete
+                BEFORE DELETE ON message_audit
+                BEGIN SELECT RAISE(ABORT, 'message audit records are append-only'); END;
+                """
+            )
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:

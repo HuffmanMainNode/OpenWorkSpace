@@ -175,3 +175,17 @@ def test_refresh_ready_promotes_only_dependency_satisfied_tasks(tmp_path):
     store.transition("task.parent", "succeeded", reason="Parent done")
     assert store.refresh_ready() == ["task.child"]
     assert store.get("task.child")["state"] == "ready"
+
+
+
+def test_identity_and_task_audit_records_reject_ordinary_mutation(tmp_path):
+    path = tmp_path / "runtime.sqlite3"
+    identities = IdentityRegistry(path)
+    identities.create(IDENTITY)
+    tasks = TaskStore(path)
+    tasks.create(make_task("task.audit"))
+    with sqlite3.connect(path) as connection:
+        with pytest.raises(sqlite3.IntegrityError, match="append-only"):
+            connection.execute("DELETE FROM identity_audit")
+        with pytest.raises(sqlite3.IntegrityError, match="append-only"):
+            connection.execute("UPDATE task_audit SET event_type='changed'")
