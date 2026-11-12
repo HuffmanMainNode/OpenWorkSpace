@@ -37,7 +37,10 @@ def build_parser() -> argparse.ArgumentParser:
     remove.add_argument("capability_id")
     remove.add_argument("--database", type=Path, default=Path(".openworkspace/registry.sqlite3"))
 
-    evaluate = subparsers.add_parser("evaluate", help="evaluate declared permissions without execution")
+    evaluate = subparsers.add_parser(
+        "evaluate",
+        help="evaluate declared permissions without execution",
+    )
     evaluate.add_argument("capability_id")
     evaluate.add_argument("--grant", action="append", default=[])
     evaluate.add_argument("--database", type=Path, default=Path(".openworkspace/registry.sqlite3"))
