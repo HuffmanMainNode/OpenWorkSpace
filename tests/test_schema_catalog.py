@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_all_published_schemas_are_valid_json_schema():
     schema_files = sorted((ROOT / "specifications").glob("*.schema.json"))
-    assert len(schema_files) >= 8
+    assert len(schema_files) >= 9
     for path in schema_files:
         schema = json.loads(path.read_text(encoding="utf-8"))
         Draft202012Validator.check_schema(schema)
@@ -30,4 +30,10 @@ def test_bundled_capability_schema_matches_published_contract():
 def test_evidence_schema_matches_bundled_runtime_schema():
     published = json.loads((ROOT / "specifications" / "evidence.schema.json").read_text())
     bundled = json.loads((ROOT / "src" / "openworkspace" / "evidence.schema.json").read_text())
-    assert published == bundled
+    assert bundled == published
+
+
+def test_registry_schema_matches_bundled_runtime_schema():
+    published = json.loads((ROOT / "specifications" / "registry.schema.json").read_text())
+    bundled = json.loads((ROOT / "src" / "openworkspace" / "registry.schema.json").read_text())
+    assert bundled == published

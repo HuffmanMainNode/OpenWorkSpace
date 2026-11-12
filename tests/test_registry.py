@@ -1,3 +1,6 @@
+from concurrent.futures import ThreadPoolExecutor
+import sqlite3
+
 import pytest
 
 from openworkspace.registry import (
@@ -70,8 +73,6 @@ def test_stored_manifest_digest_is_checked(tmp_path):
     registry_path = tmp_path / "registry.sqlite3"
     registry = CapabilityRegistry(registry_path)
     registry.register(MANIFEST)
-    import sqlite3
-
     with sqlite3.connect(registry_path) as connection:
         connection.execute(
             "UPDATE capabilities SET manifest_json = ? WHERE capability_id = ?",
@@ -79,3 +80,17 @@ def test_stored_manifest_digest_is_checked(tmp_path):
         )
     with pytest.raises(RegistryError, match="integrity"):
         registry.get("example.registry")
+
+
+def test_concurrent_distinct_registrations_are_serialized(tmp_path):
+    registry = CapabilityRegistry(tmp_path / "registry.sqlite3")
+
+    def add(index):
+        manifest = {**MANIFEST, "id": f"example.concurrent{index}"}
+        registry.register(manifest)
+
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        list(executor.map(add, range(12)))
+
+    assert len(registry.list()) == 12
+    assert len(registry.audit_events()) == 12

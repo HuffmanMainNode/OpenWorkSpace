@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/resource.schema.json",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/registry.schema.json",
   "title": "OpenWorkSpace Local Registry Record",
   "description": "Storage envelope for validated capability metadata; not an executable package record.",
   "type": "object",

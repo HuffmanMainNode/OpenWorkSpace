@@ -5,6 +5,7 @@ The JSON files in this directory are normative schema drafts for the current pub
 | File | Purpose | Runtime status |
 |---|---|---|
 | capability.schema.json | Declarative capability description | Implemented and validated by package |
+| registry.schema.json | Local registry storage envelope | Schema published; SQLite rows validated by application logic |
 | identity.schema.json | Principal identity metadata | Schema draft only |
 | task.schema.json | Task envelope and retry metadata | Schema draft only |
 | message.schema.json | Interoperable message envelope | Schema draft only |
@@ -22,4 +23,4 @@ The JSON files in this directory are normative schema drafts for the current pub
 - A valid schema instance is not a security approval.
 - Add shared positive and negative fixtures before publishing independent SDKs.
 
-The identity, task, message, permission, resource, and package schemas are not yet backed by runtime services. The local SQLite registry stores validated capability metadata, but does not yet implement a portable registry interchange contract.
+The identity, task, message, permission, resource, and package schemas are not yet backed by runtime services. The local SQLite registry stores validated capability metadata, but does not yet implement a portable registry interchange API.

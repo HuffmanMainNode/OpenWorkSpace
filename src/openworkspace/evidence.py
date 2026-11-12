@@ -9,7 +9,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, FormatChecker
 
 GENESIS = "0" * 64
 EVIDENCE_SCHEMA_PATH = Path(__file__).with_name("evidence.schema.json")
@@ -27,7 +27,7 @@ def _canonical(value: dict[str, Any]) -> bytes:
 
 def _validator() -> Draft202012Validator:
     schema = json.loads(EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8"))
-    return Draft202012Validator(schema)
+    return Draft202012Validator(schema, format_checker=FormatChecker())
 
 
 def append_event(
@@ -58,10 +58,12 @@ def append_event(
     }
     _validator().validate({**event, "hash": "0" * 64})
     event["hash"] = hashlib.sha256(_canonical(event)).hexdigest()
-    with journal.open("a", encoding="utf-8", newline="\n") as stream:
-        stream.write(json.dumps({**event, "hash": event["hash"]}, sort_keys=True, ensure_ascii=False) + "\n")
+    with journal.open("a", encoding="utf-8", newline="\\n") as stream:
+        stream.write(
+            json.dumps(event, sort_keys=True, ensure_ascii=False) + "\\n"
+        )
         stream.flush()
-    return {**event, "hash": event["hash"]}
+    return event
 
 
 def read_events(path: str | Path) -> list[dict[str, Any]]:
@@ -88,7 +90,7 @@ def read_events(path: str | Path) -> list[dict[str, Any]]:
             try:
                 validator.validate({**event, "hash": supplied_hash})
             except Exception as exc:
-                raise ValueError(f"invalid event schema at journal line {line_number}: {exc}") from exc
+                raise ValueError(f"invalid event schema at journal line {line_number}") from exc
             if event.get("previous_hash") != previous:
                 raise ValueError(f"broken hash link at journal line {line_number}")
             expected_hash = hashlib.sha256(_canonical(event)).hexdigest()

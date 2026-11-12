@@ -5,9 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from openworkspace.contracts import validate_capability
 from openworkspace.policy import PolicyDecision, authorize
@@ -40,8 +41,17 @@ class CapabilityRegistry:
         connection.execute("PRAGMA busy_timeout = 10000")
         return connection
 
+    @contextmanager
+    def _connection(self) -> Iterator[sqlite3.Connection]:
+        connection = self._connect()
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
+
     def _initialize(self) -> None:
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute("PRAGMA journal_mode = WAL")
             connection.executescript(
                 """
@@ -75,7 +85,7 @@ class CapabilityRegistry:
         digest = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
         now = datetime.now(UTC).isoformat()
         try:
-            with self._connect() as connection:
+            with self._connection() as connection:
                 connection.execute("BEGIN IMMEDIATE")
                 connection.execute(
                     """INSERT INTO capabilities
@@ -93,23 +103,17 @@ class CapabilityRegistry:
         return self.get(manifest["id"])
 
     def get(self, capability_id: str) -> dict[str, Any]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             row = connection.execute(
                 "SELECT manifest_json, manifest_sha256 FROM capabilities WHERE capability_id = ?",
                 (capability_id,),
             ).fetchone()
         if row is None:
             raise RegistryError(f"capability not found: {capability_id}")
-        encoded = row["manifest_json"]
-        actual = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
-        if actual != row["manifest_sha256"]:
-            raise RegistryError(f"stored manifest integrity check failed: {capability_id}")
-        manifest = json.loads(encoded)
-        validate_capability(manifest)
-        return manifest
+        return self._decode_manifest(capability_id, row["manifest_json"], row["manifest_sha256"])
 
     def list(self) -> list[dict[str, str]]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             rows = connection.execute(
                 """SELECT capability_id, version, manifest_sha256, registered_at
                 FROM capabilities ORDER BY capability_id"""
@@ -117,7 +121,7 @@ class CapabilityRegistry:
         return [dict(row) for row in rows]
 
     def remove(self, capability_id: str) -> None:
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             cursor = connection.execute(
                 "DELETE FROM capabilities WHERE capability_id = ?", (capability_id,)
@@ -129,22 +133,36 @@ class CapabilityRegistry:
     def evaluate(
         self, capability_id: str, granted: set[str] | frozenset[str]
     ) -> list[PolicyDecision]:
-        """Evaluate declared permissions and atomically record the decision in registry audit."""
-        manifest = self.get(capability_id)
-        decisions = authorize(manifest["permissions"], granted)
-        details = {
-            "decisions": [
-                {"permission": item.permission, "allowed": item.allowed, "reason": item.reason}
-                for item in decisions
-            ]
-        }
-        with self._connect() as connection:
+        """Evaluate permissions and atomically record the decision in registry audit."""
+        with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
-            self._audit(connection, "capability.permissions_evaluated", capability_id, details)
+            row = connection.execute(
+                "SELECT manifest_json, manifest_sha256 FROM capabilities WHERE capability_id = ?",
+                (capability_id,),
+            ).fetchone()
+            if row is None:
+                raise RegistryError(f"capability not found: {capability_id}")
+            manifest = self._decode_manifest(
+                capability_id, row["manifest_json"], row["manifest_sha256"]
+            )
+            decisions = authorize(manifest["permissions"], granted)
+            details = {
+                "decisions": [
+                    {
+                        "permission": item.permission,
+                        "allowed": item.allowed,
+                        "reason": item.reason,
+                    }
+                    for item in decisions
+                ]
+            }
+            self._audit(
+                connection, "capability.permissions_evaluated", capability_id, details
+            )
         return decisions
 
     def audit_events(self) -> list[dict[str, Any]]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             rows = connection.execute(
                 """SELECT sequence, event_type, capability_id, timestamp, details_json
                 FROM registry_audit ORDER BY sequence"""
@@ -159,6 +177,20 @@ class CapabilityRegistry:
             }
             for row in rows
         ]
+
+    @staticmethod
+    def _decode_manifest(
+        capability_id: str, encoded: str, expected_digest: str
+    ) -> dict[str, Any]:
+        actual = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+        if actual != expected_digest:
+            raise RegistryError(f"stored manifest integrity check failed: {capability_id}")
+        try:
+            manifest = json.loads(encoded)
+            validate_capability(manifest)
+        except (json.JSONDecodeError, ValueError) as exc:
+            raise RegistryError(f"stored manifest is invalid: {capability_id}") from exc
+        return manifest
 
     @staticmethod
     def _audit(
