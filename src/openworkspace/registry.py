@@ -15,6 +15,7 @@ from openworkspace.contracts import validate_capability
 from openworkspace.database import configure_connection, enable_wal
 from openworkspace.policy import PolicyDecision, authorize
 
+
 class RegistryError(ValueError):
     """Raised when a registry operation cannot be completed."""
 

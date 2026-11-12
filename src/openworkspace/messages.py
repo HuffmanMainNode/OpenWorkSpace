@@ -15,6 +15,7 @@ from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 
 from openworkspace.database import configure_connection, enable_wal
 
+
 class MessageError(ValueError):
     """Raised when a local message operation is invalid."""
 

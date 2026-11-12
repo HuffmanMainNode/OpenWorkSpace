@@ -16,6 +16,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 from openworkspace.database import configure_connection, enable_wal
 
+
 class IdentityError(ValueError):
     """Raised when an identity operation is invalid."""
 

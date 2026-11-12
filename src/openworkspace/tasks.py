@@ -15,6 +15,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 from openworkspace.database import configure_connection, enable_wal
 
+
 class TaskError(ValueError):
     """Raised when a task operation is invalid."""
 

@@ -18,6 +18,7 @@ from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 
 from openworkspace.database import configure_connection, enable_wal
 
+
 class ResourceCatalogError(ValueError):
     """Raised when a resource catalog operation is invalid."""
 
