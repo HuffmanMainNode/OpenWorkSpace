@@ -87,7 +87,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             "--path", type=Path, default=Path(".openworkspace"),
             help="workspace directory (default: .openworkspace)",
         )
-        args = parser.parse_args(arguments[1:])
+        try:
+            args = parser.parse_args(arguments[1:])
+        except SystemExit as exc:
+            return int(exc.code or 0)
         try:
             result = {"initialized": True, **initialize_workspace(args.path)}
             print(json.dumps(result, sort_keys=True))
@@ -100,10 +103,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             prog="openworkspace demo",
             description="Run a safe, non-executing permission evaluation demo.",
         )
-        parser.parse_args(arguments[1:])
+        try:
+            parser.parse_args(arguments[1:])
+        except SystemExit as exc:
+            return int(exc.code or 0)
         print(json.dumps(run_demo(), sort_keys=True))
         return 0
-    return existing_cli(arguments)
+    try:
+        return existing_cli(arguments)
+    except SystemExit as exc:
+        return int(exc.code or 0)
 
 
 if __name__ == "__main__":
