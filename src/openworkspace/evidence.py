@@ -58,10 +58,8 @@ def append_event(
     }
     _validator().validate({**event, "hash": "0" * 64})
     event["hash"] = hashlib.sha256(_canonical(event)).hexdigest()
-    with journal.open("a", encoding="utf-8", newline="\\n") as stream:
-        stream.write(
-            json.dumps(event, sort_keys=True, ensure_ascii=False) + "\\n"
-        )
+    with journal.open("a", encoding="utf-8", newline="\n") as stream:
+        stream.write(json.dumps(event, sort_keys=True, ensure_ascii=False) + "\n")
         stream.flush()
     return event
 
