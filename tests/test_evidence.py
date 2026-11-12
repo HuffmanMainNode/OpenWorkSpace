@@ -1,4 +1,5 @@
 import json
+from concurrent.futures import ProcessPoolExecutor
 
 import pytest
 
@@ -53,9 +54,6 @@ def test_truncated_journal_record_fails(tmp_path):
     journal.write_text(journal.read_text() + '{"partial":')
     with pytest.raises(ValueError, match="invalid JSON"):
         read_events(journal)
-
-
-from concurrent.futures import ProcessPoolExecutor
 
 
 def _append_from_process(arguments):

@@ -11,12 +11,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Iterator
 
+from jsonschema import Draft202012Validator, FormatChecker
+
 if os.name == "nt":
     import msvcrt
 else:
     import fcntl
-
-from jsonschema import Draft202012Validator, FormatChecker
 
 GENESIS = "0" * 64
 EVIDENCE_SCHEMA_PATH = Path(__file__).with_name("evidence.schema.json")
