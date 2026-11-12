@@ -213,6 +213,17 @@ def build_parser() -> argparse.ArgumentParser:
     package_show.add_argument("package_id")
     package_show.add_argument("version")
     _database_argument(package_show)
+
+    initialize = subparsers.add_parser(
+        "init", help="initialize local OpenWorkSpace metadata stores"
+    )
+    initialize.add_argument(
+        "--path", type=Path, default=Path(".openworkspace"),
+        help="workspace directory (default: .openworkspace)",
+    )
+    subparsers.add_parser(
+        "demo", help="run a safe, non-executing permission evaluation demonstration"
+    )
     return parser
 
 
