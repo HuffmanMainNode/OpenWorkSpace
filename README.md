@@ -129,15 +129,19 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [x] Local task lifecycle store with dependency-aware readiness.
 - [x] Local message queue with recipient inbox and acknowledgement.
 - [x] Initial architecture, security, integration, data catalog, and contributor documentation.
-- [x] Local encrypted Ed25519 key binding, signing, and signature verification.\n- [ ] Remote authentication, key rotation/recovery, and distributed revocation.
+- [x] Local encrypted Ed25519 key binding, signing, and signature verification.
+- [ ] Remote authentication, key rotation/recovery, and distributed revocation.
 - [ ] Runtime task scheduler, worker execution, cancellation, and recovery.
 - [ ] Authenticated message transport and protocol negotiation.
 - [ ] Permission enforcement at actual OS/process boundaries.
-- [x] Cross-process evidence journal writer locking and fsync.\n- [ ] External integrity anchors, recovery tooling, and power-loss qualification.
+- [x] Cross-process evidence journal writer locking and fsync.
+- [ ] External integrity anchors, recovery tooling, and power-loss qualification.
 - [ ] Qualified isolation before untrusted code execution.
 - [ ] Independent TypeScript contract consumer and shared fixtures.
 - [x] Local resource catalog with provenance metadata and explicit trust-state lifecycle.
 - [x] External package metadata intake and local artifact digest verification, with execution disabled.
+- [ ] Verified backup and restore workflow with encryption and integrity checks.
+- [ ] Optional storage adapters for local folders, cloud drives, and object storage.
 - [ ] Reviewed integrations, knowledge resources, and community workflows.
 - [ ] Windows and macOS qualification.
 
