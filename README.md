@@ -116,6 +116,7 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [Qualification requirements](qualification/requirements.yaml)
 - [Test matrix](qualification/test-matrix.yaml)
 - [Integration handbook](documentation/integrations/README.md)
+- [Storage, backup, and long-term recovery](documentation/storage/README.md)
 - [Contribution guide](CONTRIBUTING.md)
 - [Governance](GOVERNANCE.md)
 
