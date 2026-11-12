@@ -89,6 +89,11 @@ def build_parser() -> argparse.ArgumentParser:
     task_list = subparsers.add_parser("task-list", help="list local task records")
     _database_argument(task_list)
 
+    task_refresh = subparsers.add_parser(
+        "task-refresh-ready", help="promote tasks whose dependencies have succeeded"
+    )
+    _database_argument(task_refresh)
+
     task_show = subparsers.add_parser("task-show", help="show a local task record")
     task_show.add_argument("task_id")
     _database_argument(task_show)
@@ -148,6 +153,10 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "task-list":
             print(json.dumps({"tasks": TaskStore(args.database).list()}, sort_keys=True))
+            return 0
+        if args.command == "task-refresh-ready":
+            promoted = TaskStore(args.database).refresh_ready()
+            print(json.dumps({"promoted": promoted}, sort_keys=True))
             return 0
         if args.command == "task-show":
             print(json.dumps(TaskStore(args.database).get(args.task_id), sort_keys=True))

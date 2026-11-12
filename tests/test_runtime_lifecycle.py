@@ -161,3 +161,17 @@ def test_task_requires_active_registered_owner(tmp_path):
     identities.set_status(IDENTITY["id"], "suspended", reason="Test")
     with pytest.raises(TaskError, match="not active"):
         store.create(make_task("task.suspended-owner"))
+
+
+def test_refresh_ready_promotes_only_dependency_satisfied_tasks(tmp_path):
+    database = tmp_path / "runtime.sqlite3"
+    IdentityRegistry(database).create(IDENTITY)
+    store = TaskStore(database)
+    store.create(make_task("task.parent"))
+    store.create(make_task("task.child", ["task.parent"]))
+    assert store.refresh_ready() == ["task.parent"]
+    assert store.get("task.child")["state"] == "pending"
+    store.transition("task.parent", "running", reason="Parent claimed")
+    store.transition("task.parent", "succeeded", reason="Parent done")
+    assert store.refresh_ready() == ["task.child"]
+    assert store.get("task.child")["state"] == "ready"

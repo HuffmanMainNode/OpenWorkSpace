@@ -178,6 +178,54 @@ class TaskStore:
             )
         return task
 
+
+    def refresh_ready(self) -> list[str]:
+        """Promote pending tasks whose dependencies have all succeeded."""
+        promoted: list[str] = []
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            rows = connection.execute(
+                "SELECT task_id,task_json,task_sha256 FROM tasks ORDER BY created_at,task_id"
+            ).fetchall()
+            for task_id, encoded, digest in rows:
+                actual = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+                if actual != digest:
+                    raise TaskError(f"task integrity check failed: {task_id}")
+                task = json.loads(encoded)
+                if task.get("id") != task_id:
+                    raise TaskError(f"task key does not match record: {task_id}")
+                if task.get("state") != "pending":
+                    continue
+                ready = True
+                for dependency in task["dependencies"]:
+                    row = connection.execute(
+                        "SELECT task_json,task_sha256 FROM tasks WHERE task_id=?",
+                        (dependency,),
+                    ).fetchone()
+                    if row is None:
+                        raise TaskError(f"dependency not found: {dependency}")
+                    dependency_digest = hashlib.sha256(row[0].encode("utf-8")).hexdigest()
+                    if dependency_digest != row[1]:
+                        raise TaskError(f"dependency integrity check failed: {dependency}")
+                    if json.loads(row[0]).get("state") != "succeeded":
+                        ready = False
+                        break
+                if ready:
+                    task["state"] = "ready"
+                    updated, updated_digest = self._encode(task)
+                    now = datetime.now(UTC).isoformat()
+                    connection.execute(
+                        """UPDATE tasks SET task_json=?,task_sha256=?,updated_at=?
+                        WHERE task_id=?""",
+                        (updated, updated_digest, now, task_id),
+                    )
+                    self._audit(
+                        connection, task_id, "task.became_ready",
+                        {"reason": "all dependencies succeeded"},
+                    )
+                    promoted.append(task_id)
+        return promoted
+
     def list(self) -> list[dict[str, Any]]:
         with self._connect() as connection:
             rows = connection.execute(
