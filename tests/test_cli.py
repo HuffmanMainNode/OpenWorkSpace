@@ -169,3 +169,25 @@ def test_cli_identity_keygen_sign_and_verify(tmp_path, capsys, monkeypatch):
         "identity-verify", "cli.key-owner", str(payload_path), signature, *db
     ]) == 0
     assert json.loads(capsys.readouterr().out)["valid"] is True
+
+
+def test_cli_resource_catalog_lifecycle(tmp_path, capsys):
+    resource = {
+        "id": "cli.resource", "name": "CLI Reference", "resource_type": "reference",
+        "source": "https://example.invalid/cli", "version": "1.0",
+        "license_status": "reference-only", "license_expression": None,
+        "trust_state": "uninspected", "permissions": [], "maintainer": None,
+        "notes": "CLI fixture"
+    }
+    source = tmp_path / "resource.json"
+    database = tmp_path / "runtime.sqlite3"
+    source.write_text(json.dumps(resource))
+    db = ["--database", str(database)]
+    assert main(["resource-register", str(source), *db]) == 0
+    assert json.loads(capsys.readouterr().out)["registered"] is True
+    assert main(["resource-list", "--search", "reference", *db]) == 0
+    assert len(json.loads(capsys.readouterr().out)["resources"]) == 1
+    assert main(["resource-trust", "cli.resource", "inspected", "--reason", "CLI review", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["trust_state"] == "inspected"
+    assert main(["resource-show", "cli.resource", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["trust_state"] == "inspected"

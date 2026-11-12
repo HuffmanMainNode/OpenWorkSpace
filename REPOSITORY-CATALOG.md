@@ -22,6 +22,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 | `identity.py` | Local identity metadata lifecycle, encrypted Ed25519 key binding, and audit | Implemented, no authentication or cryptographic identity proof |
 | `tasks.py` | Task state store, active owner-record check, dependency readiness refresh, retry limits, audit | Implemented, no task execution engine |
 | `messages.py` | Local SQLite message queue, active identity metadata checks, inbox, acknowledgement, audit | Implemented, no network transport or sender authentication |
+| `resources.py` | Local resource catalog, search, trust-state lifecycle, audit | Implemented, metadata only; no downloads or execution |
 | `evidence.py` | Schema-validated JSONL hash chain | Implemented, no multi-writer lock |
 | `cli.py` | Capability, identity, task, message, and evidence commands | Implemented |
 

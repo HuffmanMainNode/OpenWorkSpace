@@ -14,6 +14,7 @@ from openworkspace.identity import IdentityError, IdentityRegistry
 from openworkspace.identity_keys import IdentityKeyError, IdentityKeyStore
 from openworkspace.messages import MessageError, MessageStore
 from openworkspace.registry import CapabilityRegistry, RegistryError
+from openworkspace.resources import ResourceCatalog, ResourceCatalogError
 from openworkspace.tasks import TaskError, TaskStore
 
 
@@ -149,6 +150,40 @@ def build_parser() -> argparse.ArgumentParser:
     message_ack.add_argument("message_id")
     message_ack.add_argument("recipient_id")
     _database_argument(message_ack)
+
+    resource_register = subparsers.add_parser(
+        "resource-register", help="register a resource metadata record"
+    )
+    resource_register.add_argument("path", type=Path)
+    _database_argument(resource_register)
+
+    resource_list = subparsers.add_parser(
+        "resource-list", help="list and filter local resource records"
+    )
+    resource_list.add_argument("--search")
+    resource_list.add_argument("--resource-type")
+    resource_list.add_argument("--trust-state")
+    _database_argument(resource_list)
+
+    resource_show = subparsers.add_parser(
+        "resource-show", help="show a local resource record"
+    )
+    resource_show.add_argument("resource_id")
+    _database_argument(resource_show)
+
+    resource_trust = subparsers.add_parser(
+        "resource-trust", help="change a resource trust state"
+    )
+    resource_trust.add_argument("resource_id")
+    resource_trust.add_argument(
+        "state",
+        choices=[
+            "uninspected", "inspected", "qualified", "authorized",
+            "restricted", "quarantined", "revoked",
+        ],
+    )
+    resource_trust.add_argument("--reason", required=True)
+    _database_argument(resource_trust)
     return parser
 
 
@@ -239,6 +274,33 @@ def main(argv: list[str] | None = None) -> int:
             MessageStore(args.database).acknowledge(args.message_id, args.recipient_id)
             print(json.dumps({"acknowledged": True, "message_id": args.message_id}))
             return 0
+        if args.command == "resource-register":
+            record = ResourceCatalog(args.database).register(_read_json(args.path))
+            print(json.dumps({"registered": True, "id": record["id"]}))
+            return 0
+        if args.command == "resource-list":
+            records = ResourceCatalog(args.database).list(
+                search=args.search,
+                resource_type=args.resource_type,
+                trust_state=args.trust_state,
+            )
+            print(json.dumps({"resources": records}, sort_keys=True))
+            return 0
+        if args.command == "resource-show":
+            record = ResourceCatalog(args.database).get(args.resource_id)
+            print(json.dumps(record, sort_keys=True))
+            return 0
+        if args.command == "resource-trust":
+            record = ResourceCatalog(args.database).update_trust_state(
+                args.resource_id, args.state, reason=args.reason
+            )
+            print(
+                json.dumps(
+                    {"id": record["id"], "trust_state": record["trust_state"]},
+                    sort_keys=True,
+                )
+            )
+            return 0
 
         if args.command == "register":
             manifest = validate_capability_file(args.path)
@@ -281,6 +343,7 @@ def main(argv: list[str] | None = None) -> int:
     except (
         ContractError, OSError, ValueError, KeyError,
         RegistryError, IdentityError, IdentityKeyError, TaskError, MessageError,
+        ResourceCatalogError,
     ) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

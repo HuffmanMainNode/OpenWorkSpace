@@ -99,6 +99,19 @@ openworkspace message-ack message.example.001 example.local.core
 
 Messages are stored locally in SQLite. The queue checks that sender and recipient metadata records exist and are active, validates envelopes, rejects duplicate message IDs, and allows the declared recipient identifier to acknowledge a message. This is not sender authentication, authenticated recipient access, or network transport. Do not use it as a security boundary.
 
+## Local resource catalog
+
+Register and inspect the synthetic reference resource:
+
+```bash
+openworkspace resource-register examples/contracts/resource.json
+openworkspace resource-list --search "Example reference"
+openworkspace resource-show resource.example.manual
+openworkspace resource-trust resource.example.manual inspected --reason "Metadata reviewed"
+```
+
+Resources begin as `uninspected`. Trust transitions must follow the defined lifecycle. The catalog records metadata only: it does not fetch source URLs, verify licenses, qualify code, or authorize execution.
+
 ## Evidence journal
 
 Create an event with the Python API:

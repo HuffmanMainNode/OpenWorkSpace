@@ -18,7 +18,8 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 | Task lifecycle store | Implemented | State transitions, active owner-record check, dependency readiness, retry limits; no task execution |
 | Local message queue | Implemented | SQLite envelopes, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |
 | Evidence journal | Implemented | JSONL hash chain; no multi-writer lock or external integrity anchor |
-| Resource and external package runtime | Specified | Schemas only |
+| Local resource catalog | Implemented | Metadata registration, search, trust-state lifecycle; no downloads or execution |
+| External package intake runtime | Specified | Metadata schema only; no installer or execution |
 | Third-party plugin execution | Disabled | No arbitrary external code execution |
 | OS-level sandbox | Not implemented | Required before untrusted execution |
 | Cross-language SDK | Planned | Shared contract tests required |
@@ -132,6 +133,7 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [ ] Journal locking, crash consistency, and external integrity anchors.
 - [ ] Qualified isolation before untrusted code execution.
 - [ ] Independent TypeScript contract consumer and shared fixtures.
+- [x] Local resource catalog with provenance metadata and explicit trust-state lifecycle.
 - [ ] Reviewed integrations, knowledge resources, and community workflows.
 - [ ] Windows and macOS qualification.
 

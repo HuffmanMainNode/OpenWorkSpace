@@ -46,6 +46,7 @@ jobs:
               "openworkspace/identity.schema.json",
               "openworkspace/task.schema.json",
               "openworkspace/message.schema.json",
+              "openworkspace/resource.schema.json",
           }
           missing = required - names
           if missing:
@@ -68,6 +69,7 @@ jobs:
           from openworkspace.identity_keys import IdentityKeyStore
           from openworkspace.tasks import TaskStore
           from openworkspace.messages import MessageStore
+          from openworkspace.resources import ResourceCatalog
 
           root = Path(tempfile.mkdtemp())
           journal = root / "events.jsonl"
@@ -103,5 +105,7 @@ jobs:
           assert tasks.list() == []
           messages = MessageStore(root / "runtime.sqlite3")
           assert messages is not None
+          resources = ResourceCatalog(root / "runtime.sqlite3")
+          assert resources.list() == []
           print("Installed wheel loaded bundled schemas and initialized all local stores.")
           PY

@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from jsonschema import Draft202012Validator, FormatChecker
+from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 
 
 class ResourceCatalogError(ValueError):
@@ -229,7 +229,7 @@ class ResourceCatalog:
         try:
             record = json.loads(encoded)
             self._validator.validate(record)
-        except (ValueError, json.JSONDecodeError) as exc:
+        except (ValueError, ValidationError) as exc:
             raise ResourceCatalogError(f"stored resource is invalid: {resource_id}") from exc
         if record.get("id") != resource_id:
             raise ResourceCatalogError(f"resource key does not match record: {resource_id}")
