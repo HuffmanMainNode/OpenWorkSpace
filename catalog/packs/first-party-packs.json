@@ -1,0 +1,232 @@
+{
+  "schema_version": "1.0",
+  "snapshot_date": "2026-11-12",
+  "catalog_path": "catalog/first-party/repositories.json",
+  "policy": "Discovery packs group links to first-party public non-fork projects. They do not bundle, install, authorize, or execute source code.",
+  "packs": [
+    {
+      "id": "agent-safety-trust",
+      "name": "Agent Safety and Trust",
+      "purpose": "Explore portable safety contracts, policy decision prototypes, identity and delegation boundary research.",
+      "selection": "curated-discovery",
+      "items": [
+        {
+          "project_id": "multi-agent-swarm-guardrails",
+          "selection_reason": "Multi-language safety contracts and deny-by-default reference evaluators."
+        },
+        {
+          "project_id": "agent-policy-engine",
+          "selection_reason": "Policy decision prototype; enforcement remains the caller's responsibility."
+        },
+        {
+          "project_id": "agent-emergency-control",
+          "selection_reason": "Emergency stop/resume contract validator; not an operational kill switch."
+        },
+        {
+          "project_id": "agent-identity-trust",
+          "selection_reason": "Identity and trust project; implementation requires further review."
+        },
+        {
+          "project_id": "agent-sandbox-security",
+          "selection_reason": "Sandbox security project; isolation guarantees are not yet qualified."
+        },
+        {
+          "project_id": "agent-delegation-scope-boundary-fixtures",
+          "selection_reason": "Synthetic delegation-scope fixtures, not a runtime."
+        }
+      ],
+      "access": "reference-only",
+      "optional": true,
+      "automatic_install": false,
+      "automatic_execution": false,
+      "security_approval": false,
+      "note": "Inclusion means discoverability only. It is not an endorsement, security qualification, installation instruction, or redistribution approval."
+    },
+    {
+      "id": "protocol-interoperability",
+      "name": "Protocol and Interoperability",
+      "purpose": "Compare protocol definitions, codecs, compatibility mappings, and reproducible conformance artifacts.",
+      "selection": "curated-discovery",
+      "items": [
+        {
+          "project_id": "huffman-protocol",
+          "selection_reason": "Machine-readable protocol registry and conformance evidence toolkit."
+        },
+        {
+          "project_id": "open-intelligence-exchange",
+          "selection_reason": "Experimental agent identity and message exchange protocol."
+        },
+        {
+          "project_id": "open-agent-compatibility",
+          "selection_reason": "Neutral compatibility research and mapping methodology."
+        },
+        {
+          "project_id": "aix-codecs",
+          "selection_reason": "Experimental deterministic serialization and decoding layer."
+        },
+        {
+          "project_id": "agent-schema-registry",
+          "selection_reason": "Agent schema registry project; schema compatibility requires review."
+        },
+        {
+          "project_id": "agent-conformance-lab",
+          "selection_reason": "Local contract and fixture validator, not certification."
+        },
+        {
+          "project_id": "open-agent-compatibility-fixtures",
+          "selection_reason": "MIT-licensed synthetic compatibility fixture corpus."
+        }
+      ],
+      "access": "reference-only",
+      "optional": true,
+      "automatic_install": false,
+      "automatic_execution": false,
+      "security_approval": false,
+      "note": "Inclusion means discoverability only. It is not an endorsement, security qualification, installation instruction, or redistribution approval."
+    },
+    {
+      "id": "evidence-defensive-security",
+      "name": "Evidence and Defensive Security",
+      "purpose": "Discover local defensive assessment, provenance, integrity, and integration projects.",
+      "selection": "curated-discovery",
+      "items": [
+        {
+          "project_id": "huffman-cyber-observatory",
+          "selection_reason": "Local-first defensive assessment and evidence integrity tools."
+        },
+        {
+          "project_id": "huffman-defensive-intelligence",
+          "selection_reason": "Local event and evidence integration layer with documented adapter limits."
+        },
+        {
+          "project_id": "osint-evidence-engine",
+          "selection_reason": "Evidence metadata and integrity-verification scaffold, not legal chain-of-custody proof."
+        },
+        {
+          "project_id": "agent-audit-provenance",
+          "selection_reason": "Audit and provenance project; implementation requires review."
+        },
+        {
+          "project_id": "protocol-helios",
+          "selection_reason": "Government repository reference library for defensive research."
+        }
+      ],
+      "access": "reference-only",
+      "optional": true,
+      "automatic_install": false,
+      "automatic_execution": false,
+      "security_approval": false,
+      "note": "Inclusion means discoverability only. It is not an endorsement, security qualification, installation instruction, or redistribution approval."
+    },
+    {
+      "id": "swarm-coordination",
+      "name": "Swarm Coordination",
+      "purpose": "Explore task coordination, state models, and orchestration boundaries without assuming distributed guarantees.",
+      "selection": "curated-discovery",
+      "items": [
+        {
+          "project_id": "open-swarm",
+          "selection_reason": "Local swarm orchestration project; execution and isolation require review."
+        },
+        {
+          "project_id": "swarm-coordination",
+          "selection_reason": "In-memory task assignment, acknowledgement, retry, and lease-recovery scaffold."
+        },
+        {
+          "project_id": "swarm-state-mesh",
+          "selection_reason": "Versioned task state and shared context project."
+        },
+        {
+          "project_id": "swarm-runtime",
+          "selection_reason": "Swarm runtime project; execution boundary requires review."
+        },
+        {
+          "project_id": "agent-federation-network",
+          "selection_reason": "Peer declaration validator, not live federation."
+        }
+      ],
+      "access": "reference-only",
+      "optional": true,
+      "automatic_install": false,
+      "automatic_execution": false,
+      "security_approval": false,
+      "note": "Inclusion means discoverability only. It is not an endorsement, security qualification, installation instruction, or redistribution approval."
+    },
+    {
+      "id": "research-osint",
+      "name": "Research and OSINT",
+      "purpose": "Find public-source research catalogs and policy-gated analysis scaffolds. These are not unattended collection systems.",
+      "selection": "curated-discovery",
+      "items": [
+        {
+          "project_id": "osint-collection-framework",
+          "selection_reason": "Plan validator only; it does not collect or crawl."
+        },
+        {
+          "project_id": "osint-source-registry",
+          "selection_reason": "Review-gated public source and terms catalog."
+        },
+        {
+          "project_id": "osint-entity-resolution",
+          "selection_reason": "Entity correlation research; accuracy and privacy require review."
+        },
+        {
+          "project_id": "curated-modern-osint-tools",
+          "selection_reason": "Directory of OSINT tools; each upstream tool needs separate review."
+        },
+        {
+          "project_id": "project-lazarus-osint",
+          "selection_reason": "Research project; operational scope and data handling need review."
+        },
+        {
+          "project_id": "halloween-osint-2026",
+          "selection_reason": "Local-first OSINT project; detailed security review pending."
+        }
+      ],
+      "access": "reference-only",
+      "optional": true,
+      "automatic_install": false,
+      "automatic_execution": false,
+      "security_approval": false,
+      "note": "Inclusion means discoverability only. It is not an endorsement, security qualification, installation instruction, or redistribution approval."
+    },
+    {
+      "id": "conformance-test-corpora",
+      "name": "Conformance and Test Corpora",
+      "purpose": "Use synthetic fixtures to explore retry, delegation, metrics, memory, and evaluation edge cases.",
+      "selection": "curated-discovery",
+      "items": [
+        {
+          "project_id": "agent-tool-retry-idempotency-fixtures",
+          "selection_reason": "Synthetic retry and idempotency cases; no exactly-once claim."
+        },
+        {
+          "project_id": "agent-delegation-scope-boundary-fixtures",
+          "selection_reason": "Synthetic delegated authority boundary cases."
+        },
+        {
+          "project_id": "open-agent-run-metrics-interop",
+          "selection_reason": "Draft usage and accounting interoperability fixtures."
+        },
+        {
+          "project_id": "agent-memory-portability-tests",
+          "selection_reason": "Memory portability test project; license and semantics pending review."
+        },
+        {
+          "project_id": "agent-evaluation-oracle-integrity-fixtures",
+          "selection_reason": "Evaluation oracle integrity fixture project; review pending."
+        },
+        {
+          "project_id": "agent-delegated-budget-enforcement-fixtures",
+          "selection_reason": "Delegated budget fixture project."
+        }
+      ],
+      "access": "reference-only",
+      "optional": true,
+      "automatic_install": false,
+      "automatic_execution": false,
+      "security_approval": false,
+      "note": "Inclusion means discoverability only. It is not an endorsement, security qualification, installation instruction, or redistribution approval."
+    }
+  ]
+}

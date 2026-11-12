@@ -124,3 +124,30 @@ def test_first_party_catalog_account_counts_match_entries():
         assert catalog["counts"][owner] == sum(
             item["publisher"] == owner for item in catalog["repositories"]
         )
+
+
+def test_first_party_resource_packs_match_schema_and_catalog():
+    schema = _json(ROOT / "specifications" / "resource-packs.schema.json")
+    packs = _json(ROOT / "catalog" / "packs" / "first-party-packs.json")
+    catalog = _json(ROOT / "catalog" / "first-party" / "repositories.json")
+    Draft202012Validator(schema, format_checker=FormatChecker()).validate(packs)
+    known_ids = {item["id"] for item in catalog["repositories"]}
+    for pack in packs["packs"]:
+        for item in pack["items"]:
+            assert item["project_id"] in known_ids
+        assert pack["automatic_install"] is False
+        assert pack["automatic_execution"] is False
+        assert pack["security_approval"] is False
+
+
+def test_resource_packs_reference_only_known_first_party_projects():
+    packs = _json(ROOT / "catalog" / "packs" / "first-party-packs.json")
+    catalog = _json(ROOT / "catalog" / "first-party" / "repositories.json")
+    known = {item["id"]: item for item in catalog["repositories"]}
+    for pack in packs["packs"]:
+        for item in pack["items"]:
+            project = known[item["project_id"]]
+            assert project["visibility"] == "public"
+            assert project["fork"] is False
+            assert project["redistribution"] == "not-approved"
+            assert project["integration_mode"] == "reference-only"
