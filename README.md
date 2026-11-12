@@ -62,7 +62,7 @@ Requires Python 3.11 or newer. Current CI tests Ubuntu with Python 3.11, 3.12, a
 git clone https://github.com/HuffmanMainNode/OpenWorkSpace.git
 cd OpenWorkSpace
 python -m venv .venv
-. .venv/bin/activate  # Windows PowerShell: .venv\\Scripts\\Activate.ps1
+. .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -e '.[dev]'
 pytest
 ruff check .
