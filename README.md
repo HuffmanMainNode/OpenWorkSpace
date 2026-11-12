@@ -66,6 +66,9 @@ python -m venv .venv
 python -m pip install -e '.[dev]'
 pytest
 ruff check .
+openworkspace --help
+openworkspace init
+openworkspace demo
 ```
 
 ### Capability registry
@@ -97,7 +100,7 @@ openworkspace message-ack message.example.001 example.local.core
 
 These operations manipulate local metadata and records. They do not provide identity authentication, worker execution, authenticated message delivery, or network transport.
 
-See the [getting started guide](documentation/getting-started/README.md), [installation guide](documentation/installation/README.md), and [troubleshooting guide](documentation/troubleshooting/README.md).
+See the [getting started guide](documentation/getting-started/README.md), [installation guide](documentation/installation/README.md), [storage and backup guide](documentation/storage/README.md), and [troubleshooting guide](documentation/troubleshooting/README.md).
 
 ## Repository guide
 
