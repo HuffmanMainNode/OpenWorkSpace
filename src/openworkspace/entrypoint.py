@@ -6,8 +6,8 @@ import argparse
 import json
 import sys
 import tempfile
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 from openworkspace.cli import main as existing_cli
 from openworkspace.identity import IdentityRegistry
@@ -90,7 +90,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         args = parser.parse_args(arguments[1:])
         try:
-            print(json.dumps({"initialized": True, **initialize_workspace(args.path)}, sort_keys=True))
+            result = {"initialized": True, **initialize_workspace(args.path)}
+            print(json.dumps(result, sort_keys=True))
             return 0
         except (OSError, ValueError) as exc:
             print(f"error: {exc}", file=sys.stderr)
