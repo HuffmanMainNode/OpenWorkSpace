@@ -26,15 +26,18 @@ test_groups:
     status: tested
   - id: wheel-build
     command: "python -m pip wheel --no-deps . --wheel-dir dist"
-    status: pending-ci-step
+    status: tested
   - id: wheel-resource-inclusion
     command: "Inspect wheel archive for bundled JSON schemas"
-    status: pending-ci-step
+    status: tested
+  - id: cli-clean-install-smoke
+    command: "openworkspace --help; openworkspace init --path TEMP; openworkspace list --database TEMP/registry.sqlite3; openworkspace demo"
+    status: tested
   - id: offline-operation
     command: "Run CLI with network disabled"
     status: pending
   - id: resilience-and-concurrency
-    command: "Concurrent registry registration tested; journal multi-writer and crash recovery still pending"
+    command: "Concurrent registry registration and cross-process evidence writer serialization tested; crash recovery and power-loss qualification remain pending"
     status: partial
   - id: sandbox-enforcement
     command: "Platform-specific adversarial isolation qualification"
