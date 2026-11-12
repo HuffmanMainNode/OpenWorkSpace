@@ -26,7 +26,8 @@ This index distinguishes shipped code from specifications and planned systems. A
 | `packages.py` | Package manifest validation, local artifact digest verification, metadata ledger | Implemented, no download, unpacking, signature verification, or execution |
 | `evidence.py` | Schema-validated JSONL hash chain with cross-process writer locking and fsync | Implemented, no external integrity anchor or power-loss qualification |
 | `database.py` | Shared SQLite WAL, synchronous, and busy-timeout configuration | Implemented |
-| `cli.py` | Capability, identity, task, message, resource, package-intake, and evidence commands | Implemented |
+| `cli.py` | Capability, identity, task, message, resource, package-intake, evidence, init, and demo command parser | Implemented |
+| `entrypoint.py` | Idempotent local store initialization and temporary non-executing permission demo | Implemented
 
 ## Contract and data pack
 
@@ -38,7 +39,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 ## Architecture and documentation
 
 - `architecture/`: master architecture, garage model, threat model, trust model, integration model, security requirements, compatibility policy, and architecture decision record.
-- `documentation/`: installation, getting started, integrations, security, troubleshooting.
+- `documentation/`: installation, getting started, integrations, storage/backup/recovery, security, troubleshooting.
 - `SECURITY.md`, `CONTRIBUTING.md`, `GOVERNANCE.md`, `CODE_OF_CONDUCT.md`, `CHANGELOG.md`.
 
 ## Explicitly not shipped
@@ -47,4 +48,4 @@ No third-party code runner, plugin loader, package downloader, OS sandbox, secre
 
 ## Verification
 
-Tests cover schema validity, fixture conformance, permission catalog consistency, registry behavior, identity lifecycle, task lifecycle and dependencies, message queue operations, duplicate and tampered data, concurrent distinct registrations, multi-process evidence writers, evidence tampering, CLI flows, and local Markdown links. The CI matrix is the authoritative record of the latest tested commit and environment.
+Tests cover schema validity, fixture conformance, permission catalog consistency, registry behavior, identity lifecycle, task lifecycle and dependencies, message queue operations, duplicate and tampered data, concurrent distinct registrations, multi-process evidence writers, evidence tampering, initialization idempotency, safe demo behavior, CLI help and commands, installed-wheel resources, and local Markdown links. The CI matrix is the authoritative record of the latest tested commit and environment.
