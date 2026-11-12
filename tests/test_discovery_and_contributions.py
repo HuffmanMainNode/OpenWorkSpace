@@ -107,11 +107,15 @@ def test_first_party_catalog_matches_schema_and_scope():
     )
     assert all(item["visibility"] == "public" for item in catalog["repositories"])
     assert all(item["fork"] is False for item in catalog["repositories"])
-    assert all(item["publisher"] in catalog["scope"]["accounts"] for item in catalog["repositories"])
+    assert all(
+        item["publisher"] in catalog["scope"]["accounts"]
+        for item in catalog["repositories"]
+    )
     assert all(item["automatic_install"] is False for item in catalog["repositories"])
     assert all(item["automatic_execution"] is False for item in catalog["repositories"])
     assert all(item["redistribution"] == "not-approved" for item in catalog["repositories"])
-    assert len({item["repository_url"] for item in catalog["repositories"]}) == len(catalog["repositories"])
+    urls = {item["repository_url"] for item in catalog["repositories"]}
+    assert len(urls) == len(catalog["repositories"])
 
 
 def test_first_party_catalog_account_counts_match_entries():
