@@ -30,6 +30,12 @@ OpenWorkSpace should use a provider-neutral storage interface. The core should d
 
 Provider support varies by backend and can change independently of OpenWorkSpace. Review the provider's current documentation, authentication requirements, API terms, and support status before entrusting it with long-term data.
 
+## Sync storage versus cold archive
+
+Consumer drive products such as Google Drive, iCloud Drive, OneDrive, and Dropbox are useful for convenient off-device copies and multi-device access. They should not automatically be treated as immutable cold storage. Account compromise, accidental deletion, sync propagation, provider retention rules, and account closure can affect every synchronized copy.
+
+For long-term archival retention, consider a separate object-storage destination with versioning, lifecycle tiers, retention controls, or object-lock features where available. Understand retrieval latency, retrieval charges, minimum storage duration, lifecycle transitions, and deletion semantics before choosing a tier. Keep a separate recovery copy of encryption keys and credentials. A provider's durability claim is not a substitute for restore tests.
+
 Useful upstream references:
 - [rclone supported storage backends](https://rclone.org/docs/)
 - [rclone Google Drive backend](https://rclone.org/drive/)
