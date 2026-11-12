@@ -13,6 +13,7 @@ Do not rely on OpenWorkSpace as a production security boundary or use it to run 
 - Registry, identity, task, message, and resource audit records protected from ordinary SQL update/delete statements by triggers.
 - Permission-decision helper allowing only exact explicit grants.
 - Local JSONL evidence journal with schema validation and SHA-256 hash chaining.
+- Evidence appends serialized across processes with OS-specific file locking, stream flush, and `fsync`.
 - CI tests for validation, policy decisions, registry behavior, CLI, and journal tampering.
 
 ## Important limitations
@@ -28,8 +29,9 @@ Do not rely on OpenWorkSpace as a production security boundary or use it to run 
 - Local audit triggers deter ordinary SQL mutation but can be dropped by a database owner.
 - A permission helper does not intercept system calls.
 - Evidence hash chains do not protect against privileged local administrators who can rewrite the journal and recompute hashes.
-- The JSONL journal has no inter-process writer lock or crash-consistency guarantee.
+- The evidence journal has no external integrity anchor, signed checkpoint, or completed power-loss/network-filesystem qualification. `fsync` and writer locking do not make it tamper-proof.
 - A valid manifest, package digest, or signature is not proof of benign behavior.
+- No complete backup/restore workflow or native cloud connector is shipped. Cloud copies must not be treated as verified backups until integrity and restore tests are completed.
 
 ## Safe-use guidance
 
@@ -38,6 +40,7 @@ Do not rely on OpenWorkSpace as a production security boundary or use it to run 
 - Keep source and dependencies updated through a reviewed process.
 - Treat imported files, web content, and model outputs as untrusted.
 - Use a disposable environment for experiments, understanding that ordinary containers are not automatically secure sandboxes.
+- Do not upload live SQLite databases or private keys to cloud sync folders. Follow the [storage and backup guide](../storage/README.md).
 - Report suspected vulnerabilities privately using the repository's security reporting feature where available.
 
 Read [SECURITY.md](../../SECURITY.md), [the threat model](../../architecture/threat-model.md), and [security requirements](../../architecture/security-requirements.md).
