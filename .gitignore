@@ -227,3 +227,7 @@ __marimo__/
 *.sqlite3-shm
 *.private.pem
 *.secret
+# User-selected local evidence output and lock files
+workspace-events.jsonl
+*.evidence.jsonl
+*.jsonl.lock
