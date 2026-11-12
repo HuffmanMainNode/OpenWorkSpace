@@ -1,0 +1,24 @@
+{
+  "id": "example.hello",
+  "version": "0.1.0",
+  "interface_version": "1",
+  "description": "A declarative example used to demonstrate manifest validation. It is not executable.",
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "name": {"type": "string", "maxLength": 80}
+    },
+    "additionalProperties": false
+  },
+  "outputs": {
+    "type": "object",
+    "properties": {
+      "greeting": {"type": "string"}
+    },
+    "required": ["greeting"],
+    "additionalProperties": false
+  },
+  "permissions": [],
+  "publisher": "OpenWorkSpace example",
+  "license": "Apache-2.0"
+}

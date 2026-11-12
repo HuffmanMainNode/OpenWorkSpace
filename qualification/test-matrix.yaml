@@ -1,0 +1,47 @@
+schema_version: "1.0"
+release_target: "0.1-foundation"
+environments:
+  - name: ubuntu-python-3.11
+    automation: github-actions
+    status: tested
+  - name: ubuntu-python-3.12
+    automation: github-actions
+    status: tested
+  - name: ubuntu-python-3.13
+    automation: github-actions
+    status: tested
+  - name: windows
+    automation: none
+    status: not-tested
+  - name: macos
+    automation: none
+    status: not-tested
+test_groups:
+  - id: unit-contracts
+    command: "pytest tests/test_contracts.py"
+    status: tested
+  - id: unit-policy
+    command: "pytest tests/test_policy.py"
+    status: tested
+  - id: unit-evidence
+    command: "pytest tests/test_evidence.py"
+    status: tested
+  - id: cli
+    command: "pytest tests/test_cli.py"
+    status: tested
+  - id: lint
+    command: "ruff check ."
+    status: tested
+  - id: offline-operation
+    command: "Run CLI with network disabled"
+    status: pending
+  - id: resilience-and-concurrency
+    command: "Dedicated corruption, interruption, and concurrent-writer tests"
+    status: pending
+  - id: sandbox-enforcement
+    command: "Platform-specific adversarial isolation qualification"
+    status: blocked
+notes:
+  - "A passing CI run proves only the commands and matrix listed above."
+  - "Windows and macOS compatibility are not currently claimed."
+  - "No plugin execution or sandbox isolation is qualified."

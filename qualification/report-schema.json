@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/qualification/report-schema.json",
+  "title": "OpenWorkSpace Qualification Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "release", "commit", "environment", "tests", "limitations", "result"],
+  "properties": {
+    "project": {"const": "OpenWorkSpace"},
+    "release": {"type": "string", "minLength": 1},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["os", "python", "dependencies"],
+      "properties": {
+        "os": {"type": "string"},
+        "python": {"type": "string"},
+        "dependencies": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "command", "exit_code", "status"],
+        "properties": {
+          "id": {"type": "string"},
+          "command": {"type": "string"},
+          "exit_code": {"type": "integer"},
+          "status": {"enum": ["passed", "failed", "skipped", "not-run"]}
+        }
+      }
+    },
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "result": {"enum": ["qualified-within-scope", "failed", "incomplete"]}
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/task.schema.json",
+  "title": "OpenWorkSpace Task",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "owner", "state", "inputs", "dependencies", "retry_policy"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "owner": {"type": "string", "minLength": 1, "maxLength": 256},
+    "state": {"enum": ["pending", "ready", "running", "succeeded", "failed", "cancelled", "blocked"]},
+    "inputs": {"type": "object"},
+    "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "deadline": {"type": ["string", "null"], "format": "date-time"},
+    "retry_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_attempts", "backoff_seconds"],
+      "properties": {
+        "max_attempts": {"type": "integer", "minimum": 1, "maximum": 20},
+        "backoff_seconds": {"type": "number", "minimum": 0, "maximum": 86400}
+      }
+    },
+    "idempotency_key": {"type": ["string", "null"], "maxLength": 256}
+  }
+}

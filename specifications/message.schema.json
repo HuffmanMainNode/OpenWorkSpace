@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/message.schema.json",
+  "title": "OpenWorkSpace Message Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["message_id", "sender", "recipient", "message_type", "schema_version", "timestamp", "payload"],
+  "properties": {
+    "message_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "sender": {"type": "string", "minLength": 1, "maxLength": 256},
+    "recipient": {"type": "string", "minLength": 1, "maxLength": 256},
+    "message_type": {"type": "string", "minLength": 1, "maxLength": 128},
+    "schema_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "correlation_id": {"type": ["string", "null"], "maxLength": 256},
+    "payload": {"type": "object"}
+  }
+}

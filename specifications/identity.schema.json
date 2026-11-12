@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/identity.schema.json",
+  "title": "OpenWorkSpace Identity Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "issuer", "status"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "kind": {"enum": ["user", "agent", "device", "service", "organization"]},
+    "issuer": {"type": "string", "minLength": 1, "maxLength": 256},
+    "key_reference": {"type": ["string", "null"], "maxLength": 512},
+    "status": {"enum": ["active", "suspended", "revoked", "unknown"]},
+    "valid_from": {"type": ["string", "null"], "format": "date-time"},
+    "valid_until": {"type": ["string", "null"], "format": "date-time"},
+    "attributes": {"type": "object"}
+  }
+}

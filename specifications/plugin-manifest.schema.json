@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/plugin-manifest.schema.json",
+  "title": "OpenWorkSpace External Package Manifest",
+  "description": "Descriptive metadata only. This schema does not authorize or enable package execution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "publisher", "version", "source", "digest", "license", "dependencies", "permissions", "supported_environments"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "publisher": {"type": "string", "minLength": 1, "maxLength": 256},
+    "version": {"type": "string", "minLength": 1, "maxLength": 128},
+    "source": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "license": {"type": "string", "minLength": 1, "maxLength": 256},
+    "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "permissions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "supported_environments": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "signature_reference": {"type": ["string", "null"], "maxLength": 1024}
+  }
+}
