@@ -49,3 +49,30 @@ jobs:
               raise SystemExit(f"wheel is missing runtime schemas: {sorted(missing)}")
           print(f"Verified runtime schemas in {wheel.name}")
           PY
+      - name: Install wheel into isolated target
+        run: python -m pip install --no-deps --target dist/install dist/openworkspace-*.whl
+      - name: Smoke-test installed wheel resources
+        run: |
+          python - <<'PY'
+          import sys
+          import tempfile
+          from pathlib import Path
+
+          sys.path.insert(0, "dist/install")
+          from openworkspace.evidence import append_event, read_events
+          from openworkspace.registry import CapabilityRegistry
+
+          root = Path(tempfile.mkdtemp())
+          journal = root / "events.jsonl"
+          append_event(
+              journal,
+              event_type="wheel.smoke_test",
+              actor="ci",
+              subject="installed-wheel",
+              result="success",
+          )
+          assert len(read_events(journal)) == 1
+          registry = CapabilityRegistry(root / "registry.sqlite3")
+          assert registry.list() == []
+          print("Installed wheel loaded bundled schemas and initialized local storage.")
+          PY
