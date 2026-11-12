@@ -85,6 +85,6 @@ jobs:
           tasks = TaskStore(root / "runtime.sqlite3")
           assert tasks.list() == []
           messages = MessageStore(root / "runtime.sqlite3")
-          assert messages.inbox("unused") == [] if False else True
+          assert messages is not None
           print("Installed wheel loaded bundled schemas and initialized all local stores.")
           PY

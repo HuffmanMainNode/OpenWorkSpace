@@ -2,23 +2,28 @@
 
 ## [0.1.0] - Unreleased
 
-### Added\n- Local identity metadata registry with audited active/suspended/revoked lifecycle transitions.\n- Local task lifecycle store with dependency-aware readiness, retry limits, integrity checks, and audited transitions.\n- Local SQLite message queue with identity-record status checks, inbox retrieval, recipient acknowledgement, and audit events.\n- CLI commands for identity and task records.\n
+### Added
 - Initial Python package and CLI.
 - JSON Schema 2020-12 capability manifest contract and validator.
 - Local SQLite capability registry with duplicate-ID rejection and manifest digest verification.
 - Registry audit records and permission-decision evaluation.
 - Local hash-linked JSONL evidence journal with strict schema and chain verification.
-- Shared data catalogs for permissions, capability domains, resource types, trust states, data classification, lifecycle, and protocol candidates.
-- Synthetic fixtures for all published contract schemas.
+- Local identity metadata registry with audited active, suspended, and revoked lifecycle transitions.
+- Local task lifecycle store with active owner-record checks, dependency-aware readiness, retry limits, integrity checks, and audited transitions.
+- Local SQLite message queue with active identity metadata checks, inbox retrieval, recipient acknowledgement, and audit events.
+- CLI commands for capability, identity, task, message, and evidence operations.
+- Shared data catalogs and synthetic fixtures for published contract schemas.
 - Qualification requirements, environment matrix, and report schema.
 - Repository population register and automated local Markdown-link validation.
-- CI matrix for Python 3.11, 3.12, and 3.13.
+- CI matrix for Python 3.11, 3.12, and 3.13, including wheel resource and installed-package smoke tests.
 
 ### Security and reliability boundaries
+- Identity records are metadata, not authenticated or cryptographically verified identities.
+- Task records are not executed by a scheduler or worker runtime.
+- Message queue is local-only and does not authenticate sender claims or provide network transport.
 - No third-party plugin execution, package installer, or arbitrary code runner.
 - No OS-level sandbox, credential vault, network firewall, or identity authority.
-- SQLite audit triggers are not tamper-proof against the database owner.
+- SQLite audit tables and local digests are not tamper-proof against the database owner.
 - Evidence hash chain is tamper-evident, not tamper-proof against a privileged local administrator.
 - JSONL evidence journal does not provide concurrent multi-process writer locking or crash-consistency guarantees.
-- Identity, task, message, resource, and external package contracts are specifications only.
 - Windows and macOS are not release-qualified.

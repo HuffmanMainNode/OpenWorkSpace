@@ -1,12 +1,12 @@
 # Getting Started
 
-OpenWorkSpace is a developer-oriented pre-alpha foundation. It validates declarative capability manifests, registers them in a local SQLite database, evaluates explicit permission decisions, and verifies a local evidence journal. It does not install or execute third-party capabilities.
+OpenWorkSpace is a developer-oriented pre-alpha foundation. It validates declarative capability manifests, maintains local identity metadata, stores tasks and their lifecycle, and provides a local message queue. It does not authenticate identity claims, execute tasks, or transport messages across a network.
 
 ## Requirements
 
 - Python 3.11 or newer.
 - Git.
-- Internet access to obtain source and dependencies. Registry and CLI operations are local after installation.
+- Internet access to obtain source and dependencies. Runtime database operations are local after installation.
 
 ## Install from source
 
@@ -23,7 +23,7 @@ Activate the environment:
 . .venv/bin/activate
 
 # Windows PowerShell
-.venv\\Scripts\\Activate.ps1
+.venv\Scripts\Activate.ps1
 ```
 
 Install and test:
@@ -35,28 +35,62 @@ pytest
 ruff check .
 ```
 
-## Validate and register a capability
+## Capability registry
 
 ```bash
 openworkspace validate-manifest examples/hello-capability.json
 openworkspace register examples/hello-capability.json --database .openworkspace/registry.sqlite3
 openworkspace list --database .openworkspace/registry.sqlite3
 openworkspace show example.hello --database .openworkspace/registry.sqlite3
-```
-
-The registry stores declarative metadata. It does not download packages, launch processes, or execute capability code.
-
-## Evaluate declared permissions
-
-```bash
 openworkspace evaluate example.hello --grant filesystem.read --database .openworkspace/registry.sqlite3
 ```
 
-This command demonstrates the policy helper against grants explicitly supplied by the operator. It is an evaluation record, not an enforcement mechanism. It does not grant the capability access to the filesystem.
+The registry stores declarative metadata. It does not download packages, launch processes, or execute capability code. Permission evaluation is not OS enforcement.
 
-## Verify an evidence journal
+## Local identity metadata
 
-Create one using the Python API:
+Use the synthetic identity fixtures:
+
+```bash
+openworkspace identity-create examples/contracts/identity.json
+openworkspace identity-create examples/contracts/service-identity.json
+openworkspace identity-show example.user.local
+openworkspace identity-status example.user.local suspended --reason "Example lifecycle demonstration"
+openworkspace identity-status example.user.local active --reason "Example reactivation"
+```
+
+Identity records are local metadata. The current implementation does not authenticate a person, prove control of a key, issue cryptographic credentials, or establish remote trust. `key_reference` is an opaque reference label, not a secret.
+
+## Task lifecycle
+
+The task fixture is owned by `example.user.local`, so create that identity first:
+
+```bash
+openworkspace task-create examples/contracts/task.json
+openworkspace task-list
+openworkspace task-show task.example.validation
+openworkspace task-transition task.example.validation ready --reason "Dependencies satisfied"
+openworkspace task-transition task.example.validation running --reason "Claimed for demonstration"
+openworkspace task-transition task.example.validation succeeded --reason "Demonstration completed"
+```
+
+The store enforces declared state transitions, active local owner-record presence, dependency completion before readiness, and retry limits. It does not schedule workers, execute task code, authenticate the operator, or guarantee exactly-once work.
+
+## Local message queue
+
+The message fixture uses the example user and service identities. Create both first:
+
+```bash
+openworkspace message-send examples/contracts/message.json
+openworkspace message-inbox example.local.core
+openworkspace message-ack message.example.001 example.local.core
+```
+
+Messages are stored locally in SQLite. The queue checks that sender and recipient metadata records exist and are active, validates envelopes, rejects duplicate message IDs, and allows the declared recipient identifier to acknowledge a message. This is not sender authentication, authenticated recipient access, or network transport. Do not use it as a security boundary.
+
+## Evidence journal
+
+Create an event with the Python API:
 
 ```python
 from openworkspace.evidence import append_event
@@ -77,3 +111,9 @@ openworkspace verify-evidence workspace-events.jsonl
 ```
 
 Missing and empty journals fail verification. The journal is tamper-evident, not tamper-proof against a privileged local administrator. Concurrent writers are not yet supported.
+
+## Storage
+
+The default runtime database is `.openworkspace/runtime.sqlite3`. Capability metadata uses `.openworkspace/registry.sqlite3` by default. Pass `--database` to select another local SQLite file. Back up databases while the application is stopped or use SQLite's supported backup facilities; copying only the main database file while WAL activity is ongoing may omit committed data.
+
+All examples are synthetic. Do not put secrets, private user records, or production credentials into fixtures or logs.

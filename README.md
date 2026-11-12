@@ -17,7 +17,7 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 | Permission decision primitive | Implemented | Exact explicit grants only; not OS enforcement |
 | Evidence journal | Implemented | JSONL hash chain, schema-validated; no concurrent writer lock |
 | CLI | Implemented | Manifest validation, registry operations, permission evaluation, evidence verification |
-| Identity metadata lifecycle | Implemented | Local records and status changes; no authentication or cryptographic identity proof |\n| Local message queue | Implemented | SQLite envelope storage, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |\n| Task lifecycle store | Implemented | Local state transitions and dependency readiness; no task execution engine |\n| Message, resource, package runtime | Specified | Schemas only |
+| Identity metadata lifecycle | Implemented | Local records and status changes; no authentication or cryptographic identity proof |\n| Local message queue | Implemented | SQLite envelope storage, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |\n| Task lifecycle store | Implemented | Local state transitions and dependency readiness; no task execution engine |\n| Resource and external package runtime | Specified | Schemas only |
 | Third-party plugin execution | Disabled | No arbitrary external code execution |
 | OS-level sandbox | Not implemented | Required before untrusted execution |
 | Cross-language SDK | Planned | Shared contract tests required |
@@ -105,7 +105,7 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [x] Initial architecture, security, integration, and contributor documentation.
 - [x] Draft identity, task, message, permission, evidence, resource, and package schemas.
 - [x] Local identity metadata lifecycle (authentication and cryptographic identity remain unimplemented).
-- [x] Local task lifecycle store (task execution and message transport remain unimplemented).
+- [x] Local task lifecycle store (task execution remains unimplemented).\n- [x] Local message queue (network transport and sender authentication remain unimplemented).
 - [ ] Permission enforcement at actual OS/process boundaries.
 - [ ] Journal locking, crash consistency, and external integrity anchors.
 - [ ] Qualified isolation before untrusted code execution.

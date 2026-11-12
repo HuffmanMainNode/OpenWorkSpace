@@ -8,7 +8,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 |---|---|---|
 | Packaging | `pyproject.toml`, package metadata, CLI entry point | Implemented |
 | Licensing | Apache-2.0 project license | Published |
-| CI | Python 3.11, 3.12, 3.13 install, tests, Ruff | Implemented |
+| CI | Python 3.11, 3.12, 3.13 install, tests, Ruff, wheel smoke tests | Implemented |
 | Community | Contribution guide, governance, conduct, issue templates | Published |
 | Security disclosure | Security policy and threat model | Published |
 
@@ -18,16 +18,18 @@ This index distinguishes shipped code from specifications and planned systems. A
 |---|---|---|
 | `contracts.py` | Validate capability manifests | Implemented |
 | `registry.py` | Local SQLite registry, duplicate protection, digest check, transactional audit | Implemented |
-| `policy.py` | Explicit permission decision helper | Implemented, not OS enforcement |\n| `identity.py` | Local identity metadata lifecycle and audit | Implemented, no authentication or cryptographic identity proof |\n| `tasks.py` | Task state store, dependencies, retry limits, audit | Implemented, no task execution engine |\n| `messages.py` | Local SQLite message queue, inbox, acknowledgement, audit | Implemented, no network transport or sender authentication |
+| `policy.py` | Explicit permission decision helper | Implemented, not OS enforcement |
+| `identity.py` | Local identity metadata lifecycle and audit | Implemented, no authentication or cryptographic identity proof |
+| `tasks.py` | Task state store, active owner-record check, dependencies, retry limits, audit | Implemented, no task execution engine |
+| `messages.py` | Local SQLite message queue, active identity metadata checks, inbox, acknowledgement, audit | Implemented, no network transport or sender authentication |
 | `evidence.py` | Schema-validated JSONL hash chain | Implemented, no multi-writer lock |
-| `cli.py` | Validate, register, list, show, remove, evaluate, verify | Implemented |
+| `cli.py` | Capability, identity, task, message, and evidence commands | Implemented |
 
 ## Contract and data pack
 
 - `specifications/`: capability, registry, identity, task, message, permission, evidence, resource, and external package schemas.
 - `data/catalogs/`: permission identifiers, capability domains, resource types, trust states, data classification, lifecycle, and protocol candidates.
-- `examples/contracts/`: valid synthetic fixtures for every non-capability schema.
-- `examples/hello-capability.json`: capability manifest fixture.
+- `examples/contracts/`: synthetic fixtures for published contract schemas.
 - `qualification/`: requirement register, environment matrix, and qualification report schema.
 
 ## Architecture and documentation
@@ -42,4 +44,4 @@ No third-party code runner, plugin loader, package downloader, OS sandbox, secre
 
 ## Verification
 
-Tests cover schema validity, fixture conformance, permission catalog consistency, registry behavior, duplicate and tampered data, concurrent distinct registrations, evidence tampering, CLI flows, and local Markdown links. The CI matrix is the authoritative record of the latest tested commit and environment.
+Tests cover schema validity, fixture conformance, permission catalog consistency, registry behavior, identity lifecycle, task lifecycle and dependencies, message queue operations, duplicate and tampered data, concurrent distinct registrations, evidence tampering, CLI flows, and local Markdown links. The CI matrix is the authoritative record of the latest tested commit and environment.
