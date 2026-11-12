@@ -231,3 +231,7 @@ __marimo__/
 workspace-events.jsonl
 *.evidence.jsonl
 *.jsonl.lock
+
+# User-local resource metadata; only README templates are tracked
+/local-resources/items/*
+!/local-resources/items/README.md

@@ -111,6 +111,7 @@ These operations manipulate local metadata and records. They do not provide iden
 Users may maintain a local resource collection without modifying the core. Community projects can be proposed through pull requests using the metadata-first intake process.
 
 - [Resource catalog and distribution policy](catalog/README.md)
+- [Local-only resource workspace](local-resources/README.md)
 - [First-party resource collection](catalog/first-party/README.md)
 - [Community resource collection](catalog/community/README.md)
 - [Optional resource packs](catalog/packs/README.md)

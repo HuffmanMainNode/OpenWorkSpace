@@ -45,6 +45,7 @@ OS sandbox: not implemented
 - catalog/community/README.md: third-party resource policy.
 - catalog/packs/README.md: optional curated pack policy.
 - contributions/README.md: contributor intake process.
+- local-resources/README.md: local-only user resource workspace; not auto-loaded.
 - contributions/inbox/README.md: where pull-request proposals are submitted.
 - contributions/templates/contribution.json: contribution manifest template.
 - specifications/contribution.schema.json: contribution manifest schema.

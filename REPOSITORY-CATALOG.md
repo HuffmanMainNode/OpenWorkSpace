@@ -43,6 +43,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 
 - `catalog/`: first-party, community, and optional-pack curation policies.
 - `contributions/inbox/`: metadata-first resource proposal queue; submissions are untrusted.
+- `local-resources/items/`: user-local resource records; Git-ignored except for its README template.
 - `contributions/templates/`: starter contribution manifest.
 - `AGENTS.md`: operating instructions for AI agents and automated contributors.
 - `llms.txt`: compact documentation index.
