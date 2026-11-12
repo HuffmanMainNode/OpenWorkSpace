@@ -73,3 +73,13 @@ def test_private_key_file_has_restrictive_permissions(tmp_path):
     keys.generate(IDENTITY["id"], PASSPHRASE, registry)
     mode = keys._key_path(IDENTITY["id"]).stat().st_mode & 0o777
     assert mode == 0o600
+
+
+
+def test_identity_registry_rejects_mismatched_public_key_fingerprint(tmp_path):
+    registry = IdentityRegistry(tmp_path / "runtime.sqlite3")
+    registry.create(IDENTITY)
+    with pytest.raises(IdentityError, match="fingerprint"):
+        registry.bind_public_key(
+            IDENTITY["id"], "ed25519-sha256:" + "0" * 64, "bm90LWEtcHVibGljLWtleQ=="
+        )

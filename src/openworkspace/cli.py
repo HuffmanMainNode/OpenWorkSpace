@@ -193,7 +193,7 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({"signature": signature}, sort_keys=True))
             return 0
         if args.command == "identity-verify":
-            valid = IdentityKeyStore(args.database.parent / "keys").verify(
+            valid = IdentityKeyStore.verify(
                 args.identity_id, args.path.read_bytes(), args.signature,
                 IdentityRegistry(args.database),
             )

@@ -98,7 +98,11 @@ class IdentityKeyStore:
         except Exception:
             path.unlink(missing_ok=True)
             raise
-        return {"identity_id": identity_id, "key_reference": key_reference, "public_key": public_key}
+        return {
+            "identity_id": identity_id,
+            "key_reference": key_reference,
+            "public_key": public_key,
+        }
 
     def sign(
         self,
