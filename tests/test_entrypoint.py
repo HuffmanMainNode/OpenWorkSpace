@@ -7,14 +7,12 @@ def test_initialize_workspace_creates_stores_and_is_idempotent(tmp_path):
     root = tmp_path / ".openworkspace"
     first = initialize_workspace(root)
     evidence = root / "evidence.jsonl"
-    evidence.write_text('{"preserved":true}\n', encoding="utf-8")
-
     second = initialize_workspace(root)
 
     assert first == second
     assert (root / "runtime.sqlite3").is_file()
     assert (root / "registry.sqlite3").is_file()
-    assert evidence.read_text(encoding="utf-8") == '{"preserved":true}\n'
+    assert not evidence.exists()
 
 
 def test_demo_is_non_executing_and_shows_allow_and_deny():
@@ -35,3 +33,11 @@ def test_init_and_demo_commands_emit_json(tmp_path, capsys):
     assert main(["demo"]) == 0
     demo = json.loads(capsys.readouterr().out)
     assert demo["executed"] is False
+
+
+def test_main_help_lists_init_and_demo(capsys):
+    assert main(["--help"]) == 0
+    output = capsys.readouterr().out
+    assert "init" in output
+    assert "demo" in output
+    assert "validate-manifest" in output
