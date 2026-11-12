@@ -86,3 +86,16 @@ def test_message_detects_database_tampering(tmp_path):
         )
     with pytest.raises(MessageError, match="integrity"):
         store.get("message.one")
+
+
+def test_message_detects_routing_index_tampering(tmp_path):
+    path = tmp_path / "runtime.sqlite3"
+    store = setup_store(path)
+    store.enqueue(envelope())
+    with sqlite3.connect(path) as connection:
+        connection.execute(
+            "UPDATE messages SET recipient=? WHERE message_id=?",
+            (SENDER["id"], "message.one"),
+        )
+    with pytest.raises(MessageError, match="recipient index mismatch"):
+        store.inbox(SENDER["id"])

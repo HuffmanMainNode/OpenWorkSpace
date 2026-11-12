@@ -128,17 +128,17 @@ class MessageStore:
     def get(self, message_id: str) -> dict[str, Any]:
         with self._connect() as connection:
             row = connection.execute(
-                """SELECT envelope_json,envelope_sha256,state,acknowledged_at
+                """SELECT sender,recipient,envelope_json,envelope_sha256,state,acknowledged_at
                 FROM messages WHERE message_id=?""",
                 (message_id,),
             ).fetchone()
         if row is None:
             raise MessageError(f"message not found: {message_id}")
-        self._verify(row[0], row[1], message_id)
+        self._verify(row[2], row[3], message_id, row[0], row[1])
         return {
-            "envelope": json.loads(row[0]),
-            "state": row[2],
-            "acknowledged_at": row[3],
+            "envelope": json.loads(row[2]),
+            "state": row[4],
+            "acknowledged_at": row[5],
         }
 
     def inbox(self, recipient: str, *, include_acknowledged: bool = False) -> list[dict[str, Any]]:
@@ -153,8 +153,8 @@ class MessageStore:
             query += " ORDER BY created_at,message_id"
             rows = connection.execute(query, (recipient,)).fetchall()
         result = []
-        for message_id, encoded, digest, state in rows:
-            self._verify(encoded, digest, message_id)
+        for message_id, sender, target, encoded, digest, state in rows:
+            self._verify(encoded, digest, message_id, sender, target)
             result.append({"envelope": json.loads(encoded), "state": state})
         return result
 
@@ -162,14 +162,17 @@ class MessageStore:
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(
-                "SELECT recipient,state FROM messages WHERE message_id=?", (message_id,)
+                """SELECT sender,recipient,envelope_json,envelope_sha256,state
+                FROM messages WHERE message_id=?""",
+                (message_id,),
             ).fetchone()
             if row is None:
                 raise MessageError(f"message not found: {message_id}")
             self._require_active_identity(connection, recipient)
-            if row[0] != recipient:
+            self._verify(row[2], row[3], message_id, row[0], row[1])
+            if row[1] != recipient:
                 raise MessageError("only the declared recipient may acknowledge this message")
-            if row[1] != "queued":
+            if row[4] != "queued":
                 raise MessageError(f"message is not queued: {message_id}")
             now = datetime.now(UTC).isoformat()
             connection.execute(
@@ -197,14 +200,28 @@ class MessageStore:
             for row in rows
         ]
 
-    def _verify(self, encoded: str, digest: str, message_id: str) -> None:
+    def _verify(
+        self,
+        encoded: str,
+        digest: str,
+        message_id: str,
+        sender: str | None = None,
+        recipient: str | None = None,
+    ) -> None:
         actual = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
         if actual != digest:
             raise MessageError(f"message integrity check failed: {message_id}")
         try:
-            self._validator.validate(json.loads(encoded))
+            envelope = json.loads(encoded)
+            self._validator.validate(envelope)
         except (ValueError, ValidationError) as exc:
             raise MessageError(f"stored message is invalid: {message_id}") from exc
+        if envelope.get("message_id") != message_id:
+            raise MessageError(f"message key does not match envelope: {message_id}")
+        if sender is not None and envelope.get("sender") != sender:
+            raise MessageError(f"message sender index mismatch: {message_id}")
+        if recipient is not None and envelope.get("recipient") != recipient:
+            raise MessageError(f"message recipient index mismatch: {message_id}")
 
     @staticmethod
     def _audit(
