@@ -62,7 +62,7 @@ Example only, after configuring and testing an encrypted rclone remote named `va
 
 ```bash
 rclone copy ./encrypted-snapshots vault:OpenWorkSpace/snapshots
-rclone check ./encrypted-snapshots vault:OpenWorkSpace/snapshots --one-way
+rclone cryptcheck ./encrypted-snapshots vault:OpenWorkSpace/snapshots --one-way
 ```
 
 Do not point a cloud sync client at the live `.openworkspace` directory. Do not use `rclone sync` as a default backup operation: mirroring can propagate deletions and mistakes. Confirm the meaning of every command and destination before running it.
