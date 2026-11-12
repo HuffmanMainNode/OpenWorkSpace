@@ -25,8 +25,8 @@ This index distinguishes shipped code from specifications and planned systems. A
 | `resources.py` | Local resource catalog, search, trust-state lifecycle, audit | Implemented, metadata only; no downloads or execution |
 | `packages.py` | Package manifest validation, local artifact digest verification, metadata ledger | Implemented, no downloads, unpacking, signature verification, or execution |
 | `packages.py` | Package manifest validation, local artifact digest verification, metadata ledger | Implemented, no download, unpacking, signature verification, or execution |
-| `evidence.py` | Schema-validated JSONL hash chain | Implemented, no multi-writer lock |
-| `cli.py` | Capability, identity, task, message, resource, package-intake, and evidence commands | Implemented |
+| `evidence.py` | Schema-validated JSONL hash chain with cross-process writer locking and fsync | Implemented, no external integrity anchor or power-loss qualification |
+| `database.py` | Shared SQLite WAL, synchronous, and busy-timeout configuration | Implemented |\n| `cli.py` | Capability, identity, task, message, resource, package-intake, and evidence commands | Implemented |
 
 ## Contract and data pack
 
@@ -47,4 +47,4 @@ No third-party code runner, plugin loader, package downloader, OS sandbox, secre
 
 ## Verification
 
-Tests cover schema validity, fixture conformance, permission catalog consistency, registry behavior, identity lifecycle, task lifecycle and dependencies, message queue operations, duplicate and tampered data, concurrent distinct registrations, evidence tampering, CLI flows, and local Markdown links. The CI matrix is the authoritative record of the latest tested commit and environment.
+Tests cover schema validity, fixture conformance, permission catalog consistency, registry behavior, identity lifecycle, task lifecycle and dependencies, message queue operations, duplicate and tampered data, concurrent distinct registrations, multi-process evidence writers, evidence tampering, CLI flows, and local Markdown links. The CI matrix is the authoritative record of the latest tested commit and environment.

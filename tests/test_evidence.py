@@ -53,3 +53,32 @@ def test_truncated_journal_record_fails(tmp_path):
     journal.write_text(journal.read_text() + '{"partial":')
     with pytest.raises(ValueError, match="invalid JSON"):
         read_events(journal)
+
+
+from concurrent.futures import ProcessPoolExecutor
+
+
+def _append_from_process(arguments):
+    path, process_id, count = arguments
+    for index in range(count):
+        append_event(
+            path,
+            event_type="concurrency.test",
+            actor=f"process-{process_id}",
+            subject=f"event-{index}",
+            result="written",
+        )
+
+
+def test_parallel_process_writers_preserve_complete_hash_chain(tmp_path):
+    journal = tmp_path / "parallel.jsonl"
+    workers = 4
+    per_worker = 8
+    with ProcessPoolExecutor(max_workers=workers) as executor:
+        list(executor.map(
+            _append_from_process,
+            [(str(journal), worker, per_worker) for worker in range(workers)],
+        ))
+    events = read_events(journal)
+    assert len(events) == workers * per_worker
+    assert len({event["event_id"] for event in events}) == workers * per_worker

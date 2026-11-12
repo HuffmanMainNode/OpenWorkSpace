@@ -189,3 +189,18 @@ def test_identity_and_task_audit_records_reject_ordinary_mutation(tmp_path):
             connection.execute("DELETE FROM identity_audit")
         with pytest.raises(sqlite3.IntegrityError, match="append-only"):
             connection.execute("UPDATE task_audit SET event_type='changed'")
+
+
+def test_runtime_sqlite_connections_use_wal_and_busy_timeout(tmp_path):
+    path = tmp_path / "runtime.sqlite3"
+    identities = IdentityRegistry(path)
+    tasks = TaskStore(path)
+    with sqlite3.connect(path) as connection:
+        assert connection.execute("PRAGMA journal_mode").fetchone()[0].lower() == "wal"
+    # Every independently opened connection applies the documented timeout.
+    with identities._connect() as connection:
+        assert connection.execute("PRAGMA busy_timeout").fetchone()[0] == 5000
+        assert connection.execute("PRAGMA synchronous").fetchone()[0] == 1
+    with tasks._connect() as connection:
+        assert connection.execute("PRAGMA busy_timeout").fetchone()[0] == 5000
+        assert connection.execute("PRAGMA synchronous").fetchone()[0] == 1

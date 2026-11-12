@@ -6,6 +6,8 @@ import base64
 import hashlib
 import json
 import sqlite3
+
+from openworkspace.database import configure_connection, enable_wal
 from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -37,6 +39,8 @@ class IdentityRegistry:
         )
         self._validator = Draft202012Validator(self._schema, format_checker=FormatChecker())
         with self._connect() as connection:
+            enable_wal(connection)
+            with self._connect() as connection:
             connection.execute(
                 """CREATE TABLE IF NOT EXISTS identities (
                     identity_id TEXT PRIMARY KEY,
@@ -69,7 +73,7 @@ class IdentityRegistry:
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
         connection = sqlite3.connect(self.path, timeout=10.0)
-        connection.execute("PRAGMA busy_timeout = 10000")
+        configure_connection(connection)
         try:
             with connection:
                 yield connection

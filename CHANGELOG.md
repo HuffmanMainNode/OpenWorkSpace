@@ -18,7 +18,9 @@
 - Shared data catalogs and synthetic fixtures for published contract schemas.
 - Qualification requirements, environment matrix, and report schema.
 - Repository population register and automated local Markdown-link validation.
-- CI matrix for Python 3.11, 3.12, and 3.13, including wheel resource and installed-package smoke tests.
+- Shared SQLite configuration using WAL mode, NORMAL synchronous setting, and a 5-second busy timeout across local stores.
+- Cross-process evidence journal writer locking and fsync on append.
+- CI stress test for concurrent journal writers and SQLite configuration.
 
 ### Security and reliability boundaries
 - Identity records are metadata, not authenticated or cryptographically verified identities.

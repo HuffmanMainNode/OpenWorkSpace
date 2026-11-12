@@ -17,7 +17,7 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 | Identity metadata lifecycle | Implemented | Local records and status transitions; local Ed25519 key binding and signatures; no real-world identity proof or remote authentication |
 | Task lifecycle store | Implemented | State transitions, active owner-record check, dependency readiness, retry limits; no task execution |
 | Local message queue | Implemented | SQLite envelopes, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |
-| Evidence journal | Implemented | JSONL hash chain; no multi-writer lock or external integrity anchor |
+| Evidence journal | Implemented | JSONL hash chain with cross-process writer lock and fsync; no external integrity anchor |
 | Local resource catalog | Implemented | Metadata registration, search, trust-state lifecycle; no downloads or execution |
 | External package intake | Implemented | Local manifest validation and artifact digest verification; no download, unpacking, or execution |
 | Third-party plugin execution | Disabled | No arbitrary external code execution |
@@ -30,7 +30,7 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 - **Open and portable:** no mandatory hosted service, proprietary runtime, or vendor lock-in.
 - **Modular:** use and replace capabilities independently where practical.
 - **Interoperable:** publish versioned, language-neutral contracts.
-- **Default deny:** installation or discovery never grants permissions.
+- **Default deny:** installation or discovery never grants permissions. Policy decisions remain advisory until an OS-level isolation backend is qualified.
 - **Evidence over claims:** functionality and security statements require tests and documented limits.
 - **Respect existing tools:** integrate proven software rather than rebuilding everything.
 - **Privacy by design:** data remains local by default; telemetry export requires explicit configuration.
@@ -130,7 +130,7 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [ ] Runtime task scheduler, worker execution, cancellation, and recovery.
 - [ ] Authenticated message transport and protocol negotiation.
 - [ ] Permission enforcement at actual OS/process boundaries.
-- [ ] Journal locking, crash consistency, and external integrity anchors.
+- [x] Cross-process evidence journal writer locking and fsync.\n- [ ] External integrity anchors, recovery tooling, and power-loss qualification.
 - [ ] Qualified isolation before untrusted code execution.
 - [ ] Independent TypeScript contract consumer and shared fixtures.
 - [x] Local resource catalog with provenance metadata and explicit trust-state lifecycle.

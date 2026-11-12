@@ -4,10 +4,17 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import uuid
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
 
 from jsonschema import Draft202012Validator, FormatChecker
 
@@ -30,6 +37,31 @@ def _validator() -> Draft202012Validator:
     return Draft202012Validator(schema, format_checker=FormatChecker())
 
 
+@contextmanager
+def _exclusive_journal_lock(journal: Path) -> Iterator[None]:
+    """Serialize journal writers across threads and processes on supported OSes."""
+    lock_path = journal.with_name(journal.name + ".lock")
+    with lock_path.open("a+b") as lock_file:
+        if os.name == "nt":
+            lock_file.seek(0, os.SEEK_END)
+            if lock_file.tell() == 0:
+                lock_file.write(b"0")
+                lock_file.flush()
+            lock_file.seek(0)
+            msvcrt.locking(lock_file.fileno(), msvcrt.LK_LOCK, 1)
+            try:
+                yield
+            finally:
+                lock_file.seek(0)
+                msvcrt.locking(lock_file.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
 def append_event(
     path: str | Path,
     *,
@@ -41,27 +73,29 @@ def append_event(
     """Append one event and return it. This is tamper-evident, not tamper-proof."""
     journal = Path(path)
     journal.parent.mkdir(parents=True, exist_ok=True)
-    previous = GENESIS
-    if journal.exists() and journal.stat().st_size:
-        events = read_events(journal)
-        previous = events[-1]["hash"]
-    event: dict[str, Any] = {
-        "event_id": str(uuid.uuid4()),
-        "timestamp": datetime.now(UTC).isoformat(),
-        "event_type": event_type,
-        "actor": actor,
-        "subject": subject,
-        "result": result,
-        "source": None,
-        "metadata": {},
-        "previous_hash": previous,
-    }
-    _validator().validate({**event, "hash": "0" * 64})
-    event["hash"] = hashlib.sha256(_canonical(event)).hexdigest()
-    with journal.open("a", encoding="utf-8", newline="\n") as stream:
-        stream.write(json.dumps(event, sort_keys=True, ensure_ascii=False) + "\n")
-        stream.flush()
-    return event
+    with _exclusive_journal_lock(journal):
+        previous = GENESIS
+        if journal.exists() and journal.stat().st_size:
+            events = read_events(journal)
+            previous = events[-1]["hash"]
+        event: dict[str, Any] = {
+            "event_id": str(uuid.uuid4()),
+            "timestamp": datetime.now(UTC).isoformat(),
+            "event_type": event_type,
+            "actor": actor,
+            "subject": subject,
+            "result": result,
+            "source": None,
+            "metadata": {},
+            "previous_hash": previous,
+        }
+        _validator().validate({**event, "hash": "0" * 64})
+        event["hash"] = hashlib.sha256(_canonical(event)).hexdigest()
+        with journal.open("a", encoding="utf-8", newline="\n") as stream:
+            stream.write(json.dumps(event, sort_keys=True, ensure_ascii=False) + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        return event
 
 
 def read_events(path: str | Path) -> list[dict[str, Any]]:

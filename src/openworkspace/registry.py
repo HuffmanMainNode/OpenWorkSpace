@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+
+from openworkspace.database import configure_connection, enable_wal
 from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -38,8 +40,7 @@ class CapabilityRegistry:
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.path, timeout=10.0)
         connection.row_factory = sqlite3.Row
-        connection.execute("PRAGMA foreign_keys = ON")
-        connection.execute("PRAGMA busy_timeout = 10000")
+        configure_connection(connection, foreign_keys=True)
         return connection
 
     @contextmanager
@@ -53,7 +54,7 @@ class CapabilityRegistry:
 
     def _initialize(self) -> None:
         with self._connection() as connection:
-            connection.execute("PRAGMA journal_mode = WAL")
+            enable_wal(connection)
             connection.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS capabilities (
