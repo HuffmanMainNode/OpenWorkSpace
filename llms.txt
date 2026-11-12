@@ -46,6 +46,8 @@ OS sandbox: not implemented
 - catalog/packs/README.md: optional curated pack policy.
 - contributions/README.md: contributor intake process.
 - local-resources/README.md: local-only user resource workspace; not auto-loaded.
+- catalog/first-party/repositories.json: verified public, non-fork first-party project links; reference-only and not install authorization.
+- specifications/first-party-catalog.schema.json: JSON Schema for first-party catalog records.
 - contributions/inbox/README.md: where pull-request proposals are submitted.
 - contributions/templates/contribution.json: contribution manifest template.
 - specifications/contribution.schema.json: contribution manifest schema.

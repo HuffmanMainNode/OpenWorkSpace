@@ -1,40 +1,51 @@
-# First-Party Resource Collection
+# First-party project catalog
 
-This collection indexes the maintainer's own public open-source projects as optional resources. It does not absorb their source code into OpenWorkSpace.
+This directory is the OpenWorkSpace directory of public projects authored under the owner's three explicitly designated public GitHub accounts.
 
-## Inclusion policy
+## Current snapshot
 
-A repository is eligible only after verifying all of the following against public GitHub metadata:
-- Repository visibility is public.
-- Repository is not a fork.
-- Canonical owner and repository name are correct.
-- The inspected revision is pinned.
-- License and source provenance are reviewed.
-- Project purpose and maturity are supported by repository contents.
-- Any archive or redistribution rights are independently confirmed.
+- **62 public, non-fork repositories** passed exact repository metadata checks in this snapshot.
+- PCakes303: 33 candidates.
+- HuffmanRepositories: 12 candidates.
+- HuffmanMainNode: 17 candidates.
+- No private repositories are included.
+- Forks are excluded, even when publicly visible.
+- No source code or archives are copied into OpenWorkSpace.
 
-Private repositories and private workspace assets are excluded completely. Forks are excluded from this first-party collection. No source repository is modified by catalog maintenance.
+The snapshot was produced on 2026-11-12. GitHub search is not a definitive account inventory, and the counts do not exactly reconcile with previously stated account totals. The index records the results actually verified, not an assumption that search was exhaustive.
 
-## Account scope
+## How to read the index
 
-The initial inventory scope is the public, non-fork repositories of:
-- `HuffmanMainNode`
-- `PCakes303`
-- `HuffmanRepositories`
+`repositories.json` is the canonical machine-readable catalog. It contains repository links, source account, resource category, a cautious summary, license status, and review state.
 
-This scope is not a claim that all repositories have been inventoried or approved. Records are added only after individual verification. Account search results are not a substitute for checking each repository's visibility, fork status, license, and current content.
+- `metadata-reviewed` means public visibility and non-fork status were checked on the exact repository metadata endpoint. It does not mean the code was audited.
+- `readme-reviewed` means the README was inspected for purpose and declared limitations. It does not mean the implementation was independently tested.
+- `not-established` means no reliable SPDX license was established from repository metadata. Check the repository's actual license files and file-level notices.
+- `not-reviewed` means a license identifier was surfaced but file-level provenance and redistribution rights have not been approved.
+- `reference-only` means OpenWorkSpace links to the upstream source; it does not bundle or install it.
+- `source_revision: null` means no immutable revision has yet been pinned for a release archive.
 
-## Categories
+## Initial useful project families
 
-- Agent foundations
-- Agent coordination
-- Trust and security
-- Intelligence and research
-- Interoperability
-- Testing and evaluation
-- Storage and preservation
-- Developer tools
+| Family | Projects to evaluate first | OpenWorkSpace role |
+|---|---|---|
+| Agent safety and policy | Multi-Agent-Swarm-Guardrails, agent-policy-engine, agent-emergency-control | Optional reference contracts and local validators |
+| Interoperability | Huffman-Protocol, Open-Intelligence-Exchange, Open-Agent-Compatibility, AIX Codecs | Protocol discovery, mappings, codecs, and conformance evidence |
+| Swarm coordination | Open-Swarm, swarm-coordination, swarm-state-mesh | Optional coordination components, subject to isolation and persistence review |
+| Evidence and defensive security | Huffman Cyber Observatory, OSINT Evidence Engine, Agent Audit & Provenance | Local integrity, defensive assessment, and provenance tools |
+| Research and OSINT | OSINT Collection Framework, OSINT Source Registry, Curated Modern OSINT Tools | Review-gated research references, not unattended collection |
+| Test corpora | Open-Agent Compatibility Fixtures, retry/idempotency and delegation fixtures | Offline test data and conformance exercises |
 
-## Current inventory status
+These are candidates, not approved integrations. OpenWorkSpace Core should remain small. Users can opt into tools individually and keep private local records in `local-resources/`.
 
-No individual repository is promoted by this initial catalog policy document. The inventory and project-by-project license review are separate qualification work. Until a record is published here or in a machine-readable catalog file, treat it as unreviewed and do not infer integration.
+## Approval path
+
+1. Confirm exact upstream repository and pinned commit.
+2. Inspect README, source tree, license files, copyright notices, dependency manifests, release state, and security policy.
+3. Run static checks and tests in an isolated review environment.
+4. Document data flows, network access, permissions, platform support, and known limitations.
+5. Decide whether to link, provide a source install recipe, or distribute an archive.
+6. Only approve archives when the license and file-level provenance explicitly permit redistribution.
+7. Generate checksums, an SBOM, attribution notices, and a reproducible build record for any approved bundle.
+
+No entry in this catalog authorizes downloading, installing, executing, or redistributing upstream code.

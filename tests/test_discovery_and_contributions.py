@@ -94,3 +94,29 @@ def test_reference_only_template_does_not_claim_execution_or_redistribution():
     assert manifest["distribution"]["mode"] == "reference-only"
     assert manifest["distribution"]["source_included"] is False
     assert manifest["distribution"]["archive_allowed"] is False
+
+
+def test_first_party_catalog_matches_schema_and_scope():
+    schema = _json(ROOT / "specifications" / "first-party-catalog.schema.json")
+    catalog = _json(ROOT / "catalog" / "first-party" / "repositories.json")
+    Draft202012Validator(schema, format_checker=FormatChecker()).validate(catalog)
+    assert catalog["counts"]["total"] == len(catalog["repositories"])
+    assert catalog["counts"]["total"] == sum(
+        catalog["counts"][owner]
+        for owner in ("PCakes303", "HuffmanRepositories", "HuffmanMainNode")
+    )
+    assert all(item["visibility"] == "public" for item in catalog["repositories"])
+    assert all(item["fork"] is False for item in catalog["repositories"])
+    assert all(item["publisher"] in catalog["scope"]["accounts"] for item in catalog["repositories"])
+    assert all(item["automatic_install"] is False for item in catalog["repositories"])
+    assert all(item["automatic_execution"] is False for item in catalog["repositories"])
+    assert all(item["redistribution"] == "not-approved" for item in catalog["repositories"])
+    assert len({item["repository_url"] for item in catalog["repositories"]}) == len(catalog["repositories"])
+
+
+def test_first_party_catalog_account_counts_match_entries():
+    catalog = _json(ROOT / "catalog" / "first-party" / "repositories.json")
+    for owner in ("PCakes303", "HuffmanRepositories", "HuffmanMainNode"):
+        assert catalog["counts"][owner] == sum(
+            item["publisher"] == owner for item in catalog["repositories"]
+        )
