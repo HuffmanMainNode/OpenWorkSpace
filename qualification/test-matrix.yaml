@@ -20,7 +20,7 @@ test_groups:
   - id: unit-and-contracts
     command: "pytest"
     status: tested
-    coverage: "Manifest, policy, registry, evidence, CLI, schemas, fixtures, data catalogs, and Markdown links."
+    coverage: "Manifest, policy, registry, identity, task, message, evidence, resource, package intake, discovery, contribution security invariants, CLI, schemas, fixtures, data catalogs, and Markdown links."
   - id: lint
     command: "ruff check ."
     status: tested
@@ -28,13 +28,19 @@ test_groups:
     command: "python -m pip wheel --no-deps . --wheel-dir dist"
     status: tested
   - id: wheel-resource-inclusion
-    command: "Inspect wheel archive for bundled JSON schemas"
+    command: "Inspect wheel archive for bundled runtime JSON schemas"
     status: tested
   - id: cli-clean-install-smoke
     command: "openworkspace --help; openworkspace init --path TEMP; openworkspace list --database TEMP/registry.sqlite3; openworkspace demo"
     status: tested
+  - id: installed-wheel-smoke
+    command: "Install built wheel into isolated target and initialize each local store"
+    status: tested
   - id: offline-operation
     command: "Run CLI with network disabled"
+    status: pending
+  - id: dependency-vulnerability-audit
+    command: "Automated dependency advisory scan"
     status: pending
   - id: resilience-and-concurrency
     command: "Concurrent registry registration and cross-process evidence writer serialization tested; crash recovery and power-loss qualification remain pending"
@@ -46,3 +52,4 @@ notes:
   - "A passing CI run proves only the commands and matrix listed above."
   - "Windows and macOS compatibility are not currently claimed."
   - "No plugin execution or sandbox isolation is qualified."
+  - "Contribution intake is metadata-only; no submitted tool is automatically installed or executed."

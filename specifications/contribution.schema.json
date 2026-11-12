@@ -96,7 +96,13 @@
           },
           "distribution": {
             "properties": {
+              "source_included": {"const": true},
               "archive_allowed": {"const": true}
+            }
+          },
+          "review": {
+            "properties": {
+              "status": {"const": "approved-archive"}
             }
           }
         }
@@ -113,6 +119,26 @@
           "review": {
             "properties": {
               "status": {"enum": ["approved-reference", "approved-archive"]}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "network": {
+            "properties": {
+              "required": {"const": false}
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "network": {
+            "properties": {
+              "destinations": {"maxItems": 0}
             }
           }
         }

@@ -112,3 +112,19 @@ requirements:
     title: Portable encrypted backup and verified restore
     status: blocked
     test: not implemented
+  - id: WSP-026
+    title: Machine-readable workspace discovery descriptor validates
+    status: tested
+    test: tests/test_discovery_and_contributions.py::test_workspace_discovery_descriptor_matches_schema
+  - id: WSP-027
+    title: Contribution manifest rejects unknown and unsafe approval claims
+    status: tested
+    test: tests/test_discovery_and_contributions.py
+  - id: WSP-028
+    title: Contribution archive requires explicit license and maintainer review
+    status: tested
+    test: tests/test_discovery_and_contributions.py::test_archive_distribution_requires_license_and_maintainer_approval
+  - id: WSP-029
+    title: Untrusted network and execution declarations fail schema validation
+    status: tested
+    test: tests/test_discovery_and_contributions.py
