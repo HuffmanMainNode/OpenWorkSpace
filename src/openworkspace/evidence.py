@@ -1,8 +1,5 @@
 """Append-only JSONL evidence journal with a verifiable hash chain."""
 
-
-"""Append-only JSONL evidence journal with a verifiable hash chain."""
-
 from __future__ import annotations
 
 import hashlib

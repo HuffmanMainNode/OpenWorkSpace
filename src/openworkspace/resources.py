@@ -3,12 +3,6 @@
 The catalog never fetches or executes resources.
 """
 
-
-"""Local resource catalog for provenance and trust metadata.
-
-The catalog never fetches or executes resources.
-"""
-
 from __future__ import annotations
 
 import hashlib

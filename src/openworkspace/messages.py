@@ -1,8 +1,5 @@
 """Local SQLite message queue. It provides no network transport or sender authentication."""
 
-
-"""Local SQLite message queue. It provides no network transport or sender authentication."""
-
 from __future__ import annotations
 
 import hashlib

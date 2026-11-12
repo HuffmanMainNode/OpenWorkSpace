@@ -1,8 +1,5 @@
 """Local task lifecycle store. Tasks are records; this module does not execute them."""
 
-
-"""Local task lifecycle store. Tasks are records; this module does not execute them."""
-
 from __future__ import annotations
 
 import hashlib

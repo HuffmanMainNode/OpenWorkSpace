@@ -1,8 +1,5 @@
 """Local external-package intake metadata and artifact digest verification."""
 
-
-"""Local external-package intake metadata and artifact digest verification."""
-
 from __future__ import annotations
 
 import hashlib

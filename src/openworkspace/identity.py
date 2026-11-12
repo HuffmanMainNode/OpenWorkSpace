@@ -1,8 +1,5 @@
 """Local identity record registry. This module does not authenticate principals."""
 
-
-"""Local identity record registry. This module does not authenticate principals."""
-
 from __future__ import annotations
 
 import base64

@@ -1,8 +1,5 @@
 """Transactional local SQLite registry for declarative capability manifests."""
 
-
-"""Transactional local SQLite registry for declarative capability manifests."""
-
 from __future__ import annotations
 
 import hashlib

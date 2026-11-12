@@ -1,8 +1,5 @@
 """Shared SQLite connection configuration for local runtime stores."""
 
-
-"""Shared SQLite connection configuration for local runtime stores."""
-
 import sqlite3
 
 BUSY_TIMEOUT_MS = 5_000
