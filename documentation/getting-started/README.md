@@ -33,7 +33,16 @@ python -m pip install --upgrade pip
 python -m pip install -e '.[dev]'
 pytest
 ruff check .
+openworkspace --help
+openworkspace init
+openworkspace demo
 ```
+
+The default workspace is `.openworkspace/`. To initialize elsewhere, use `openworkspace init --path /your/workspace`. Commands that accept `--database` must then be pointed explicitly at the matching database, for example `--database /your/workspace/runtime.sqlite3` for identity/task/message/resource/package commands or `--database /your/workspace/registry.sqlite3` for capability registry commands. Initialization does not rewrite your shell environment or global CLI defaults.
+
+The initialization command creates the SQLite stores. The evidence journal is created when the first event is appended; an empty file is not a valid evidence journal.
+
+The demo uses a temporary registry and synthetic manifest. It demonstrates permission decisions only. It does not execute code or enforce operating-system access controls.
 
 ## Capability registry
 
@@ -148,10 +157,12 @@ Then run:
 openworkspace verify-evidence workspace-events.jsonl
 ```
 
-Missing and empty journals fail verification. The journal is tamper-evident, not tamper-proof against a privileged local administrator. Concurrent writers are not yet supported.
+Missing and empty journals fail verification. Appends are serialized across processes using an OS-specific file lock and flushed with `fsync`. The journal remains tamper-evident, not tamper-proof against a privileged local administrator. Network filesystem and power-loss behavior are not fully qualified.
 
 ## Storage
 
-The default runtime database is `.openworkspace/runtime.sqlite3`. Capability metadata uses `.openworkspace/registry.sqlite3` by default. Pass `--database` to select another local SQLite file. Back up databases while the application is stopped or use SQLite's supported backup facilities; copying only the main database file while WAL activity is ongoing may omit committed data.
+The default runtime database is `.openworkspace/runtime.sqlite3`. Capability metadata uses `.openworkspace/registry.sqlite3` by default. Pass `--database` to select another local SQLite file. Copying only the main database file while WAL activity is ongoing may omit committed data. OpenWorkSpace does not yet provide a complete backup/restore command or a cloud storage connector.
+
+See the [storage and backup guide](../storage/README.md) for the current boundaries and safe interim options for Google Drive, iCloud Drive, OneDrive, Dropbox, Nextcloud, and object storage.
 
 All examples are synthetic. Do not put secrets, private user records, or production credentials into fixtures or logs.
