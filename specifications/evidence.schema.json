@@ -4,9 +4,9 @@
   "title": "OpenWorkSpace Evidence Event",
   "type": "object",
   "additionalProperties": false,
-  "required": ["event_id", "event_type", "timestamp", "actor", "subject", "result", "previous_hash", "hash"],
+  "required": ["event_id", "event_type", "timestamp", "actor", "subject", "result", "source", "metadata", "previous_hash", "hash"],
   "properties": {
-    "event_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "event_id": {"type": "string", "format": "uuid"},
     "event_type": {"type": "string", "minLength": 1, "maxLength": 128},
     "timestamp": {"type": "string", "format": "date-time"},
     "actor": {"type": "string", "minLength": 1, "maxLength": 256},
