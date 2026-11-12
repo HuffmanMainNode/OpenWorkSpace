@@ -218,3 +218,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# OpenWorkSpace local state and credentials
+.openworkspace/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.private.pem
+*.secret

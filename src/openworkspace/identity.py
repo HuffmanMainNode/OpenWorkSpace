@@ -165,6 +165,48 @@ class IdentityRegistry:
             )
         return record
 
+    def bind_public_key(
+        self, identity_id: str, key_reference: str, public_key: str
+    ) -> dict[str, Any]:
+        """Bind a public Ed25519 key to an active metadata record."""
+        if not key_reference.startswith("ed25519-sha256:") or not public_key:
+            raise IdentityError("invalid Ed25519 key binding")
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(
+                "SELECT record_json,record_sha256 FROM identities WHERE identity_id=?",
+                (identity_id,),
+            ).fetchone()
+            if row is None:
+                raise IdentityError(f"identity not found: {identity_id}")
+            if hashlib.sha256(row[0].encode("utf-8")).hexdigest() != row[1]:
+                raise IdentityError(f"identity integrity check failed: {identity_id}")
+            record = json.loads(row[0])
+            if record["status"] != "active":
+                raise IdentityError("only active identities may bind a key")
+            if record.get("key_reference") is not None:
+                raise IdentityError("identity already has a key binding")
+            record["key_reference"] = key_reference
+            record.setdefault("attributes", {})["public_key_ed25519"] = public_key
+            encoded, digest = self._encode(record)
+            now = datetime.now(UTC).isoformat()
+            connection.execute(
+                """UPDATE identities SET record_json=?,record_sha256=?,updated_at=?
+                WHERE identity_id=?""",
+                (encoded, digest, now, identity_id),
+            )
+            connection.execute(
+                """INSERT INTO identity_audit
+                (identity_id,event_type,timestamp,details_json) VALUES(?,?,?,?)""",
+                (
+                    identity_id,
+                    "identity.key_bound",
+                    now,
+                    json.dumps({"key_reference": key_reference}, sort_keys=True),
+                ),
+            )
+        return record
+
     def list(self) -> list[dict[str, str]]:
         with self._connect() as connection:
             rows = connection.execute(
