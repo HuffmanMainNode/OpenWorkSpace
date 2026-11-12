@@ -99,8 +99,8 @@ def test_cli_identity_and_task_lifecycle(tmp_path, capsys):
 
     assert main(["task-create", str(task_path), *db]) == 0
     assert json.loads(capsys.readouterr().out)["created"] is True
-    assert main(["task-transition", "cli.example.task", "ready", "--reason", "CLI test", *db]) == 0
-    assert json.loads(capsys.readouterr().out)["state"] == "ready"
+    assert main(["task-refresh-ready", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["promoted"] == ["cli.example.task"]
     assert main(["task-list", *db]) == 0
     assert json.loads(capsys.readouterr().out)["tasks"][0]["state"] == "ready"
     assert main(["task-show", "cli.example.task", *db]) == 0

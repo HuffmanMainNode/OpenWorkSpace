@@ -20,7 +20,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 | `registry.py` | Local SQLite registry, duplicate protection, digest check, transactional audit | Implemented |
 | `policy.py` | Explicit permission decision helper | Implemented, not OS enforcement |
 | `identity.py` | Local identity metadata lifecycle and audit | Implemented, no authentication or cryptographic identity proof |
-| `tasks.py` | Task state store, active owner-record check, dependencies, retry limits, audit | Implemented, no task execution engine |
+| `tasks.py` | Task state store, active owner-record check, dependency readiness refresh, retry limits, audit | Implemented, no task execution engine |
 | `messages.py` | Local SQLite message queue, active identity metadata checks, inbox, acknowledgement, audit | Implemented, no network transport or sender authentication |
 | `evidence.py` | Schema-validated JSONL hash chain | Implemented, no multi-writer lock |
 | `cli.py` | Capability, identity, task, message, and evidence commands | Implemented |

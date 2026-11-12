@@ -69,7 +69,7 @@ The task fixture is owned by `example.user.local`, so create that identity first
 openworkspace task-create examples/contracts/task.json
 openworkspace task-list
 openworkspace task-show task.example.validation
-openworkspace task-transition task.example.validation ready --reason "Dependencies satisfied"
+openworkspace task-refresh-ready
 openworkspace task-transition task.example.validation running --reason "Claimed for demonstration"
 openworkspace task-transition task.example.validation succeeded --reason "Demonstration completed"
 ```

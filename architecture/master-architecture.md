@@ -22,7 +22,9 @@ OpenWorkSpace is a modular, local-first capability ecosystem. It helps people an
 These are conceptual domains, not mandatory microservices.
 
 ## Initial implementation
-The 0.1 Python package and CLI validate declarative capability manifests against JSON Schema 2020-12, expose a default-deny permission-decision primitive, and write/verify a local hash-linked JSONL evidence journal. The permission primitive is not an OS enforcement mechanism. The journal is not tamper-proof against a privileged local administrator.
+The 0.1 Python package and CLI validate declarative capability manifests against JSON Schema 2020-12, maintain a local SQLite capability registry, manage local identity metadata lifecycle, maintain dependency-aware task state, provide a local SQLite message queue, expose a default-deny permission-decision primitive, and write/verify a local hash-linked JSONL evidence journal.
+
+These are local metadata and lifecycle components. Identity records are not authenticated credentials. Tasks are not executed by workers. Messages are not transported over a network. The permission primitive is not an OS enforcement mechanism. Local database digests and audit rows are not tamper-proof against a privileged local administrator. The evidence journal is not tamper-proof and does not yet support concurrent multi-process writers.
 
 ## Trust lifecycle
 A future lifecycle should distinguish discovery, acquisition, inspection, qualification, authorization, execution, monitoring, revocation, and removal. A manifest is descriptive metadata only. Publisher, digest, license, dependencies, permissions, behavior, compatibility, and maintenance require independent assessment.
