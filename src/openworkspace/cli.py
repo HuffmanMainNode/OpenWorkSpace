@@ -51,9 +51,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     remove = subparsers.add_parser("remove", help="remove a capability metadata record")
     remove.add_argument("capability_id")
-    remove.add_argument("--database", type=Path, default=Path(".openworkspace/registry.sqlite3"))
+    remove.add_argument(
+        "--database", type=Path, default=Path(".openworkspace/registry.sqlite3")
+    )
 
-    evaluate = subparsers.add_parser("evaluate", help="evaluate declared permissions without execution")
+    evaluate = subparsers.add_parser(
+        "evaluate", help="evaluate declared permissions without execution"
+    )
     evaluate.add_argument("capability_id")
     evaluate.add_argument("--grant", action="append", default=[])
     evaluate.add_argument("--database", type=Path, default=Path(".openworkspace/registry.sqlite3"))
@@ -61,7 +65,9 @@ def build_parser() -> argparse.ArgumentParser:
     verify = subparsers.add_parser("verify-evidence", help="verify a local evidence journal")
     verify.add_argument("path", type=Path)
 
-    identity_create = subparsers.add_parser("identity-create", help="create a local identity metadata record")
+    identity_create = subparsers.add_parser(
+        "identity-create", help="create a local identity metadata record"
+    )
     identity_create.add_argument("path", type=Path)
     _database_argument(identity_create)
 
@@ -144,23 +150,31 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({"registered": True, "id": registered["id"]}))
             return 0
         if args.command == "list":
-            print(json.dumps({"capabilities": CapabilityRegistry(args.database).list()}, sort_keys=True))
+            capabilities = CapabilityRegistry(args.database).list()
+            print(json.dumps({"capabilities": capabilities}, sort_keys=True))
             return 0
         if args.command == "show":
-            print(json.dumps(CapabilityRegistry(args.database).get(args.capability_id), sort_keys=True))
+            manifest = CapabilityRegistry(args.database).get(args.capability_id)
+            print(json.dumps(manifest, sort_keys=True))
             return 0
         if args.command == "remove":
             CapabilityRegistry(args.database).remove(args.capability_id)
             print(json.dumps({"removed": True, "id": args.capability_id}))
             return 0
         if args.command == "evaluate":
-            decisions = CapabilityRegistry(args.database).evaluate(args.capability_id, set(args.grant))
+            decisions = CapabilityRegistry(args.database).evaluate(
+                args.capability_id, set(args.grant)
+            )
             print(
                 json.dumps(
                     {
                         "executed": False,
                         "decisions": [
-                            {"permission": item.permission, "allowed": item.allowed, "reason": item.reason}
+                            {
+                                "permission": item.permission,
+                                "allowed": item.allowed,
+                                "reason": item.reason,
+                            }
                             for item in decisions
                         ],
                     },
@@ -168,7 +182,10 @@ def main(argv: list[str] | None = None) -> int:
                 )
             )
             return 0 if all(item.allowed for item in decisions) else 3
-    except (ContractError, OSError, ValueError, KeyError, RegistryError, IdentityError, TaskError) as exc:
+    except (
+        ContractError, OSError, ValueError, KeyError,
+        RegistryError, IdentityError, TaskError,
+    ) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     return 2

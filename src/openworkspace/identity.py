@@ -142,7 +142,8 @@ class IdentityRegistry:
                 (encoded, digest, now, identity_id),
             )
             connection.execute(
-                "INSERT INTO identity_audit(identity_id,event_type,timestamp,details_json) VALUES(?,?,?,?)",
+                """INSERT INTO identity_audit
+                (identity_id,event_type,timestamp,details_json) VALUES(?,?,?,?)""",
                 (
                     identity_id,
                     "identity.status_changed",

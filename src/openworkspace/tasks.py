@@ -152,7 +152,8 @@ class TaskStore:
             encoded, digest = self._encode(task)
             now = datetime.now(UTC).isoformat()
             connection.execute(
-                "UPDATE tasks SET task_json=?,task_sha256=?,attempts=?,updated_at=? WHERE task_id=?",
+                """UPDATE tasks SET task_json=?,task_sha256=?,attempts=?,updated_at=?
+                WHERE task_id=?""",
                 (encoded, digest, attempts, now, task_id),
             )
             self._audit(

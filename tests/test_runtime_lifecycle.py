@@ -78,9 +78,12 @@ def test_task_lifecycle_and_audit(tmp_path):
     store = TaskStore(tmp_path / "runtime.sqlite3")
     task = store.create(make_task("task.one"))
     assert task["state"] == "pending"
-    assert store.transition("task.one", "ready", reason="Dependencies satisfied")["state"] == "ready"
-    assert store.transition("task.one", "running", reason="Worker claimed task")["state"] == "running"
-    assert store.transition("task.one", "succeeded", reason="Work completed")["state"] == "succeeded"
+    ready = store.transition("task.one", "ready", reason="Dependencies satisfied")
+    assert ready["state"] == "ready"
+    running = store.transition("task.one", "running", reason="Worker claimed task")
+    assert running["state"] == "running"
+    succeeded = store.transition("task.one", "succeeded", reason="Work completed")
+    assert succeeded["state"] == "succeeded"
     assert [e["event_type"] for e in store.audit_events()] == [
         "task.created", "task.state_changed", "task.state_changed", "task.state_changed"
     ]
