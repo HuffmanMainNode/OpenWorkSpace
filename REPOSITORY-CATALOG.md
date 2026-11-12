@@ -24,7 +24,7 @@ This index distinguishes shipped code from specifications and planned systems. A
 | `messages.py` | Local SQLite message queue, active identity metadata checks, inbox, acknowledgement, audit | Implemented, no network transport or sender authentication |
 | `resources.py` | Local resource catalog, search, trust-state lifecycle, audit | Implemented, metadata only; no downloads or execution |
 | `evidence.py` | Schema-validated JSONL hash chain | Implemented, no multi-writer lock |
-| `cli.py` | Capability, identity, task, message, and evidence commands | Implemented |
+| `cli.py` | Capability, identity, task, message, resource, and evidence commands | Implemented |
 
 ## Contract and data pack
 

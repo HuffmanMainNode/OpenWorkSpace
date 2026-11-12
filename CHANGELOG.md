@@ -13,7 +13,7 @@
 - Local task lifecycle store with active owner-record checks, dependency-aware readiness refresh, retry limits, integrity checks, and audited transitions.
 - Local SQLite message queue with active identity metadata checks, inbox retrieval, recipient acknowledgement, and audit events.
 - Local resource catalog with metadata search, explicit trust-state transitions, digest checks, and append-only audit records.
-- CLI commands for capability, identity, task, message, and evidence operations.
+- CLI commands for capability, identity, task, message, resource, and evidence operations.
 - Shared data catalogs and synthetic fixtures for published contract schemas.
 - Qualification requirements, environment matrix, and report schema.
 - Repository population register and automated local Markdown-link validation.
