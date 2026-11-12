@@ -28,3 +28,24 @@ jobs:
         run: pytest
       - name: Lint
         run: ruff check .
+      - name: Build wheel
+        run: python -m pip wheel --no-deps . --wheel-dir dist
+      - name: Verify wheel includes runtime schemas
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          wheel = next(Path("dist").glob("openworkspace-*.whl"))
+          with ZipFile(wheel) as archive:
+              names = set(archive.namelist())
+          required = {
+              "openworkspace/capability.schema.json",
+              "openworkspace/evidence.schema.json",
+              "openworkspace/registry.schema.json",
+          }
+          missing = required - names
+          if missing:
+              raise SystemExit(f"wheel is missing runtime schemas: {sorted(missing)}")
+          print(f"Verified runtime schemas in {wheel.name}")
+          PY
