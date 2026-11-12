@@ -42,7 +42,6 @@ class TaskStore:
         )
         with self._connect() as connection:
             enable_wal(connection)
-            with self._connect() as connection:
             connection.execute(
                 """CREATE TABLE IF NOT EXISTS tasks (
                     task_id TEXT PRIMARY KEY, task_json TEXT NOT NULL,

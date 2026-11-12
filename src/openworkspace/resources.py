@@ -49,7 +49,6 @@ class ResourceCatalog:
         self._validator = Draft202012Validator(schema, format_checker=FormatChecker())
         with self._connect() as connection:
             enable_wal(connection)
-            with self._connect() as connection:
             connection.execute(
                 """CREATE TABLE IF NOT EXISTS resources (
                     resource_id TEXT PRIMARY KEY,
