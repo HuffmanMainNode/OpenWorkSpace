@@ -145,7 +145,7 @@ class MessageStore:
         with self._connect() as connection:
             self._require_active_identity(connection, recipient)
             query = (
-                "SELECT message_id,envelope_json,envelope_sha256,state "
+                "SELECT message_id,sender,recipient,envelope_json,envelope_sha256,state "
                 "FROM messages WHERE recipient=?"
             )
             if not include_acknowledged:
