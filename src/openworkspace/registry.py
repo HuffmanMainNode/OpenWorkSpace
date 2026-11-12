@@ -1,12 +1,13 @@
 """Transactional local SQLite registry for declarative capability manifests."""
 
+
+"""Transactional local SQLite registry for declarative capability manifests."""
+
 from __future__ import annotations
 
 import hashlib
 import json
 import sqlite3
-
-from openworkspace.database import configure_connection, enable_wal
 from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -14,8 +15,8 @@ from pathlib import Path
 from typing import Any
 
 from openworkspace.contracts import validate_capability
+from openworkspace.database import configure_connection, enable_wal
 from openworkspace.policy import PolicyDecision, authorize
-
 
 class RegistryError(ValueError):
     """Raised when a registry operation cannot be completed."""

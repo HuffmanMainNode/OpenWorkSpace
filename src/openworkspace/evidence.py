@@ -1,15 +1,19 @@
 """Append-only JSONL evidence journal with a verifiable hash chain."""
 
+
+"""Append-only JSONL evidence journal with a verifiable hash chain."""
+
 from __future__ import annotations
 
 import hashlib
 import json
 import os
 import uuid
+from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 

@@ -1,9 +1,9 @@
 """Shared SQLite connection configuration for local runtime stores."""
 
-from __future__ import annotations
+
+"""Shared SQLite connection configuration for local runtime stores."""
 
 import sqlite3
-
 
 BUSY_TIMEOUT_MS = 5_000
 

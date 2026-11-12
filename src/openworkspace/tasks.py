@@ -1,12 +1,13 @@
 """Local task lifecycle store. Tasks are records; this module does not execute them."""
 
+
+"""Local task lifecycle store. Tasks are records; this module does not execute them."""
+
 from __future__ import annotations
 
 import hashlib
 import json
 import sqlite3
-
-from openworkspace.database import configure_connection, enable_wal
 from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -15,6 +16,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
+from openworkspace.database import configure_connection, enable_wal
 
 class TaskError(ValueError):
     """Raised when a task operation is invalid."""

@@ -3,13 +3,17 @@
 The catalog never fetches or executes resources.
 """
 
+
+"""Local resource catalog for provenance and trust metadata.
+
+The catalog never fetches or executes resources.
+"""
+
 from __future__ import annotations
 
 import hashlib
 import json
 import sqlite3
-
-from openworkspace.database import configure_connection, enable_wal
 from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -18,6 +22,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 
+from openworkspace.database import configure_connection, enable_wal
 
 class ResourceCatalogError(ValueError):
     """Raised when a resource catalog operation is invalid."""

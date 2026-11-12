@@ -1,12 +1,13 @@
 """Local external-package intake metadata and artifact digest verification."""
 
+
+"""Local external-package intake metadata and artifact digest verification."""
+
 from __future__ import annotations
 
 import hashlib
 import json
 import sqlite3
-
-from openworkspace.database import configure_connection, enable_wal
 from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -15,6 +16,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 
+from openworkspace.database import configure_connection, enable_wal
 
 class PackageIntakeError(ValueError):
     """Raised when external package metadata or artifact verification fails."""
