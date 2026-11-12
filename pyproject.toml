@@ -26,7 +26,7 @@ dependencies = ["jsonschema>=4.23,<5", "cryptography>=42,<47"]
 dev = ["pytest>=8.3,<9", "ruff>=0.9,<1"]
 
 [project.scripts]
-openworkspace = "openworkspace.cli:main"
+openworkspace = "openworkspace.entrypoint:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/openworkspace"]
