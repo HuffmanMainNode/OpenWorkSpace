@@ -146,7 +146,7 @@
           "repository_url": {
             "type": "string",
             "format": "uri",
-            "pattern": "^https://github\\\\.com/(PCakes303|HuffmanRepositories|HuffmanMainNode)/"
+            "pattern": "^https://github\\.com/(PCakes303|HuffmanRepositories|HuffmanMainNode)/"
           },
           "visibility": {
             "const": "public"
