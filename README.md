@@ -19,7 +19,7 @@ OpenWorkSpace is an open-source, local-first digital workshop for discovering an
 | Local message queue | Implemented | SQLite envelopes, active identity metadata checks, inbox and acknowledgement; no network transport or sender authentication |
 | Evidence journal | Implemented | JSONL hash chain; no multi-writer lock or external integrity anchor |
 | Local resource catalog | Implemented | Metadata registration, search, trust-state lifecycle; no downloads or execution |
-| External package intake runtime | Specified | Metadata schema only; no installer or execution |
+| External package intake | Implemented | Local manifest validation and artifact digest verification; no download, unpacking, or execution |
 | Third-party plugin execution | Disabled | No arbitrary external code execution |
 | OS-level sandbox | Not implemented | Required before untrusted execution |
 | Cross-language SDK | Planned | Shared contract tests required |
@@ -134,6 +134,7 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [ ] Qualified isolation before untrusted code execution.
 - [ ] Independent TypeScript contract consumer and shared fixtures.
 - [x] Local resource catalog with provenance metadata and explicit trust-state lifecycle.
+- [x] External package metadata intake and local artifact digest verification, with execution disabled.
 - [ ] Reviewed integrations, knowledge resources, and community workflows.
 - [ ] Windows and macOS qualification.
 

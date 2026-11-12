@@ -112,6 +112,20 @@ openworkspace resource-trust resource.example.manual inspected --reason "Metadat
 
 Resources begin as `uninspected`. Trust transitions must follow the defined lifecycle. The catalog records metadata only: it does not fetch source URLs, verify licenses, qualify code, or authorize execution.
 
+## External package intake
+
+The package fixture is metadata-only and uses a reserved example URL. To register a package, create a local artifact and generate a manifest whose `digest` matches its SHA-256:
+
+```bash
+openworkspace package-validate ./package-manifest.json
+openworkspace package-verify ./package-manifest.json ./package-artifact.bin
+openworkspace package-register ./package-manifest.json ./package-artifact.bin
+openworkspace package-list
+openworkspace package-show example.package 1.0.0
+```
+
+The intake verifies the local bytes and records metadata. It does not download the source URL, unpack archives, inspect package behavior, verify publisher signatures, install dependencies, or execute code. A matching digest proves byte consistency only.
+
 ## Evidence journal
 
 Create an event with the Python API:

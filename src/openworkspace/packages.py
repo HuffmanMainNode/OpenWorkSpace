@@ -167,6 +167,8 @@ class PackageCatalog:
             raise PackageIntakeError(f"stored package manifest is invalid: {package_id}") from exc
         if manifest["id"] != package_id or manifest["version"] != version:
             raise PackageIntakeError("package database key does not match its manifest")
+        if row[2] != manifest["digest"]:
+            raise PackageIntakeError("stored artifact digest does not match package manifest")
         return {
             "manifest": manifest,
             "artifact_sha256": row[2],
@@ -185,6 +187,11 @@ class PackageCatalog:
             if hashlib.sha256(encoded.encode("utf-8")).hexdigest() != manifest_digest:
                 raise PackageIntakeError(f"stored package manifest integrity failed: {package_id}")
             manifest = json.loads(encoded)
+            self.validate(manifest)
+            if manifest["id"] != package_id or manifest["version"] != version:
+                raise PackageIntakeError("package database key does not match its manifest")
+            if artifact_digest != manifest["digest"]:
+                raise PackageIntakeError("stored artifact digest does not match package manifest")
             result.append(
                 {
                     "id": package_id,

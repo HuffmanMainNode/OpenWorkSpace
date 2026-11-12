@@ -47,6 +47,7 @@ jobs:
               "openworkspace/task.schema.json",
               "openworkspace/message.schema.json",
               "openworkspace/resource.schema.json",
+              "openworkspace/plugin-manifest.schema.json",
           }
           missing = required - names
           if missing:
@@ -70,6 +71,7 @@ jobs:
           from openworkspace.tasks import TaskStore
           from openworkspace.messages import MessageStore
           from openworkspace.resources import ResourceCatalog
+          from openworkspace.packages import PackageCatalog
 
           root = Path(tempfile.mkdtemp())
           journal = root / "events.jsonl"
@@ -107,5 +109,7 @@ jobs:
           assert messages is not None
           resources = ResourceCatalog(root / "runtime.sqlite3")
           assert resources.list() == []
+          packages = PackageCatalog(root / "runtime.sqlite3")
+          assert packages.list() == []
           print("Installed wheel loaded bundled schemas and initialized all local stores.")
           PY

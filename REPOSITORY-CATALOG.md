@@ -23,8 +23,9 @@ This index distinguishes shipped code from specifications and planned systems. A
 | `tasks.py` | Task state store, active owner-record check, dependency readiness refresh, retry limits, audit | Implemented, no task execution engine |
 | `messages.py` | Local SQLite message queue, active identity metadata checks, inbox, acknowledgement, audit | Implemented, no network transport or sender authentication |
 | `resources.py` | Local resource catalog, search, trust-state lifecycle, audit | Implemented, metadata only; no downloads or execution |
+| `packages.py` | Package manifest validation, local artifact digest verification, metadata ledger | Implemented, no download, unpacking, signature verification, or execution |
 | `evidence.py` | Schema-validated JSONL hash chain | Implemented, no multi-writer lock |
-| `cli.py` | Capability, identity, task, message, resource, and evidence commands | Implemented |
+| `cli.py` | Capability, identity, task, message, resource, package-intake, and evidence commands | Implemented |
 
 ## Contract and data pack
 

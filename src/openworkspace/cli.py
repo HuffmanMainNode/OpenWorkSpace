@@ -15,6 +15,7 @@ from openworkspace.identity_keys import IdentityKeyError, IdentityKeyStore
 from openworkspace.messages import MessageError, MessageStore
 from openworkspace.registry import CapabilityRegistry, RegistryError
 from openworkspace.resources import ResourceCatalog, ResourceCatalogError
+from openworkspace.packages import PackageCatalog, PackageIntakeError
 from openworkspace.tasks import TaskError, TaskStore
 
 
@@ -184,6 +185,34 @@ def build_parser() -> argparse.ArgumentParser:
     )
     resource_trust.add_argument("--reason", required=True)
     _database_argument(resource_trust)
+
+    package_validate = subparsers.add_parser(
+        "package-validate", help="validate an external package manifest"
+    )
+    package_validate.add_argument("path", type=Path)
+    _database_argument(package_validate)
+
+    package_verify = subparsers.add_parser(
+        "package-verify", help="verify a local artifact against its manifest digest"
+    )
+    package_verify.add_argument("manifest", type=Path)
+    package_verify.add_argument("artifact", type=Path)
+    _database_argument(package_verify)
+
+    package_register = subparsers.add_parser(
+        "package-register", help="record a verified package artifact without executing it"
+    )
+    package_register.add_argument("manifest", type=Path)
+    package_register.add_argument("artifact", type=Path)
+    _database_argument(package_register)
+
+    package_list = subparsers.add_parser("package-list", help="list verified package metadata")
+    _database_argument(package_list)
+
+    package_show = subparsers.add_parser("package-show", help="show a package version record")
+    package_show.add_argument("package_id")
+    package_show.add_argument("version")
+    _database_argument(package_show)
     return parser
 
 
@@ -301,6 +330,37 @@ def main(argv: list[str] | None = None) -> int:
                 )
             )
             return 0
+        if args.command == "package-validate":
+            manifest = PackageCatalog(args.database).validate_file(args.path)
+            print(json.dumps({
+                "valid": True, "id": manifest["id"], "version": manifest["version"]
+            }, sort_keys=True))
+            return 0
+        if args.command == "package-verify":
+            catalog = PackageCatalog(args.database)
+            manifest = catalog.validate_file(args.manifest)
+            digest = catalog.verify_artifact(manifest, args.artifact)
+            print(json.dumps({"verified": True, "digest": digest}, sort_keys=True))
+            return 0
+        if args.command == "package-register":
+            catalog = PackageCatalog(args.database)
+            manifest = catalog.validate_file(args.manifest)
+            record = catalog.register(manifest, args.artifact)
+            print(json.dumps({
+                "registered": True,
+                "id": record["manifest"]["id"],
+                "version": record["manifest"]["version"],
+                "execution_enabled": False,
+            }, sort_keys=True))
+            return 0
+        if args.command == "package-list":
+            records = PackageCatalog(args.database).list()
+            print(json.dumps({"packages": records}, sort_keys=True))
+            return 0
+        if args.command == "package-show":
+            record = PackageCatalog(args.database).get(args.package_id, args.version)
+            print(json.dumps(record, sort_keys=True))
+            return 0
 
         if args.command == "register":
             manifest = validate_capability_file(args.path)
@@ -343,7 +403,7 @@ def main(argv: list[str] | None = None) -> int:
     except (
         ContractError, OSError, ValueError, KeyError,
         RegistryError, IdentityError, IdentityKeyError, TaskError, MessageError,
-        ResourceCatalogError,
+        ResourceCatalogError, PackageIntakeError,
     ) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

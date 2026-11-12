@@ -191,3 +191,33 @@ def test_cli_resource_catalog_lifecycle(tmp_path, capsys):
     assert json.loads(capsys.readouterr().out)["trust_state"] == "inspected"
     assert main(["resource-show", "cli.resource", *db]) == 0
     assert json.loads(capsys.readouterr().out)["trust_state"] == "inspected"
+
+
+def test_cli_package_validate_verify_register_and_show(tmp_path, capsys):
+    import hashlib
+
+    artifact = b"synthetic cli package bytes"
+    artifact_path = tmp_path / "package.bin"
+    artifact_path.write_bytes(artifact)
+    manifest = {
+        "id": "cli.package", "publisher": "Example", "version": "1.0.0",
+        "source": "https://example.invalid/package",
+        "digest": "sha256:" + hashlib.sha256(artifact).hexdigest(),
+        "license": "Apache-2.0", "dependencies": [], "permissions": [],
+        "supported_environments": ["python>=3.11"], "signature_reference": None
+    }
+    manifest_path = tmp_path / "package.json"
+    manifest_path.write_text(json.dumps(manifest))
+    database = tmp_path / "runtime.sqlite3"
+    db = ["--database", str(database)]
+
+    assert main(["package-validate", str(manifest_path), *db]) == 0
+    assert json.loads(capsys.readouterr().out)["valid"] is True
+    assert main(["package-verify", str(manifest_path), str(artifact_path), *db]) == 0
+    assert json.loads(capsys.readouterr().out)["verified"] is True
+    assert main(["package-register", str(manifest_path), str(artifact_path), *db]) == 0
+    assert json.loads(capsys.readouterr().out)["execution_enabled"] is False
+    assert main(["package-list", *db]) == 0
+    assert len(json.loads(capsys.readouterr().out)["packages"]) == 1
+    assert main(["package-show", "cli.package", "1.0.0", *db]) == 0
+    assert json.loads(capsys.readouterr().out)["manifest"]["id"] == "cli.package"

@@ -46,6 +46,20 @@ def test_identity_task_and_message_schemas_match_bundled_runtime_resources():
         assert bundled == published
 
 
+def test_package_schema_matches_bundled_runtime_schema():
+    published = json.loads(
+        (ROOT / "specifications" / "plugin-manifest.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    bundled = json.loads(
+        (ROOT / "src" / "openworkspace" / "plugin-manifest.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert bundled == published
+
+
 def test_resource_schema_matches_bundled_runtime_schema():
     published = json.loads(
         (ROOT / "specifications" / "resource.schema.json").read_text(encoding="utf-8")
