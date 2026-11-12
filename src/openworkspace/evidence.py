@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -12,10 +12,23 @@ GENESIS = "0" * 64
 
 
 def _canonical(value: dict[str, Any]) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    )
+    return encoded.encode("utf-8")
 
 
-def append_event(path: str | Path, *, event_type: str, actor: str, subject: str, result: str) -> dict[str, Any]:
+def append_event(
+    path: str | Path,
+    *,
+    event_type: str,
+    actor: str,
+    subject: str,
+    result: str,
+) -> dict[str, Any]:
     """Append one event and return it. This is tamper-evident, not tamper-proof."""
     journal = Path(path)
     journal.parent.mkdir(parents=True, exist_ok=True)
@@ -24,7 +37,7 @@ def append_event(path: str | Path, *, event_type: str, actor: str, subject: str,
         events = read_events(journal)
         previous = events[-1]["hash"]
     event: dict[str, Any] = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "event_type": event_type,
         "actor": actor,
         "subject": subject,

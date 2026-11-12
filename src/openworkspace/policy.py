@@ -12,7 +12,10 @@ class PolicyDecision:
     permission: str
 
 
-def authorize(required: tuple[str, ...] | list[str], granted: set[str] | frozenset[str]) -> list[PolicyDecision]:
+def authorize(
+    required: tuple[str, ...] | list[str],
+    granted: set[str] | frozenset[str],
+) -> list[PolicyDecision]:
     """Evaluate each requested permission against explicit grants (default deny)."""
     return [
         PolicyDecision(

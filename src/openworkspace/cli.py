@@ -12,7 +12,10 @@ from openworkspace.evidence import read_events
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="openworkspace", description="Local-first digital workshop tools")
+    parser = argparse.ArgumentParser(
+        prog="openworkspace",
+        description="Local-first digital workshop tools",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
     validate = subparsers.add_parser("validate-manifest", help="validate a capability manifest")
     validate.add_argument("path", type=Path)
