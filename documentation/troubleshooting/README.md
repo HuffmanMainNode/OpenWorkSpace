@@ -24,7 +24,11 @@ The registry stores a SHA-256 digest of each canonical manifest. Preserve a copy
 
 The CLI reports a missing, empty, malformed, altered, or broken journal. Preserve a copy of the original before investigation. Do not edit records to make verification pass.
 
-The JSONL evidence journal does not currently support concurrent writers. Do not have multiple processes append to the same journal concurrently.
+Evidence writers are serialized across processes using an OS-specific file lock. If a process terminates unexpectedly, preserve the original journal and lock file for investigation. Do not edit records to make verification pass.
+
+## Custom workspace path
+
+If you initialized a workspace with `openworkspace init --path /some/path`, commands still use their documented `--database` defaults unless you pass the selected database path explicitly. Use `/some/path/runtime.sqlite3` for identity, task, message, resource, and package commands, and `/some/path/registry.sqlite3` for capability registry commands.
 
 ## Tests fail locally
 
