@@ -136,3 +136,36 @@ def test_cli_local_message_queue(tmp_path, capsys):
     assert json.loads(capsys.readouterr().out)["acknowledged"] is True
     assert main(["message-inbox", "cli.recipient", *db]) == 0
     assert json.loads(capsys.readouterr().out)["messages"] == []
+
+
+def test_cli_identity_keygen_sign_and_verify(tmp_path, capsys, monkeypatch):
+    identity = {
+        "id": "cli.key-owner", "kind": "user", "issuer": "local",
+        "key_reference": None, "status": "active", "valid_from": None,
+        "valid_until": None, "attributes": {}
+    }
+    identity_path = tmp_path / "identity.json"
+    payload_path = tmp_path / "payload.bin"
+    database = tmp_path / "runtime.sqlite3"
+    key_directory = tmp_path / "keys"
+    identity_path.write_text(json.dumps(identity))
+    payload_path.write_bytes(b"OpenWorkSpace CLI signature test")
+    db = ["--database", str(database)]
+    keys = ["--key-directory", str(key_directory)]
+
+    assert main(["identity-create", str(identity_path), *db]) == 0
+    capsys.readouterr()
+    prompts = iter(["cli passphrase for tests", "cli passphrase for tests"])
+    monkeypatch.setattr("openworkspace.cli.getpass.getpass", lambda _: next(prompts))
+    assert main(["identity-keygen", "cli.key-owner", *keys, *db]) == 0
+    assert json.loads(capsys.readouterr().out)["key_generated"] is True
+
+    monkeypatch.setattr(
+        "openworkspace.cli.getpass.getpass", lambda _: "cli passphrase for tests"
+    )
+    assert main(["identity-sign", "cli.key-owner", str(payload_path), *keys, *db]) == 0
+    signature = json.loads(capsys.readouterr().out)["signature"]
+    assert main([
+        "identity-verify", "cli.key-owner", str(payload_path), signature, *db
+    ]) == 0
+    assert json.loads(capsys.readouterr().out)["valid"] is True
