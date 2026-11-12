@@ -13,9 +13,9 @@ from openworkspace.evidence import read_events
 from openworkspace.identity import IdentityError, IdentityRegistry
 from openworkspace.identity_keys import IdentityKeyError, IdentityKeyStore
 from openworkspace.messages import MessageError, MessageStore
+from openworkspace.packages import PackageCatalog, PackageIntakeError
 from openworkspace.registry import CapabilityRegistry, RegistryError
 from openworkspace.resources import ResourceCatalog, ResourceCatalogError
-from openworkspace.packages import PackageCatalog, PackageIntakeError
 from openworkspace.tasks import TaskError, TaskStore
 
 
