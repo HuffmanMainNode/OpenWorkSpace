@@ -87,7 +87,8 @@ class IdentityRegistry:
                     (record["id"], encoded, digest, now, now),
                 )
                 connection.execute(
-                    "INSERT INTO identity_audit(identity_id,event_type,timestamp,details_json) VALUES(?,?,?,?)",
+                    """INSERT INTO identity_audit
+                    (identity_id,event_type,timestamp,details_json) VALUES(?,?,?,?)""",
                     (record["id"], "identity.created", now, json.dumps({"sha256": digest})),
                 )
         except sqlite3.IntegrityError as exc:
@@ -129,18 +130,27 @@ class IdentityRegistry:
             record = json.loads(row[0])
             current = record["status"]
             if status not in self._TRANSITIONS[current]:
-                raise IdentityError(f"identity status transition not allowed: {current} -> {status}")
+                raise IdentityError(
+                    f"identity status transition not allowed: {current} -> {status}"
+                )
             record["status"] = status
             encoded, digest = self._encode(record)
             now = datetime.now(UTC).isoformat()
             connection.execute(
-                "UPDATE identities SET record_json=?, record_sha256=?, updated_at=? WHERE identity_id=?",
+                """UPDATE identities SET record_json=?, record_sha256=?, updated_at=?
+                WHERE identity_id=?""",
                 (encoded, digest, now, identity_id),
             )
             connection.execute(
                 "INSERT INTO identity_audit(identity_id,event_type,timestamp,details_json) VALUES(?,?,?,?)",
-                (identity_id, "identity.status_changed", now,
-                 json.dumps({"from": current, "to": status, "reason": reason}, sort_keys=True)),
+                (
+                    identity_id,
+                    "identity.status_changed",
+                    now,
+                    json.dumps(
+                        {"from": current, "to": status, "reason": reason}, sort_keys=True
+                    ),
+                ),
             )
         return record
 

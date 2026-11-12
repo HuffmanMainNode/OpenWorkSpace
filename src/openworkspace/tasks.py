@@ -136,7 +136,10 @@ class TaskStore:
                     ).fetchone()
                     if dependency_row is None:
                         raise TaskError(f"dependency not found: {dependency}")
-                    if hashlib.sha256(dependency_row[0].encode("utf-8")).hexdigest() != dependency_row[1]:
+                    dependency_digest = hashlib.sha256(
+                        dependency_row[0].encode("utf-8")
+                    ).hexdigest()
+                    if dependency_digest != dependency_row[1]:
                         raise TaskError(f"dependency integrity check failed: {dependency}")
                     if json.loads(dependency_row[0])["state"] != "succeeded":
                         raise TaskError(f"dependency is not complete: {dependency}")
