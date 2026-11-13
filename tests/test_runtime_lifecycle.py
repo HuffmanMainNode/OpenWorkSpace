@@ -204,3 +204,11 @@ def test_runtime_sqlite_connections_use_wal_and_busy_timeout(tmp_path):
     with tasks._connect() as connection:
         assert connection.execute("PRAGMA busy_timeout").fetchone()[0] == 5000
         assert connection.execute("PRAGMA synchronous").fetchone()[0] == 1
+
+
+def test_task_rejects_self_dependency_before_lookup(tmp_path):
+    database = tmp_path / "runtime.sqlite3"
+    IdentityRegistry(database).create(IDENTITY)
+    store = TaskStore(database)
+    with pytest.raises(TaskError, match="cannot depend on itself"):
+        store.create(make_task("task.self", ["task.self"]))
