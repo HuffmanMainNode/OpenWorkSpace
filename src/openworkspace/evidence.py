@@ -144,6 +144,25 @@ def _read_events_unlocked(journal: Path, *, allow_torn_tail: bool) -> list[dict[
     return _parse_complete_lines(raw)
 
 
+def read_events_with_status(
+    path: str | Path,
+) -> tuple[list[dict[str, Any]], bool]:
+    """Read a journal once and return its verified events plus torn-tail status."""
+    journal = Path(path)
+    if not journal.exists():
+        raise FileNotFoundError(f"evidence journal does not exist: {journal}")
+    with _journal_lock(journal, shared=True):
+        raw = journal.read_bytes()
+        if not raw:
+            raise ValueError(f"evidence journal is empty: {journal}")
+        torn_tail = not raw.endswith(b"\\n")
+        if torn_tail:
+            raw = raw[: raw.rfind(b"\\n") + 1]
+            if not raw:
+                return [], True
+        return _parse_complete_lines(raw), torn_tail
+
+
 def _last_event_hash_unlocked(journal: Path) -> str:
     """Validate only the final complete event; full-chain checks belong to read_events."""
     if not journal.exists():
