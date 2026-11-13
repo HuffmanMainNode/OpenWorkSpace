@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 import uuid
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -14,7 +15,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
-if os.name == "nt":
+if sys.platform == "win32":
     import msvcrt
 else:
     import fcntl
@@ -43,7 +44,7 @@ def _exclusive_journal_lock(journal: Path) -> Iterator[None]:
     """Serialize journal writers across threads and processes on supported OSes."""
     lock_path = journal.with_name(journal.name + ".lock")
     with lock_path.open("a+b") as lock_file:
-        if os.name == "nt":
+        if sys.platform == "win32":
             lock_file.seek(0, os.SEEK_END)
             if lock_file.tell() == 0:
                 lock_file.write(b"0")
