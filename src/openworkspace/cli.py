@@ -91,7 +91,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     identity_status = subparsers.add_parser("identity-status", help="change local identity status")
     identity_status.add_argument("identity_id")
-    identity_status.add_argument("status", choices=["active", "suspended", "revoked", "unknown"])
+    identity_status.add_argument("status", choices=["active", "suspended", "revoked"])
     identity_status.add_argument("--reason", required=True)
     _database_argument(identity_status)
 
