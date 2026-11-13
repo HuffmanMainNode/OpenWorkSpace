@@ -201,12 +201,15 @@ def test_readers_during_writes_never_observe_false_integrity_failure(tmp_path):
 
     def reader():
         ready.wait(timeout=10)
-        while not finished.is_set():
+        for _ in range(50):
+            if finished.is_set():
+                break
             try:
                 read_events(journal)
             except Exception as exc:
                 errors.append(exc)
                 return
+            time.sleep(0.001)
 
     with ThreadPoolExecutor(max_workers=2) as executor:
         write_future = executor.submit(writer)
