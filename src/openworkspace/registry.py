@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 import hashlib
 import json
 import sqlite3
@@ -133,7 +134,7 @@ class CapabilityRegistry:
 
     def evaluate(
         self, capability_id: str, granted: set[str] | frozenset[str]
-    ) -> list[PolicyDecision]:
+    ) -> builtins.list[PolicyDecision]:
         """Evaluate permissions and atomically record the decision in registry audit."""
         with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -162,7 +163,7 @@ class CapabilityRegistry:
             )
         return decisions
 
-    def audit_events(self) -> list[dict[str, Any]]:
+    def audit_events(self) -> builtins.list[dict[str, Any]]:
         with self._connection() as connection:
             rows = connection.execute(
                 """SELECT sequence, event_type, capability_id, timestamp, details_json
