@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker, SchemaError, ValidationError
@@ -70,9 +70,17 @@ def validate_local_catalog(root: str | Path = ".") -> dict[str, Any]:
     if catalog["counts"]["total"] != len(entries):
         raise CatalogValidationError("first-party catalog total does not match its entries")
 
+    pack_ids = [pack["id"] for pack in packs["packs"]]
+    if len(set(pack_ids)) != len(pack_ids):
+        raise CatalogValidationError("resource packs contain duplicate pack IDs")
+
     for pack in packs["packs"]:
-        for item in pack["items"]:
-            project_id = item["project_id"]
+        item_ids = [item["project_id"] for item in pack["items"]]
+        if len(set(item_ids)) != len(item_ids):
+            raise CatalogValidationError(
+                f"resource pack {pack['id']} contains duplicate project references"
+            )
+        for project_id in item_ids:
             if project_id not in by_id:
                 raise CatalogValidationError(
                     f"resource pack {pack['id']} references unknown project {project_id}"
@@ -103,6 +111,21 @@ def validate_local_catalog(root: str | Path = ".") -> dict[str, Any]:
         if entry["review_state"] != record["review_state"]:
             raise CatalogValidationError(
                 f"review state mismatch for qualified project {project_id}"
+            )
+
+        license_path = PurePosixPath(record["license_file"]["path"])
+        if (
+            license_path.is_absolute()
+            or ".." in license_path.parts
+            or not license_path.parts
+        ):
+            raise CatalogValidationError(
+                f"license file path must be a safe repository-relative path for {project_id}"
+            )
+        license_was_reviewed = record["license_file"]["path"] in record["files_reviewed"]
+        if record["license_file"]["inspected"] != license_was_reviewed:
+            raise CatalogValidationError(
+                f"license inspection flag and files_reviewed disagree for {project_id}"
             )
         if record["decision"] != "reference-only":
             raise CatalogValidationError(
