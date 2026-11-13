@@ -2,13 +2,6 @@ import json
 import shutil
 from pathlib import Path
 
-import pytest
-
-from openworkspace.discovery import (
-    CatalogValidationError,
-    validate_local_catalog,
-)
-
 
 SOURCE_ROOT = Path(__file__).resolve().parents[1]
 DOCUMENTS = (
@@ -19,6 +12,12 @@ DOCUMENTS = (
     "catalog/packs/first-party-packs.json",
     "catalog/first-party/source-qualification.json",
 )
+
+
+def _validate(root):
+    from openworkspace.discovery import validate_local_catalog
+
+    return validate_local_catalog(root)
 
 
 def _copy_catalog(tmp_path: Path) -> Path:
@@ -40,8 +39,19 @@ def _write(root: Path, relative: str, document: dict) -> None:
     )
 
 
+def _assert_invalid(root: Path, expected_message: str) -> None:
+    from openworkspace.discovery import CatalogValidationError
+
+    try:
+        _validate(root)
+    except CatalogValidationError as exc:
+        assert expected_message in str(exc)
+    else:
+        raise AssertionError(f"expected catalog validation error containing {expected_message!r}")
+
+
 def test_local_catalog_validates_and_reports_offline_scope():
-    result = validate_local_catalog(SOURCE_ROOT)
+    result = _validate(SOURCE_ROOT)
     assert result == {
         "valid": True,
         "repositories": 62,
@@ -59,8 +69,7 @@ def test_rejects_duplicate_resource_pack_ids(tmp_path):
     packs["packs"].append(dict(packs["packs"][0]))
     _write(root, path, packs)
 
-    with pytest.raises(CatalogValidationError, match="duplicate pack IDs"):
-        validate_local_catalog(root)
+    _assert_invalid(root, "duplicate pack IDs")
 
 
 def test_rejects_duplicate_project_reference_within_pack(tmp_path):
@@ -71,8 +80,7 @@ def test_rejects_duplicate_project_reference_within_pack(tmp_path):
     first_pack["items"].append(dict(first_pack["items"][0]))
     _write(root, path, packs)
 
-    with pytest.raises(CatalogValidationError, match="duplicate project references"):
-        validate_local_catalog(root)
+    _assert_invalid(root, "duplicate project references")
 
 
 def test_rejects_license_flag_that_disagrees_with_reviewed_files(tmp_path):
@@ -86,8 +94,7 @@ def test_rejects_license_flag_that_disagrees_with_reviewed_files(tmp_path):
     record["license_file"]["inspected"] = True
     _write(root, path, qualification)
 
-    with pytest.raises(CatalogValidationError, match="license inspection flag"):
-        validate_local_catalog(root)
+    _assert_invalid(root, "license inspection flag")
 
 
 def test_rejects_license_path_traversal(tmp_path):
@@ -97,8 +104,7 @@ def test_rejects_license_path_traversal(tmp_path):
     qualification["records"][0]["license_file"]["path"] = "../LICENSE"
     _write(root, path, qualification)
 
-    with pytest.raises(CatalogValidationError, match="safe repository-relative path"):
-        validate_local_catalog(root)
+    _assert_invalid(root, "safe repository-relative path")
 
 
 def test_rejects_inspected_license_missing_from_reviewed_file_list(tmp_path):
@@ -112,5 +118,4 @@ def test_rejects_inspected_license_missing_from_reviewed_file_list(tmp_path):
     record["files_reviewed"].remove(record["license_file"]["path"])
     _write(root, path, qualification)
 
-    with pytest.raises(CatalogValidationError, match="license inspection flag"):
-        validate_local_catalog(root)
+    _assert_invalid(root, "license inspection flag")
