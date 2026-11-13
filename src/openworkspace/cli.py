@@ -10,7 +10,7 @@ from pathlib import Path
 
 from openworkspace.contracts import ContractError, validate_capability_file
 from openworkspace.discovery import validate_local_catalog
-from openworkspace.evidence import JournalTornTailError, read_events, repair_evidence
+from openworkspace.evidence import read_events, read_events_with_status, repair_evidence
 from openworkspace.identity import IdentityError, IdentityRegistry
 from openworkspace.identity_keys import IdentityKeyError, IdentityKeyStore
 from openworkspace.messages import MessageError, MessageStore
@@ -253,18 +253,13 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(result, sort_keys=True))
             return 0
         if args.command == "verify-evidence":
-            try:
-                events = read_events(args.path)
-            except JournalTornTailError:
-                events = read_events(args.path, allow_torn_tail=True)
-                print(json.dumps({
-                    "valid": False, "events": len(events), "torn_tail": True
-                }, sort_keys=True))
-                return 2
+            events, torn_tail = read_events_with_status(args.path)
             print(json.dumps({
-                "valid": True, "events": len(events), "torn_tail": False
+                "valid": not torn_tail,
+                "events": len(events),
+                "torn_tail": torn_tail,
             }, sort_keys=True))
-            return 0
+            return 2 if torn_tail else 0
         if args.command == "evidence-repair":
             result = repair_evidence(args.path)
             print(json.dumps(result, sort_keys=True))
