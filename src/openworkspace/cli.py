@@ -10,7 +10,7 @@ from pathlib import Path
 
 from openworkspace.contracts import ContractError, validate_capability_file
 from openworkspace.discovery import validate_local_catalog
-from openworkspace.evidence import read_events, read_events_with_status, repair_evidence
+from openworkspace.evidence import read_events_with_status, repair_evidence
 from openworkspace.identity import IdentityError, IdentityRegistry
 from openworkspace.identity_keys import IdentityKeyError, IdentityKeyStore
 from openworkspace.messages import MessageError, MessageStore
