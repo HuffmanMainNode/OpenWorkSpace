@@ -155,9 +155,9 @@ def read_events_with_status(
         raw = journal.read_bytes()
         if not raw:
             raise ValueError(f"evidence journal is empty: {journal}")
-        torn_tail = not raw.endswith(b"\\n")
+        torn_tail = not raw.endswith(b"\n")
         if torn_tail:
-            raw = raw[: raw.rfind(b"\\n") + 1]
+            raw = raw[: raw.rfind(b"\n") + 1]
             if not raw:
                 return [], True
         return _parse_complete_lines(raw), torn_tail
@@ -183,7 +183,7 @@ def _last_event_hash_unlocked(journal: Path) -> str:
             chunk_start = max(0, cursor - 4096)
             stream.seek(chunk_start)
             chunk = stream.read(cursor - chunk_start)
-            previous_newline = chunk.rfind(b"\\n")
+            previous_newline = chunk.rfind(b"\n")
             if previous_newline >= 0:
                 line_start = chunk_start + previous_newline + 1
                 break

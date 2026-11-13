@@ -279,7 +279,7 @@ def test_append_uses_one_append_write_and_restrictive_file_mode(tmp_path, monkey
     monkeypatch.setattr(evidence.os, "write", tracked_write)
     journal = tmp_path / "single-write.jsonl"
     append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
-    event_writes = [payload for payload in writes if payload.endswith(b"\\n")]
+    event_writes = [payload for payload in writes if payload.endswith(b"\n")]
     assert len(event_writes) == 1
     if os.name == "posix":
         assert journal.stat().st_mode & 0o777 == 0o600
@@ -290,7 +290,7 @@ def test_append_refuses_corrupt_complete_final_event(tmp_path):
     append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
     event = json.loads(journal.read_text(encoding="utf-8"))
     event["result"] = "tampered"
-    journal.write_text(json.dumps(event) + "\\n", encoding="utf-8")
+    journal.write_text(json.dumps(event) + "\n", encoding="utf-8")
     before = journal.read_bytes()
     with pytest.raises(ValueError, match="integrity check failed"):
         append_event(journal, event_type="test", actor="tester", subject="two", result="ok")
@@ -339,7 +339,7 @@ def test_short_append_write_leaves_detectable_torn_tail(tmp_path, monkeypatch):
     with pytest.raises(OSError, match="short evidence journal write"):
         append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
     monkeypatch.setattr(evidence.os, "write", original_write)
-    assert not journal.read_bytes().endswith(b"\\n")
+    assert not journal.read_bytes().endswith(b"\n")
     with pytest.raises(JournalTornTailError):
         append_event(journal, event_type="test", actor="tester", subject="two", result="ok")
 
