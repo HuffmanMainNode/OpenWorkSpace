@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from openworkspace.discovery import CatalogValidationError, validate_local_catalog
+from openworkspace.discovery import (\n    CatalogValidationError,\n    validate_local_catalog,\n)
 
 
 SOURCE_ROOT = Path(__file__).resolve().parents[1]
