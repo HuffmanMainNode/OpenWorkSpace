@@ -221,3 +221,40 @@ def test_cli_package_validate_verify_register_and_show(tmp_path, capsys):
     assert len(json.loads(capsys.readouterr().out)["packages"]) == 1
     assert main(["package-show", "cli.package", "1.0.0", *db]) == 0
     assert json.loads(capsys.readouterr().out)["manifest"]["id"] == "cli.package"
+
+def test_cli_validate_catalog_is_offline_and_reports_counts(capsys):
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    assert main(["validate-catalog", "--root", str(root)]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["valid"] is True
+    assert result["repositories"] == 62
+    assert result["resource_packs"] == 6
+    assert result["qualification_records"] == 9
+    assert result["network_accessed"] is False
+    assert result["source_code_executed"] is False
+
+
+def test_cli_validate_catalog_rejects_broken_local_data(tmp_path, capsys):
+    import shutil
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    for relative in (
+        "specifications/first-party-catalog.schema.json",
+        "specifications/resource-packs.schema.json",
+        "specifications/source-qualification.schema.json",
+        "catalog/first-party/repositories.json",
+        "catalog/packs/first-party-packs.json",
+        "catalog/first-party/source-qualification.json",
+    ):
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(root / relative, target)
+    catalog_path = tmp_path / "catalog/first-party/repositories.json"
+    catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+    catalog["repositories"][0]["visibility"] = "private"
+    catalog_path.write_text(json.dumps(catalog), encoding="utf-8")
+    assert main(["validate-catalog", "--root", str(tmp_path)]) == 2
+    assert "error:" in capsys.readouterr().err

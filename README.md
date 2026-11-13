@@ -180,3 +180,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Do not claim a capability is complete un
 ## License
 
 Original project code is offered under Apache-2.0. Third-party integrations, packages, datasets, models, and documentation retain their own licenses and terms. A catalog entry never implies redistribution rights.
+
+## Offline catalog validation
+
+From a local clone, validate the first-party resource catalog, optional resource packs, and machine-readable source qualification records:
+
+```bash
+openworkspace validate-catalog --root .
+```
+
+This command reads only the selected local repository files. It does not contact GitHub, download resources, install dependencies, or execute upstream projects. It checks JSON schemas, repository and pack references, owner counts, immutable source revision pins, and consistency between qualification records and catalog entries. A successful result validates metadata consistency only; it is not a security certification or approval to install, execute, or redistribute a resource.

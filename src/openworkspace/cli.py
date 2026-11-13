@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from openworkspace.contracts import ContractError, validate_capability_file
+from openworkspace.discovery import validate_local_catalog
 from openworkspace.evidence import read_events
 from openworkspace.identity import IdentityError, IdentityRegistry
 from openworkspace.identity_keys import IdentityKeyError, IdentityKeyStore
@@ -42,6 +43,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     validate = subparsers.add_parser("validate-manifest", help="validate a capability manifest")
     validate.add_argument("path", type=Path)
+
+    catalog_validate = subparsers.add_parser(
+        "validate-catalog", help="validate local discovery catalogs and qualification records"
+    )
+    catalog_validate.add_argument(
+        "--root", type=Path, default=Path("."),
+        help="OpenWorkSpace repository root (default: current directory)",
+    )
 
     register = subparsers.add_parser("register", help="validate and register a capability manifest")
     register.add_argument("path", type=Path)
@@ -233,6 +242,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "validate-manifest":
             manifest = validate_capability_file(args.path)
             print(json.dumps({"valid": True, "id": manifest["id"], "version": manifest["version"]}))
+            return 0
+        if args.command == "validate-catalog":
+            result = validate_local_catalog(args.root)
+            print(json.dumps(result, sort_keys=True))
             return 0
         if args.command == "verify-evidence":
             events = read_events(args.path)
