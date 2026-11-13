@@ -232,30 +232,30 @@
           "automatic_execution": {
             "const": false
           }
-        }
-      }
-    }
-  },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "review_state": {
-            "const": "source-sampled"
-          }
         },
-        "required": [
-          "review_state"
-        ]
-      },
-      "then": {
-        "properties": {
-          "source_revision": {
-            "type": "string",
-            "pattern": "^[0-9a-f]{40}$"
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "review_state": {
+                  "const": "source-sampled"
+                }
+              },
+              "required": [
+                "review_state"
+              ]
+            },
+            "then": {
+              "properties": {
+                "source_revision": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                }
+              }
+            }
           }
-        }
+        ]
       }
     }
-  ]
+  }
 }
