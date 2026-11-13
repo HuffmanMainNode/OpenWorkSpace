@@ -367,3 +367,18 @@ def test_repair_restores_original_torn_bytes_if_recovery_append_fails(tmp_path, 
     with pytest.raises(OSError, match="short evidence journal write"):
         evidence.repair_evidence(journal)
     assert journal.read_bytes() == before
+
+
+def test_read_events_with_status_reports_torn_tail(tmp_path):
+    from openworkspace.evidence import read_events_with_status
+
+    journal = tmp_path / "status.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    events, torn_tail = read_events_with_status(journal)
+    assert len(events) == 1
+    assert torn_tail is False
+    with journal.open("ab") as stream:
+        stream.write(b'{"partial":')
+    events, torn_tail = read_events_with_status(journal)
+    assert len(events) == 1
+    assert torn_tail is True
