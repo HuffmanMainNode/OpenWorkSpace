@@ -32,3 +32,13 @@ The demo does **not** execute a capability, access the operating system on its b
 ## Existing commands
 
 All existing commands remain available, including `validate-manifest`, `register`, `list`, `evaluate`, identity, task, message, resource, package, and evidence operations. Run `openworkspace --help` for the complete command list.
+
+## Validate local discovery metadata
+
+Before editing first-party resource entries, packs, or qualification records, run:
+
+```bash
+openworkspace validate-catalog --root .
+```
+
+The validator is offline and read-only. It checks the repository's local JSON schemas, catalog counts and identifiers, pack references, pinned source revisions, and qualification-record consistency. It does not query upstream repositories or execute their code.

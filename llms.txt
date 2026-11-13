@@ -48,6 +48,10 @@ OS sandbox: not implemented
 - local-resources/README.md: local-only user resource workspace; not auto-loaded.
 - catalog/first-party/repositories.json: verified public, non-fork first-party project links; reference-only and not install authorization.
 - catalog/packs/first-party-packs.json: curated optional discovery packs; never install or execute automatically.
+- catalog/first-party/source-qualification.json: machine-readable, revision-pinned source review records; reference-only.
+- specifications/source-qualification.schema.json: schema for source qualification evidence.
+- documentation/qualification/README.md: qualification record semantics and review boundaries.
+- Run `openworkspace validate-catalog --root .` to validate catalog metadata offline.
 - specifications/resource-packs.schema.json: JSON Schema for curated discovery packs.
 - specifications/first-party-catalog.schema.json: JSON Schema for first-party catalog records.
 - contributions/inbox/README.md: where pull-request proposals are submitted.

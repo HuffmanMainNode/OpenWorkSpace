@@ -51,4 +51,5 @@ Also run the CI smoke tests for CLI initialization, non-executing demo, and inst
 - Start with openworkspace.json, then specifications/workspace-discovery.schema.json.
 - Use llms.txt for a compact documentation map.
 - Use catalog/README.md and catalog/first-party/README.md for resource catalog boundaries.
+- Run `openworkspace validate-catalog --root .` to validate local catalog, pack, and source-qualification metadata offline before changing them.
 - Structured metadata is descriptive, not an authorization grant.
