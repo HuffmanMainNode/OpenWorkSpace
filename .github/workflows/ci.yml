@@ -34,6 +34,8 @@ jobs:
           init_output="$(openworkspace init --path "$workspace")"
           python -c 'import json,sys; data=json.loads(sys.stdin.read()); assert data["initialized"] is True; print("Initialized:", data["workspace"])' <<< "$init_output"
           openworkspace list --database "$workspace/registry.sqlite3"
+          catalog_output="$(openworkspace validate-catalog --root .)"
+          python -c 'import json,sys; data=json.loads(sys.stdin.read()); assert data["valid"] is True; assert data["network_accessed"] is False; assert data["source_code_executed"] is False; print("Offline catalog verified:", data["repositories"], "repositories")' <<< "$catalog_output"
           demo_output="$(openworkspace demo)"
           python -c 'import json,sys; data=json.loads(sys.stdin.read()); assert data["executed"] is False; assert data["os_access_enforced"] is False; print("Safe demo verified")' <<< "$demo_output"
       - name: Lint
