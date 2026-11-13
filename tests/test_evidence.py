@@ -292,3 +292,19 @@ def test_append_refuses_corrupt_complete_final_event(tmp_path):
     with pytest.raises(ValueError, match="integrity check failed"):
         append_event(journal, event_type="test", actor="tester", subject="two", result="ok")
     assert journal.read_bytes() == before
+
+
+def test_first_append_fsyncs_parent_directory(tmp_path, monkeypatch):
+    import openworkspace.evidence as evidence
+
+    synced = []
+    original_fsync_directory = evidence._fsync_directory
+
+    def tracked_fsync_directory(directory):
+        synced.append(directory)
+        original_fsync_directory(directory)
+
+    monkeypatch.setattr(evidence, "_fsync_directory", tracked_fsync_directory)
+    journal = tmp_path / "first-event.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    assert synced == [tmp_path]
