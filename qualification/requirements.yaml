@@ -132,3 +132,7 @@ requirements:
     title: Runtime dependencies are vulnerability-audited and development dependencies are tested on a weekly schedule
     status: implemented
     test: tests/test_supply_chain.py::test_supply_chain_controls_are_declared
+  - id: WSP-031
+    title: Task self-dependencies are rejected with a specific validation error
+    status: tested
+    test: tests/test_runtime_lifecycle.py::test_task_rejects_self_dependency_before_lookup
