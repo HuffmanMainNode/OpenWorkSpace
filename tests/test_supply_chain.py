@@ -1,8 +1,7 @@
-import pathlib
-import tomllib
+def _root():
+    import pathlib
 
-
-ROOT = pathlib.Path(__file__).resolve().parents[1]
+    return pathlib.Path(__file__).resolve().parents[1]
 
 
 def _assert_actions_are_pinned(workflow):
@@ -17,14 +16,17 @@ def _assert_actions_are_pinned(workflow):
 
 
 def test_supply_chain_controls_are_declared():
-    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    import tomllib
+
+    root = _root()
+    project = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
     runtime = project["project"]["dependencies"]
     development = project["project"]["optional-dependencies"]["dev"]
 
     assert "cryptography>=50.0.0,<51" in runtime
     assert "pytest>=9.0.3,<10" in development
 
-    ci = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    ci = (root / ".github/workflows/ci.yml").read_text(encoding="utf-8")
     assert "permissions:\n  contents: read" in ci
     assert "pip-audit --strict -r runtime-requirements.txt" in ci
     assert "runtime-audit:" in ci
@@ -32,7 +34,7 @@ def test_supply_chain_controls_are_declared():
     assert "pip install ." not in audit_job
     _assert_actions_are_pinned(ci)
 
-    weekly = (ROOT / ".github/workflows/weekly-dependencies.yml").read_text(
+    weekly = (root / ".github/workflows/weekly-dependencies.yml").read_text(
         encoding="utf-8"
     )
     assert "schedule:" in weekly
@@ -42,6 +44,6 @@ def test_supply_chain_controls_are_declared():
     assert "permissions:\n  contents: read" in weekly
     _assert_actions_are_pinned(weekly)
 
-    dependabot = (ROOT / ".github/dependabot.yml").read_text(encoding="utf-8")
+    dependabot = (root / ".github/dependabot.yml").read_text(encoding="utf-8")
     assert 'package-ecosystem: "pip"' in dependabot
     assert 'package-ecosystem: "github-actions"' in dependabot
