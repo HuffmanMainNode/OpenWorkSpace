@@ -219,7 +219,8 @@
           "review_state": {
             "enum": [
               "metadata-reviewed",
-              "readme-reviewed"
+              "readme-reviewed",
+              "source-sampled"
             ]
           },
           "integration_mode": {
