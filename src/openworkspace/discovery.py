@@ -36,8 +36,23 @@ def _validate_document(root: Path, schema_path: str, document_path: str) -> dict
     return document
 
 
+def _is_safe_relative_path(value: str) -> bool:
+    """Reject absolute, traversing, drive-qualified, and control-character paths."""
+    path = PurePosixPath(value)
+    return (
+        bool(value)
+        and "\\" not in value
+        and ":" not in value
+        and not any(ord(character) < 32 for character in value)
+        and not path.is_absolute()
+        and all(part not in {".", ".."} for part in path.parts)
+        and bool(path.parts)
+    )
+
+
 def validate_local_catalog(root: str | Path = ".") -> dict[str, Any]:
     """Validate catalog, packs, and qualification records without network or execution."""
+
     repository = Path(root).expanduser()
     catalog = _validate_document(
         repository,
@@ -113,16 +128,17 @@ def validate_local_catalog(root: str | Path = ".") -> dict[str, Any]:
                 f"review state mismatch for qualified project {project_id}"
             )
 
-        license_path = PurePosixPath(record["license_file"]["path"])
-        if (
-            license_path.is_absolute()
-            or ".." in license_path.parts
-            or not license_path.parts
-        ):
+        license_path = record["license_file"]["path"]
+        if not _is_safe_relative_path(license_path):
             raise CatalogValidationError(
                 f"license file path must be a safe repository-relative path for {project_id}"
             )
-        license_was_reviewed = record["license_file"]["path"] in record["files_reviewed"]
+        for reviewed_path in record["files_reviewed"]:
+            if not _is_safe_relative_path(reviewed_path):
+                raise CatalogValidationError(
+                    f"reviewed file path must be safe and repository-relative for {project_id}"
+                )
+        license_was_reviewed = license_path in record["files_reviewed"]
         if record["license_file"]["inspected"] != license_was_reviewed:
             raise CatalogValidationError(
                 f"license inspection flag and files_reviewed disagree for {project_id}"
