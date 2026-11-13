@@ -1,9 +1,9 @@
 import json
-import pathlib
 import shutil
+from pathlib import Path
 
 
-SOURCE_ROOT = pathlib.Path(__file__).resolve().parents[1]
+SOURCE_ROOT = Path(__file__).resolve().parents[1]
 DOCUMENTS = (
     "specifications/first-party-catalog.schema.json",
     "specifications/resource-packs.schema.json",
@@ -20,7 +20,7 @@ def _validate(root):
     return validate_local_catalog(root)
 
 
-def _copy_catalog(tmp_path: pathlib.Path) -> pathlib.Path:
+def _copy_catalog(tmp_path: Path) -> Path:
     for relative in DOCUMENTS:
         target = tmp_path / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -28,18 +28,18 @@ def _copy_catalog(tmp_path: pathlib.Path) -> pathlib.Path:
     return tmp_path
 
 
-def _read(root: pathlib.Path, relative: str) -> dict:
+def _read(root: Path, relative: str) -> dict:
     path = root / relative
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _write(root: pathlib.Path, relative: str, document: dict) -> None:
+def _write(root: Path, relative: str, document: dict) -> None:
     (root / relative).write_text(
         json.dumps(document, indent=2) + "\n", encoding="utf-8"
     )
 
 
-def _assert_invalid(root: pathlib.Path, expected_message: str) -> None:
+def _assert_invalid(root: Path, expected_message: str) -> None:
     from openworkspace.discovery import CatalogValidationError
 
     try:
