@@ -128,3 +128,7 @@ requirements:
     title: Untrusted network and execution declarations fail schema validation
     status: tested
     test: tests/test_discovery_and_contributions.py
+  - id: WSP-030
+    title: Runtime dependencies are vulnerability-audited and development dependencies are tested on a weekly schedule
+    status: tested
+    test: tests/test_supply_chain.py::test_supply_chain_controls_are_declared

@@ -27,6 +27,7 @@
 - Metadata-first community and first-party resource contribution process with a versioned JSON Schema contract.
 - Resource catalog policy separating first-party, community, optional packs, and local-only additions.
 - Automated validation tests for discovery metadata, contribution schema, contribution template, and intake boundaries.
+- CI runtime dependency vulnerability auditing, weekly dependency compatibility checks, and Dependabot update configuration.
 
 ### Security and reliability boundaries
 - Identity records are metadata, not authenticated or cryptographically verified identities.
