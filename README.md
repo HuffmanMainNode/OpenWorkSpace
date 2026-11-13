@@ -106,6 +106,14 @@ openworkspace message-ack message.example.001 example.local.core
 
 These operations manipulate local metadata and records. They do not provide identity authentication, worker execution, authenticated message delivery, or network transport.
 
+## Evidence journal integrity and recovery
+
+The local JSONL evidence journal verifies each complete event and its hash-chain link. Appends validate the final complete event rather than rereading the entire history. A final record without its newline is treated as a torn tail: new appends stop, and `openworkspace verify-evidence PATH` reports `torn_tail: true` with a non-zero exit.
+
+Use `openworkspace evidence-repair PATH` only after reviewing the failure. Repair requires the complete preceding chain to verify, preserves the incomplete suffix in a separate `PATH.torn-<UTC timestamp>` file with restrictive permissions, truncates only the torn suffix, and appends a `journal.recovered` event containing the fragment length and SHA-256. It refuses clean journals and journals with corruption in a complete line. Keep the original journal and fragment sidecar as evidence.
+
+**Integrity limits remain:** deleting complete trailing events is not detected by the local chain alone, and an attacker able to rewrite the whole journal can recompute the chain. Independent signed checkpoints are not implemented; that architectural decision remains owner-reserved. The journal is tamper-evident, not tamper-proof, and repair is not a substitute for backups or external integrity anchors.
+
 ## Extend OpenWorkSpace
 
 Users may maintain a local resource collection without modifying the core. Community projects can be proposed through pull requests using the metadata-first intake process.
