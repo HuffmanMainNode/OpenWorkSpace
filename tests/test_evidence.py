@@ -308,3 +308,59 @@ def test_first_append_fsyncs_parent_directory(tmp_path, monkeypatch):
     journal = tmp_path / "first-event.jsonl"
     append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
     assert synced == [tmp_path]
+
+
+def test_append_rejects_non_object_metadata_before_writing(tmp_path):
+    from jsonschema import ValidationError
+
+    journal = tmp_path / "invalid-metadata.jsonl"
+    with pytest.raises(ValidationError):
+        append_event(
+            journal, event_type="test", actor="tester", subject="one",
+            result="ok", metadata=["not", "an", "object"],
+        )
+    assert not journal.exists()
+
+
+def test_short_append_write_leaves_detectable_torn_tail(tmp_path, monkeypatch):
+    import openworkspace.evidence as evidence
+    from openworkspace.evidence import JournalTornTailError
+
+    original_write = evidence.os.write
+    journal = tmp_path / "short-write.jsonl"
+
+    def short_write(descriptor, data):
+        return original_write(descriptor, data[:12])
+
+    monkeypatch.setattr(evidence.os, "write", short_write)
+    with pytest.raises(OSError, match="short evidence journal write"):
+        append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    monkeypatch.setattr(evidence.os, "write", original_write)
+    assert not journal.read_bytes().endswith(b"\\n")
+    with pytest.raises(JournalTornTailError):
+        append_event(journal, event_type="test", actor="tester", subject="two", result="ok")
+
+
+def test_repair_restores_original_torn_bytes_if_recovery_append_fails(tmp_path, monkeypatch):
+    import openworkspace.evidence as evidence
+
+    journal = tmp_path / "repair-rollback.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    fragment = b'{"partial":"rollback"'
+    with journal.open("ab") as stream:
+        stream.write(fragment)
+    before = journal.read_bytes()
+    original_write = evidence.os.write
+    calls = 0
+
+    def fail_recovery_write(descriptor, data):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            return original_write(descriptor, data[:12])
+        return original_write(descriptor, data)
+
+    monkeypatch.setattr(evidence.os, "write", fail_recovery_write)
+    with pytest.raises(OSError, match="short evidence journal write"):
+        evidence.repair_evidence(journal)
+    assert journal.read_bytes() == before
