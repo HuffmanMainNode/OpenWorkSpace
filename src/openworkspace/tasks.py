@@ -110,13 +110,13 @@ class TaskStore:
                 if json.loads(owner[0]).get("status") != "active":
                     raise TaskError(f"task owner identity is not active: {task['owner']}")
                 for dependency in task["dependencies"]:
+                    if dependency == task["id"]:
+                        raise TaskError("a task cannot depend on itself")
                     row = connection.execute(
                         "SELECT task_json FROM tasks WHERE task_id = ?", (dependency,)
                     ).fetchone()
                     if row is None:
                         raise TaskError(f"dependency not found: {dependency}")
-                    if dependency == task["id"]:
-                        raise TaskError("a task cannot depend on itself")
                 connection.execute(
                     """INSERT INTO tasks(task_id,task_json,task_sha256,created_at,updated_at)
                     VALUES(?,?,?,?,?)""",
