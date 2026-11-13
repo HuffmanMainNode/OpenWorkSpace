@@ -1,12 +1,3 @@
-import json
-import shutil
-from pathlib import Path
-
-import pytest
-
-from openworkspace.discovery import CatalogValidationError, validate_local_catalog
-
-
 DOCUMENTS = (
     "specifications/first-party-catalog.schema.json",
     "specifications/resource-packs.schema.json",
@@ -17,36 +8,55 @@ DOCUMENTS = (
 )
 
 
-def _source_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+def _source_root():
+    import pathlib
+
+    return pathlib.Path(__file__).resolve().parents[1]
 
 
-def _validate(root: Path) -> dict:
+def _validate(root):
+    from openworkspace.discovery import validate_local_catalog
+
     return validate_local_catalog(root)
 
 
-def _copy_catalog(tmp_path: Path) -> Path:
+def _copy_catalog(tmp_path):
+    import pathlib
+    import shutil
+
     for relative in DOCUMENTS:
-        target = tmp_path / relative
+        target = pathlib.Path(tmp_path) / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(_source_root() / relative, target)
-    return tmp_path
+    return pathlib.Path(tmp_path)
 
 
-def _read(root: Path, relative: str) -> dict:
+def _read(root, relative):
+    import json
+
     path = root / relative
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _write(root: Path, relative: str, document: dict) -> None:
+def _write(root, relative, document):
+    import json
+
     (root / relative).write_text(
         json.dumps(document, indent=2) + "\n", encoding="utf-8"
     )
 
 
-def _assert_invalid(root: Path, expected_message: str) -> None:
-    with pytest.raises(CatalogValidationError, match=expected_message):
+def _assert_invalid(root, expected_message):
+    from openworkspace.discovery import CatalogValidationError
+
+    try:
         _validate(root)
+    except CatalogValidationError as exc:
+        assert expected_message in str(exc)
+    else:
+        raise AssertionError(
+            f"expected catalog validation error containing {expected_message!r}"
+        )
 
 
 def test_local_catalog_validates_and_reports_offline_scope():
