@@ -168,7 +168,7 @@ See the [getting started guide](documentation/getting-started/README.md), [insta
 - [ ] Authenticated message transport and protocol negotiation.
 - [ ] Permission enforcement at actual OS/process boundaries.
 - [x] Cross-process evidence journal writer locking and fsync.
-- [x] Torn-tail detection and guarded repair with preserved fragment and recovery event.
+- [ ] Torn-tail detection and guarded repair with preserved fragment and recovery event.
 - [ ] External integrity anchors and power-loss qualification.
 - [ ] Qualified isolation before untrusted code execution.
 - [ ] Independent TypeScript contract consumer and shared fixtures.
