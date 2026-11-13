@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from openworkspace.cli import main
 
 
@@ -258,3 +260,12 @@ def test_cli_validate_catalog_rejects_broken_local_data(tmp_path, capsys):
     catalog_path.write_text(json.dumps(catalog), encoding="utf-8")
     assert main(["validate-catalog", "--root", str(tmp_path)]) == 2
     assert "error:" in capsys.readouterr().err
+
+
+def test_cli_rejects_unknown_identity_status_choice():
+    from openworkspace.cli import build_parser
+
+    with pytest.raises(SystemExit):
+        build_parser().parse_args([
+            "identity-status", "example.identity", "unknown", "--reason", "invalid"
+        ])
