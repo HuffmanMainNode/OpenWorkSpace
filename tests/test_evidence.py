@@ -261,3 +261,34 @@ def test_append_latency_does_not_scale_with_journal_length(tmp_path):
     first = statistics.median(timings[:200])
     last = statistics.median(timings[-200:])
     assert last <= first * 3, f"append latency grew from {first:.6f}s to {last:.6f}s"
+
+
+def test_append_uses_one_append_write_and_restrictive_file_mode(tmp_path, monkeypatch):
+    import openworkspace.evidence as evidence
+
+    writes = []
+    original_write = evidence.os.write
+
+    def tracked_write(descriptor, data):
+        writes.append(data)
+        return original_write(descriptor, data)
+
+    monkeypatch.setattr(evidence.os, "write", tracked_write)
+    journal = tmp_path / "single-write.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    event_writes = [payload for payload in writes if payload.endswith(b"\\n")]
+    assert len(event_writes) == 1
+    if os.name == "posix":
+        assert journal.stat().st_mode & 0o777 == 0o600
+
+
+def test_append_refuses_corrupt_complete_final_event(tmp_path):
+    journal = tmp_path / "corrupt-final.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    event = json.loads(journal.read_text(encoding="utf-8"))
+    event["result"] = "tampered"
+    journal.write_text(json.dumps(event) + "\\n", encoding="utf-8")
+    before = journal.read_bytes()
+    with pytest.raises(ValueError, match="integrity check failed"):
+        append_event(journal, event_type="test", actor="tester", subject="two", result="ok")
+    assert journal.read_bytes() == before
