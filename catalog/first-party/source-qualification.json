@@ -1,0 +1,230 @@
+{
+  "schema_version": "1.0",
+  "review_date": "2026-11-12",
+  "scope": "OpenWorkSpace first-party resource source qualification",
+  "policy": {
+    "source_selection": "public-non-fork-only",
+    "source_repositories_modified": false,
+    "source_code_copied": false,
+    "upstream_code_executed": false,
+    "automatic_install": false,
+    "automatic_execution": false,
+    "redistribution_approved": false,
+    "integration_mode": "reference-only"
+  },
+  "records": [
+    {
+      "project_id": "multi-agent-swarm-guardrails",
+      "source_revision": "f4f42ad79678bc16b7a7539c0b6ed9c28b81f885",
+      "review_state": "source-sampled",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": true
+      },
+      "files_reviewed": [
+        "README.md",
+        "LICENSE",
+        "NOTICE",
+        "pyproject.toml",
+        "src/masg/policy.py",
+        "tests/test_policy.py"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "Selected files only; not a complete source audit.",
+        "Policy evaluation is not OS enforcement, principal authentication, or sandboxing.",
+        "Optional trust and Linux broker features require separate review."
+      ]
+    },
+    {
+      "project_id": "huffman-protocol",
+      "source_revision": "a360d60c2d2245cf6df4a1c2e7b0945299ccf676",
+      "review_state": "source-sampled",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": true
+      },
+      "files_reviewed": [
+        "README.md",
+        "LICENSE",
+        "pyproject.toml",
+        "src/huffman_protocol/validation.py",
+        "tests/test_validation.py"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "Selected offline validation files only; not a complete source audit.",
+        "No publisher authentication or certification claim is established."
+      ]
+    },
+    {
+      "project_id": "open-intelligence-exchange",
+      "source_revision": "8062c55588cd4e811fd3bda280fde5866a4f469a",
+      "review_state": "source-sampled",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": true
+      },
+      "files_reviewed": [
+        "README.md",
+        "LICENSE",
+        "pyproject.toml",
+        "src/oix/identity.py",
+        "src/oix/secure_transport.py",
+        "tests/test_protocol.py",
+        "tests/test_secure_transport.py"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "Selected identity and transport files only; not a complete source audit.",
+        "Key storage, trust enrollment, lifecycle, replay durability, and network exposure require deeper review.",
+        "Inspected design stores private-key files without encryption at rest; POSIX permission bits do not provide equivalent Windows protection."
+      ]
+    },
+    {
+      "project_id": "huffman-cyber-observatory",
+      "source_revision": "22614667f656334361f5d7785d80c92bda98de9f",
+      "review_state": "source-sampled",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": true
+      },
+      "files_reviewed": [
+        "README.md",
+        "LICENSE",
+        "pyproject.toml",
+        "src/huffman_cyber/cli.py"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "CLI entrypoint only; scanner, crypto, feeds, SBOM, release, and workflow implementations remain unreviewed.",
+        "Network commands must remain explicit opt-in operations."
+      ]
+    },
+    {
+      "project_id": "huffman-defensive-intelligence",
+      "source_revision": "36a7e9b72c2a9e6885645add071544e3b17ebec3",
+      "review_state": "source-sampled",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": true
+      },
+      "files_reviewed": [
+        "README.md",
+        "LICENSE",
+        "pyproject.toml",
+        "docs/INTEGRATION_CONTRACT.md"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "Documentation and integration contract only; adapter and persistence implementations remain unreviewed.",
+        "Documented network transport and production PKI limitations remain applicable."
+      ]
+    },
+    {
+      "project_id": "open-agent-compatibility-fixtures",
+      "source_revision": "948bd398ee10050c099852e87970aaf5d3977c9c",
+      "review_state": "readme-reviewed",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": true
+      },
+      "files_reviewed": [
+        "README.md",
+        "LICENSE"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "README and top-level MIT license inspected; individual fixture content and source-spec provenance remain unreviewed.",
+        "Fixtures are not a runtime or certification program."
+      ]
+    },
+    {
+      "project_id": "open-agent-run-metrics-interop",
+      "source_revision": "f9776a4172eb1a7c3fad5cd592ace252b1e26ad9",
+      "review_state": "readme-reviewed",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": false
+      },
+      "files_reviewed": [
+        "README.md"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "License file and fixture-level provenance not reviewed.",
+        "Draft fixtures only; not billing, budget enforcement, or financial correctness certification."
+      ]
+    },
+    {
+      "project_id": "agent-delegation-scope-boundary-fixtures",
+      "source_revision": "7ea4d9b01f6c3145e3002b7b88eb198744cba270",
+      "review_state": "readme-reviewed",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": false
+      },
+      "files_reviewed": [
+        "README.md"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "License file and fixture-level provenance not reviewed.",
+        "Synthetic draft fixtures only; not a production authorization system or conformance proof."
+      ]
+    },
+    {
+      "project_id": "agent-tool-retry-idempotency-fixtures",
+      "source_revision": "e93332c3b37ea6e044795904924f4f07eb5f2c77",
+      "review_state": "readme-reviewed",
+      "license_file": {
+        "path": "LICENSE",
+        "inspected": false
+      },
+      "files_reviewed": [
+        "README.md"
+      ],
+      "tests": {
+        "executed": false,
+        "reason": "No upstream code or tests were executed during this source review."
+      },
+      "decision": "reference-only",
+      "limitations": [
+        "License file and fixture-level provenance not reviewed.",
+        "Synthetic draft fixtures only; no runtime or exactly-once guarantee."
+      ]
+    }
+  ]
+}

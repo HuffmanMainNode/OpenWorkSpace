@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HuffmanMainNode/OpenWorkSpace/blob/main/specifications/source-qualification.schema.json",
+  "title": "OpenWorkSpace Source Qualification Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "review_date",
+    "scope",
+    "policy",
+    "records"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_selection",
+        "source_repositories_modified",
+        "source_code_copied",
+        "upstream_code_executed",
+        "automatic_install",
+        "automatic_execution",
+        "redistribution_approved",
+        "integration_mode"
+      ],
+      "properties": {
+        "source_selection": {
+          "const": "public-non-fork-only"
+        },
+        "source_repositories_modified": {
+          "const": false
+        },
+        "source_code_copied": {
+          "const": false
+        },
+        "upstream_code_executed": {
+          "const": false
+        },
+        "automatic_install": {
+          "const": false
+        },
+        "automatic_execution": {
+          "const": false
+        },
+        "redistribution_approved": {
+          "const": false
+        },
+        "integration_mode": {
+          "const": "reference-only"
+        }
+      }
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_id",
+          "source_revision",
+          "review_state",
+          "license_file",
+          "files_reviewed",
+          "tests",
+          "decision",
+          "limitations"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{1,127}$"
+          },
+          "source_revision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "review_state": {
+            "enum": [
+              "readme-reviewed",
+              "source-sampled"
+            ]
+          },
+          "license_file": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "inspected"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "inspected": {
+                "type": "boolean"
+              }
+            }
+          },
+          "files_reviewed": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "tests": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "executed",
+              "reason"
+            ],
+            "properties": {
+              "executed": {
+                "const": false
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "decision": {
+            "const": "reference-only"
+          },
+          "limitations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

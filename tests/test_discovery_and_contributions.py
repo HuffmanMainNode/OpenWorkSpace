@@ -151,3 +151,34 @@ def test_resource_packs_reference_only_known_first_party_projects():
             assert project["fork"] is False
             assert project["redistribution"] == "not-approved"
             assert project["integration_mode"] == "reference-only"
+
+def test_source_qualification_record_matches_schema_and_catalog():
+    schema = _json(ROOT / "specifications" / "source-qualification.schema.json")
+    record = _json(ROOT / "catalog" / "first-party" / "source-qualification.json")
+    catalog = _json(ROOT / "catalog" / "first-party" / "repositories.json")
+    Draft202012Validator(schema, format_checker=FormatChecker()).validate(record)
+    known = {item["id"]: item for item in catalog["repositories"]}
+    assert len(record["records"]) == len({item["project_id"] for item in record["records"]})
+    for item in record["records"]:
+        source = known[item["project_id"]]
+        assert source["source_revision"] == item["source_revision"]
+        assert source["review_state"] == item["review_state"]
+        assert source["integration_mode"] == record["policy"]["integration_mode"]
+        assert source["redistribution"] == "not-approved"
+        assert source["automatic_install"] is False
+        assert source["automatic_execution"] is False
+
+
+def test_source_sampled_catalog_entry_requires_immutable_revision():
+    schema = _json(ROOT / "specifications" / "first-party-catalog.schema.json")
+    catalog = _json(ROOT / "catalog" / "first-party" / "repositories.json")
+    entry = next(item for item in catalog["repositories"] if item["review_state"] == "source-sampled")
+    entry["source_revision"] = None
+    assert list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(catalog))
+
+
+def test_source_qualification_schema_rejects_upstream_execution_or_redistribution():
+    schema = _json(ROOT / "specifications" / "source-qualification.schema.json")
+    record = _json(ROOT / "catalog" / "first-party" / "source-qualification.json")
+    record["policy"]["upstream_code_executed"] = True
+    assert list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(record))
