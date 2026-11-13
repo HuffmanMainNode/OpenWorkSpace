@@ -158,14 +158,17 @@ def _last_event_hash_unlocked(journal: Path) -> str:
         if stream.read(1) != b"\n":
             raise JournalTornTailError(f"evidence journal has a torn final line: {journal}")
 
-        position = size - 2
+        cursor = size - 1
         line_start = 0
-        while position >= 0:
-            stream.seek(position)
-            if stream.read(1) == b"\n":
-                line_start = position + 1
+        while cursor > 0:
+            chunk_start = max(0, cursor - 4096)
+            stream.seek(chunk_start)
+            chunk = stream.read(cursor - chunk_start)
+            previous_newline = chunk.rfind(b"\\n")
+            if previous_newline >= 0:
+                line_start = chunk_start + previous_newline + 1
                 break
-            position -= 1
+            cursor = chunk_start
 
         stream.seek(line_start)
         final_line = stream.read(size - line_start - 1)
