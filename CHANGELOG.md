@@ -4,7 +4,7 @@
 
 ### Fixed
 - Cache the evidence schema validator and make journal appends validate only the final complete event.
-- Write each evidence event with one append-mode descriptor write and fsync; fsync the parent directory on first journal creation.
+- Write each evidence event with one append-mode descriptor write and fsync; fsync the parent directory on first journal creation where directory fsync is supported.
 - Detect torn JSONL tails, block unsafe appends, preserve torn fragments during explicit repair, and record recovery metadata.
 - Serialize journal readers with writers and expose torn-tail state in `verify-evidence`.
 - Reject task self-dependencies before dependency lookup and remove the unsupported `unknown` identity-status CLI choice.
