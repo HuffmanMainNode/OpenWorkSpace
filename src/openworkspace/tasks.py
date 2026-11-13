@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 import hashlib
 import json
 import sqlite3
@@ -251,7 +252,7 @@ class TaskStore:
             result.append({"id": task["id"], "owner": task["owner"], "state": task["state"]})
         return result
 
-    def audit_events(self, task_id: str | None = None) -> list[dict[str, Any]]:
+    def audit_events(self, task_id: str | None = None) -> builtins.list[dict[str, Any]]:
         query = "SELECT task_id,event_type,timestamp,details_json FROM task_audit"
         params: tuple[Any, ...] = ()
         if task_id is not None:
