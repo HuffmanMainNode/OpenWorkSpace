@@ -10,7 +10,7 @@ from pathlib import Path
 
 from openworkspace.contracts import ContractError, validate_capability_file
 from openworkspace.discovery import validate_local_catalog
-from openworkspace.evidence import read_events
+from openworkspace.evidence import JournalTornTailError, read_events, repair_evidence
 from openworkspace.identity import IdentityError, IdentityRegistry
 from openworkspace.identity_keys import IdentityKeyError, IdentityKeyStore
 from openworkspace.messages import MessageError, MessageStore
@@ -78,6 +78,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     verify = subparsers.add_parser("verify-evidence", help="verify a local evidence journal")
     verify.add_argument("path", type=Path)
+
+    evidence_repair = subparsers.add_parser(
+        "evidence-repair", help="preserve and repair a torn final evidence-journal line"
+    )
+    evidence_repair.add_argument("path", type=Path)
 
     identity_create = subparsers.add_parser(
         "identity-create", help="create a local identity metadata record"
@@ -248,8 +253,21 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(result, sort_keys=True))
             return 0
         if args.command == "verify-evidence":
-            events = read_events(args.path)
-            print(json.dumps({"valid": True, "events": len(events)}))
+            try:
+                events = read_events(args.path)
+            except JournalTornTailError:
+                events = read_events(args.path, allow_torn_tail=True)
+                print(json.dumps({
+                    "valid": False, "events": len(events), "torn_tail": True
+                }, sort_keys=True))
+                return 2
+            print(json.dumps({
+                "valid": True, "events": len(events), "torn_tail": False
+            }, sort_keys=True))
+            return 0
+        if args.command == "evidence-repair":
+            result = repair_evidence(args.path)
+            print(json.dumps(result, sort_keys=True))
             return 0
         if args.command == "identity-create":
             record = IdentityRegistry(args.database).create(_read_json(args.path))
