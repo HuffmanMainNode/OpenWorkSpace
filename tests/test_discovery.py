@@ -1,7 +1,3 @@
-import pathlib
-
-
-SOURCE_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOCUMENTS = (
     "specifications/first-party-catalog.schema.json",
     "specifications/resource-packs.schema.json",
@@ -12,30 +8,37 @@ DOCUMENTS = (
 )
 
 
+def _source_root():
+    import pathlib
+
+    return pathlib.Path(__file__).resolve().parents[1]
+
+
 def _validate(root):
     from openworkspace.discovery import validate_local_catalog
 
     return validate_local_catalog(root)
 
 
-def _copy_catalog(tmp_path: pathlib.Path) -> pathlib.Path:
+def _copy_catalog(tmp_path):
+    import pathlib
     import shutil
 
     for relative in DOCUMENTS:
-        target = tmp_path / relative
+        target = pathlib.Path(tmp_path) / relative
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(SOURCE_ROOT / relative, target)
-    return tmp_path
+        shutil.copy2(_source_root() / relative, target)
+    return pathlib.Path(tmp_path)
 
 
-def _read(root: pathlib.Path, relative: str) -> dict:
+def _read(root, relative):
     import json
 
     path = root / relative
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _write(root: pathlib.Path, relative: str, document: dict) -> None:
+def _write(root, relative, document):
     import json
 
     (root / relative).write_text(
@@ -43,7 +46,7 @@ def _write(root: pathlib.Path, relative: str, document: dict) -> None:
     )
 
 
-def _assert_invalid(root: pathlib.Path, expected_message: str) -> None:
+def _assert_invalid(root, expected_message):
     from openworkspace.discovery import CatalogValidationError
 
     try:
@@ -51,11 +54,13 @@ def _assert_invalid(root: pathlib.Path, expected_message: str) -> None:
     except CatalogValidationError as exc:
         assert expected_message in str(exc)
     else:
-        raise AssertionError(f"expected catalog validation error containing {expected_message!r}")
+        raise AssertionError(
+            f"expected catalog validation error containing {expected_message!r}"
+        )
 
 
 def test_local_catalog_validates_and_reports_offline_scope():
-    result = _validate(SOURCE_ROOT)
+    result = _validate(_source_root())
     assert result == {
         "valid": True,
         "repositories": 62,
@@ -87,6 +92,16 @@ def test_rejects_duplicate_project_reference_within_pack(tmp_path):
     _assert_invalid(root, "duplicate project references")
 
 
+def test_rejects_unknown_project_reference_in_pack(tmp_path):
+    root = _copy_catalog(tmp_path)
+    path = "catalog/packs/first-party-packs.json"
+    packs = _read(root, path)
+    packs["packs"][0]["items"][0]["project_id"] = "not-in-catalog"
+    _write(root, path, packs)
+
+    _assert_invalid(root, "references unknown project")
+
+
 def test_rejects_license_flag_that_disagrees_with_reviewed_files(tmp_path):
     root = _copy_catalog(tmp_path)
     path = "catalog/first-party/source-qualification.json"
@@ -101,11 +116,31 @@ def test_rejects_license_flag_that_disagrees_with_reviewed_files(tmp_path):
     _assert_invalid(root, "license inspection flag")
 
 
-def test_rejects_license_path_traversal(tmp_path):
+def test_rejects_posix_license_path_traversal(tmp_path):
     root = _copy_catalog(tmp_path)
     path = "catalog/first-party/source-qualification.json"
     qualification = _read(root, path)
     qualification["records"][0]["license_file"]["path"] = "../LICENSE"
+    _write(root, path, qualification)
+
+    _assert_invalid(root, "safe repository-relative path")
+
+
+def test_rejects_windows_license_path_traversal(tmp_path):
+    root = _copy_catalog(tmp_path)
+    path = "catalog/first-party/source-qualification.json"
+    qualification = _read(root, path)
+    qualification["records"][0]["license_file"]["path"] = r"..\\LICENSE"
+    _write(root, path, qualification)
+
+    _assert_invalid(root, "safe repository-relative path")
+
+
+def test_rejects_windows_drive_qualified_license_path(tmp_path):
+    root = _copy_catalog(tmp_path)
+    path = "catalog/first-party/source-qualification.json"
+    qualification = _read(root, path)
+    qualification["records"][0]["license_file"]["path"] = "C:/private/LICENSE"
     _write(root, path, qualification)
 
     _assert_invalid(root, "safe repository-relative path")
@@ -123,3 +158,13 @@ def test_rejects_inspected_license_missing_from_reviewed_file_list(tmp_path):
     _write(root, path, qualification)
 
     _assert_invalid(root, "license inspection flag")
+
+
+def test_rejects_duplicate_qualification_record(tmp_path):
+    root = _copy_catalog(tmp_path)
+    path = "catalog/first-party/source-qualification.json"
+    qualification = _read(root, path)
+    qualification["records"].append(dict(qualification["records"][0]))
+    _write(root, path, qualification)
+
+    _assert_invalid(root, "duplicate source qualification record")
