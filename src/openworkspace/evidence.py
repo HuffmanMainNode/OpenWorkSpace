@@ -262,9 +262,10 @@ def _write_fragment_exclusive(path: Path, fragment: bytes) -> None:
             raise OSError(f"short torn-fragment write: {written} of {len(fragment)} bytes")
         os.fsync(descriptor)
     except Exception:
+        os.close(descriptor)
         path.unlink(missing_ok=True)
         raise
-    finally:
+    else:
         os.close(descriptor)
     _fsync_directory(path.parent)
 
