@@ -138,17 +138,17 @@ requirements:
     test: tests/test_runtime_lifecycle.py::test_task_rejects_self_dependency_before_lookup
   - id: WSP-032
     title: Torn evidence tails are detected and repaired only after prefix verification
-    status: tested
+    status: implemented
     test: tests/test_evidence.py::test_repair_moves_torn_fragment_and_appends_recovery_event
   - id: WSP-033
     title: Evidence append latency remains bounded across a 3000-event journal
-    status: tested
+    status: implemented
     test: tests/test_evidence.py::test_append_latency_does_not_scale_with_journal_length
   - id: WSP-034
     title: Evidence readers never observe false integrity failures during concurrent writes
-    status: tested
+    status: implemented
     test: tests/test_evidence.py::test_readers_during_writes_never_observe_false_integrity_failure
   - id: WSP-035
     title: Evidence journal truncation and rechaining limitations are explicitly tested
-    status: tested
+    status: implemented
     test: tests/test_evidence.py::test_rechained_forgery_is_not_detected_documented_limit
