@@ -151,3 +151,5 @@ jobs:
           )
           PY
           pip-audit --strict -r runtime-requirements.txt --progress-spinner off
+          printf "cryptography==50.0.0\npytest==9.0.3\n" > dependency-floor-requirements.txt
+          pip-audit --strict -r dependency-floor-requirements.txt --progress-spinner off

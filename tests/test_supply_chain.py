@@ -29,6 +29,8 @@ def test_supply_chain_controls_are_declared():
     ci = (root / ".github/workflows/ci.yml").read_text(encoding="utf-8")
     assert "permissions:\n  contents: read" in ci
     assert "pip-audit --strict -r runtime-requirements.txt" in ci
+    assert "cryptography==50.0.0" in ci
+    assert "pytest==9.0.3" in ci
     assert "runtime-audit:" in ci
     audit_job = ci.split("  runtime-audit:", 1)[1]
     assert "pip install ." not in audit_job
