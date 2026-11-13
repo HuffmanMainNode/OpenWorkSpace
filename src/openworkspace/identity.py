@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import builtins
 import hashlib
 import json
 import sqlite3
@@ -225,7 +226,7 @@ class IdentityRegistry:
             ).fetchall()
         return [{"id": row[0], "updated_at": row[1]} for row in rows]
 
-    def audit_events(self, identity_id: str | None = None) -> list[dict[str, Any]]:
+    def audit_events(self, identity_id: str | None = None) -> builtins.list[dict[str, Any]]:
         query = "SELECT identity_id,event_type,timestamp,details_json FROM identity_audit"
         params: tuple[Any, ...] = ()
         if identity_id is not None:

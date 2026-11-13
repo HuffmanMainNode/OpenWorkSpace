@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 import hashlib
 import json
 import sqlite3
@@ -206,7 +207,7 @@ class PackageCatalog:
             )
         return result
 
-    def audit_events(self, package_id: str | None = None) -> list[dict[str, Any]]:
+    def audit_events(self, package_id: str | None = None) -> builtins.list[dict[str, Any]]:
         query = "SELECT package_id,version,event_type,timestamp,details_json FROM package_audit"
         params: tuple[Any, ...] = ()
         if package_id is not None:

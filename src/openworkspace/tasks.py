@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 import hashlib
 import json
 import sqlite3
@@ -109,13 +110,13 @@ class TaskStore:
                 if json.loads(owner[0]).get("status") != "active":
                     raise TaskError(f"task owner identity is not active: {task['owner']}")
                 for dependency in task["dependencies"]:
+                    if dependency == task["id"]:
+                        raise TaskError("a task cannot depend on itself")
                     row = connection.execute(
                         "SELECT task_json FROM tasks WHERE task_id = ?", (dependency,)
                     ).fetchone()
                     if row is None:
                         raise TaskError(f"dependency not found: {dependency}")
-                    if dependency == task["id"]:
-                        raise TaskError("a task cannot depend on itself")
                 connection.execute(
                     """INSERT INTO tasks(task_id,task_json,task_sha256,created_at,updated_at)
                     VALUES(?,?,?,?,?)""",
@@ -251,7 +252,7 @@ class TaskStore:
             result.append({"id": task["id"], "owner": task["owner"], "state": task["state"]})
         return result
 
-    def audit_events(self, task_id: str | None = None) -> list[dict[str, Any]]:
+    def audit_events(self, task_id: str | None = None) -> builtins.list[dict[str, Any]]:
         query = "SELECT task_id,event_type,timestamp,details_json FROM task_audit"
         params: tuple[Any, ...] = ()
         if task_id is not None:

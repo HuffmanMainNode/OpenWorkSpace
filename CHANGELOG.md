@@ -2,6 +2,13 @@
 
 ## [0.1.0] - Unreleased
 
+### Fixed
+- Reject task self-dependencies before dependency lookup and remove the unsupported `unknown` identity-status CLI choice.
+- Correct class-scope `list` annotation shadowing, Windows evidence-lock platform detection, and the PowerShell activation example.
+
+### Tooling
+- Add mypy to development dependencies and enforce source type checking in CI.
+
 ### Added
 - Initial Python package and CLI.
 - JSON Schema 2020-12 capability manifest contract and validator.

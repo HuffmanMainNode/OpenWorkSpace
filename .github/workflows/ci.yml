@@ -40,6 +40,8 @@ jobs:
           python -c 'import json,sys; data=json.loads(sys.stdin.read()); assert data["executed"] is False; assert data["os_access_enforced"] is False; print("Safe demo verified")' <<< "$demo_output"
       - name: Lint
         run: ruff check .
+      - name: Type check
+        run: mypy src
       - name: Build wheel
         run: python -m pip wheel --no-deps . --wheel-dir dist
       - name: Verify wheel includes runtime schemas

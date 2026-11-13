@@ -5,6 +5,7 @@ The catalog never fetches or executes resources.
 
 from __future__ import annotations
 
+import builtins
 import hashlib
 import json
 import sqlite3
@@ -209,7 +210,7 @@ class ResourceCatalog:
             )
         return record
 
-    def audit_events(self, resource_id: str | None = None) -> list[dict[str, Any]]:
+    def audit_events(self, resource_id: str | None = None) -> builtins.list[dict[str, Any]]:
         query = "SELECT resource_id,event_type,timestamp,details_json FROM resource_audit"
         params: tuple[Any, ...] = ()
         if resource_id is not None:
