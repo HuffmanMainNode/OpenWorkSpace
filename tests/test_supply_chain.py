@@ -1,8 +1,8 @@
+import pathlib
 import tomllib
-from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 def _assert_actions_are_pinned(workflow):
