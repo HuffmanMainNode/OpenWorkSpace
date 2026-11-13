@@ -172,9 +172,13 @@ def test_source_qualification_record_matches_schema_and_catalog():
 def test_source_sampled_catalog_entry_requires_immutable_revision():
     schema = _json(ROOT / "specifications" / "first-party-catalog.schema.json")
     catalog = _json(ROOT / "catalog" / "first-party" / "repositories.json")
-    entry = next(item for item in catalog["repositories"] if item["review_state"] == "source-sampled")
+    entry = next(
+        item for item in catalog["repositories"]
+        if item["review_state"] == "source-sampled"
+    )
     entry["source_revision"] = None
-    assert list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(catalog))
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    assert list(validator.iter_errors(catalog))
 
 
 def test_source_qualification_schema_rejects_upstream_execution_or_redistribution():
