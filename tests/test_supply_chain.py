@@ -26,8 +26,10 @@ def test_supply_chain_controls_are_declared():
 
     ci = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
     assert "permissions:\n  contents: read" in ci
-    assert "pip-audit --path" in ci
+    assert "pip-audit --strict -r runtime-requirements.txt" in ci
     assert "runtime-audit:" in ci
+    audit_job = ci.split("  runtime-audit:", 1)[1]
+    assert "pip install ." not in audit_job
     _assert_actions_are_pinned(ci)
 
     weekly = (ROOT / ".github/workflows/weekly-dependencies.yml").read_text(
