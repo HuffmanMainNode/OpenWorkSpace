@@ -4,8 +4,8 @@ import os
 import statistics
 import time
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from threading import Event
 from pathlib import Path
+from threading import Event
 
 import pytest
 
