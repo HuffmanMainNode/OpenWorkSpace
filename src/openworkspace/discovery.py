@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker, SchemaError, ValidationError
@@ -36,8 +36,23 @@ def _validate_document(root: Path, schema_path: str, document_path: str) -> dict
     return document
 
 
+def _is_safe_relative_path(value: str) -> bool:
+    """Reject absolute, traversing, drive-qualified, and control-character paths."""
+    path = PurePosixPath(value)
+    return (
+        bool(value)
+        and "\\" not in value
+        and ":" not in value
+        and not any(ord(character) < 32 for character in value)
+        and not path.is_absolute()
+        and all(part not in {".", ".."} for part in path.parts)
+        and bool(path.parts)
+    )
+
+
 def validate_local_catalog(root: str | Path = ".") -> dict[str, Any]:
     """Validate catalog, packs, and qualification records without network or execution."""
+
     repository = Path(root).expanduser()
     catalog = _validate_document(
         repository,
@@ -70,9 +85,17 @@ def validate_local_catalog(root: str | Path = ".") -> dict[str, Any]:
     if catalog["counts"]["total"] != len(entries):
         raise CatalogValidationError("first-party catalog total does not match its entries")
 
+    pack_ids = [pack["id"] for pack in packs["packs"]]
+    if len(set(pack_ids)) != len(pack_ids):
+        raise CatalogValidationError("resource packs contain duplicate pack IDs")
+
     for pack in packs["packs"]:
-        for item in pack["items"]:
-            project_id = item["project_id"]
+        item_ids = [item["project_id"] for item in pack["items"]]
+        if len(set(item_ids)) != len(item_ids):
+            raise CatalogValidationError(
+                f"resource pack {pack['id']} contains duplicate project references"
+            )
+        for project_id in item_ids:
             if project_id not in by_id:
                 raise CatalogValidationError(
                     f"resource pack {pack['id']} references unknown project {project_id}"
@@ -103,6 +126,22 @@ def validate_local_catalog(root: str | Path = ".") -> dict[str, Any]:
         if entry["review_state"] != record["review_state"]:
             raise CatalogValidationError(
                 f"review state mismatch for qualified project {project_id}"
+            )
+
+        license_path = record["license_file"]["path"]
+        if not _is_safe_relative_path(license_path):
+            raise CatalogValidationError(
+                f"license file path must be a safe repository-relative path for {project_id}"
+            )
+        for reviewed_path in record["files_reviewed"]:
+            if not _is_safe_relative_path(reviewed_path):
+                raise CatalogValidationError(
+                    f"reviewed file path must be safe and repository-relative for {project_id}"
+                )
+        license_was_reviewed = license_path in record["files_reviewed"]
+        if record["license_file"]["inspected"] != license_was_reviewed:
+            raise CatalogValidationError(
+                f"license inspection flag and files_reviewed disagree for {project_id}"
             )
         if record["decision"] != "reference-only":
             raise CatalogValidationError(
