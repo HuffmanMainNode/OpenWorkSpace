@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -269,3 +270,43 @@ def test_cli_rejects_unknown_identity_status_choice():
         build_parser().parse_args([
             "identity-status", "example.identity", "unknown", "--reason", "invalid"
         ])
+
+
+def test_cli_verify_evidence_reports_torn_tail(tmp_path, capsys):
+    from openworkspace.entrypoint import main as entrypoint_main
+    from openworkspace.evidence import append_event
+
+    journal = tmp_path / "cli-torn.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    with journal.open("ab") as stream:
+        stream.write(b'{"partial":')
+    assert entrypoint_main(["verify-evidence", str(journal)]) != 0
+    result = json.loads(capsys.readouterr().out)
+    assert result == {"valid": False, "events": 1, "torn_tail": True}
+
+
+def test_cli_verify_evidence_reports_clean_tail_state(tmp_path, capsys):
+    from openworkspace.entrypoint import main as entrypoint_main
+    from openworkspace.evidence import append_event
+
+    journal = tmp_path / "cli-clean.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    assert entrypoint_main(["verify-evidence", str(journal)]) == 0
+    assert json.loads(capsys.readouterr().out) == {
+        "valid": True, "events": 1, "torn_tail": False
+    }
+
+
+def test_cli_evidence_repair_command(tmp_path, capsys):
+    from openworkspace.entrypoint import main as entrypoint_main
+    from openworkspace.evidence import append_event, read_events
+
+    journal = tmp_path / "cli-repair.jsonl"
+    append_event(journal, event_type="test", actor="tester", subject="one", result="ok")
+    with journal.open("ab") as stream:
+        stream.write(b'{"partial":')
+    assert entrypoint_main(["evidence-repair", str(journal)]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["repaired"] is True
+    assert Path(result["fragment_path"]).exists()
+    assert read_events(journal)[-1]["event_type"] == "journal.recovered"
